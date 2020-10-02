@@ -4,7 +4,8 @@ Custom dark-forest tools
 ## Structure
 
 * `/native` contains all the Rust code that we generate native bindings from.
-* `/lib` contains the JS code that manages the SpiralPattern, Perlin, etc. In addition, it creates a leveldb instance where it stores all explored chunks, and a websocket server for communicating to a client.
+* `/lib` contains the JS code that manages the SpiralPattern, Perlin, etc.
+* `/index.mjs` is the primary file that creates a leveldb instance (to stores all explored chunks) and a websocket server for communicating to a client.
 
 ## Install
 
@@ -24,4 +25,4 @@ If you change any Rust code, you need to run `yarn build` for the native binding
 
 ## "Known Board"
 
-Any chunks explored by Sophon will be stored in a leveldb instance at `lib/known_board_perlin`. If something gets out-of-sync, you can delete that directory to start from scratch.
+Any chunks explored by Sophon will be stored in a leveldb instance at `known_board_perlin`. If something gets out-of-sync, you can delete that directory to start from scratch.

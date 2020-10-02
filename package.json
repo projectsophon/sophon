@@ -2,7 +2,7 @@
   "name": "sophon",
   "version": "0.1.0",
   "description": "Custom dark-forest tools",
-  "main": "lib/index.mjs",
+  "main": "index.mjs",
   "author": "Blaine Bublitz <blaine.bublitz@gmail.com>",
   "license": "MIT",
   "dependencies": {

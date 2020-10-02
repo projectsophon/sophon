@@ -6,6 +6,12 @@ Custom dark-forest tools
 * `/native` contains all the Rust code that we generate native bindings from.
 * `/lib` contains the JS code that manages the SpiralPattern, Perlin, etc. In addition, it creates a leveldb instance where it stores all explored chunks, and a websocket server for communicating to a client.
 
+## Install
+
+* Install Node
+* Install Yarn
+* Install Rust
+
 ## Using
 
 Install dependencies by running `yarn`, this will also kick off the first Rust build.

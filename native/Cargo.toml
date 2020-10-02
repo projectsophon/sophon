@@ -12,16 +12,17 @@ name = "sophon"
 crate-type = ["cdylib"]
 
 [build-dependencies]
+# https://github.com/GabrielCastro/neon-serde/issues/61#issuecomment-700184165
 neon-build = "=0.4.0"
 
 [dependencies]
+# https://github.com/GabrielCastro/neon-serde/issues/61#issuecomment-700184165
 neon = "=0.4.0"
 neon-serde = "0.4.0"
 lazy_static = "1.4.0"
-bigint = "4.4.3"
 uint = "0.8.5"
 serde = { version = "1.0.116", features = ["derive"] }
-rayon = "1.4"
+rayon = "1.4.1"
 itertools = "0.9.0"
 
 [profile.release]
@@ -29,7 +30,7 @@ opt-level = 3
 debug = true
 debug-assertions = false
 overflow-checks = false
-# lto = "fat"
+# lto = "fat" # Digital Ocean, presumably gcc, doesnt like
 panic = 'unwind'
 incremental = false
 codegen-units = 16

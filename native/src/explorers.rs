@@ -103,7 +103,6 @@ impl MiningPattern for Spiral {
 #[cfg(test)]
 mod tests {
     use super::*;
-    extern crate test;
 
     #[test]
     fn sixteen_iter() {

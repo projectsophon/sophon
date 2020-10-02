@@ -1,6 +1,4 @@
-#![feature(proc_macro_hygiene, decl_macro)]
 #![allow(non_snake_case)]
-#![feature(test)]
 
 pub mod explorers;
 pub mod game;
@@ -15,7 +13,6 @@ use crate::game::{ChunkFootprint, Coords, Planet};
 use crate::mimc::*;
 use itertools::iproduct;
 use neon::prelude::*;
-use neon_serde;
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 

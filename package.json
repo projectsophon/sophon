@@ -1,0 +1,28 @@
+{
+  "name": "sophon",
+  "version": "0.1.0",
+  "description": "Custom dark-forest tools",
+  "main": "lib/index.mjs",
+  "author": "Blaine Bublitz <blaine.bublitz@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "big-integer": "^1.6.48",
+    "level": "^6.0.1",
+    "level-concat-iterator": "^2.0.1",
+    "lodash": "^4.17.20",
+    "multileveldown": "^3.0.0",
+    "node-fetch": "^2.6.1",
+    "primus": "^7.3.5",
+    "primus-emit": "^1.0.0",
+    "ws": "^7.3.1"
+  },
+  "devDependencies": {
+    "neon-cli": "^0.4.2"
+  },
+  "scripts": {
+    "start": "node .",
+    "prepare": "yarn build",
+    "build": "yarn build-rust",
+    "build-rust": "neon +nightly build --release"
+  }
+}

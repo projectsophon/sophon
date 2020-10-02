@@ -23,6 +23,6 @@
     "start": "node .",
     "prepare": "yarn build",
     "build": "yarn build-rust",
-    "build-rust": "neon +nightly build --release"
+    "build-rust": "neon build --release"
   }
 }

@@ -8,6 +8,7 @@ const require = createRequire(import.meta.url);
 
 import level from 'level';
 import Primus from 'primus';
+import { createServer } from 'vite';
 
 import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
 import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
@@ -21,7 +22,7 @@ const initCoords = {
   y: 0,
 };
 
-const worldRadius = 8969;
+const worldRadius = 10613;
 const planetRarity = 16384;
 
 const chunkSize = MAX_CHUNK_SIZE;
@@ -51,6 +52,26 @@ const primus = Primus.createServer({
     emit: require('primus-emit'),
   }
 });
+
+const server = createServer({
+  root: path.join(__dirname, 'client'),
+  alias: {
+    'react': '@pika/react',
+    'react-dom': '@pika/react-dom',
+    'auto-bind': 'auto-bind/index',
+    'crypto': 'crypto-browserify',
+    'http': 'http-browserify',
+    'https': 'https-browserify',
+    'stream': 'stream-browserify',
+  },
+  jsx: 'react',
+  plugins: [
+    require('vite-plugin-react')
+  ],
+  optimizeDeps: {
+    include: ['auto-bind/index'],
+  },
+}).listen(8082);
 
 primus.on('connection', (spark) => {
   spark.emit('sync-map', Array.from(localStorageManager.allChunks()));

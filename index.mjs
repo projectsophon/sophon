@@ -2,6 +2,10 @@ import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
+
 import level from 'level';
 import Primus from 'primus';
 
@@ -9,26 +13,8 @@ import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
 import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
 import { SpiralPattern } from './lib/SpiralPattern.mjs';
 import LocalStorageManager from './lib/LocalStorageManager.mjs';
-import perlin from './lib/perlin.mjs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const require = createRequire(import.meta.url);
 
 const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'json' });
-
-function updatePerlin(exploredChunk) {
-  const chunkCenter = {
-    x: exploredChunk.chunkFootprint.bottomLeft.x + exploredChunk.chunkFootprint.sideLength / 2,
-    y: exploredChunk.chunkFootprint.bottomLeft.y + exploredChunk.chunkFootprint.sideLength / 2,
-  };
-  exploredChunk.perlin = perlin(chunkCenter, false);
-  for (const planetLoc of exploredChunk.planetLocations) {
-    planetLoc.perlin = perlin({ x: planetLoc.coords.x, y: planetLoc.coords.y });
-  }
-  return exploredChunk;
-}
 
 const initCoords = {
   x: 0,
@@ -47,7 +33,7 @@ const localStorageManager = await LocalStorageManager.create(db);
 if (process.env.PRELOAD_MAP) {
   const chunks = require(process.env.PRELOAD_MAP);
 
-  chunks.map(updatePerlin).forEach((chunk) => localStorageManager.updateChunk(chunk, false));
+  chunks.forEach((chunk) => localStorageManager.updateChunk(chunk, false));
 }
 
 const minerManager = MinerManager.create(

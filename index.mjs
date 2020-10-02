@@ -5,11 +5,11 @@ import { fileURLToPath } from 'url';
 import level from 'level';
 import Primus from 'primus';
 
-import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './constants.mjs';
-import { MinerManager, MinerManagerEvent } from './MinerManager.mjs';
-import { SpiralPattern } from './SpiralPattern.mjs';
-import LocalStorageManager from './LocalStorageManager.mjs';
-import perlin from './perlin.mjs';
+import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
+import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
+import { SpiralPattern } from './lib/SpiralPattern.mjs';
+import LocalStorageManager from './lib/LocalStorageManager.mjs';
+import perlin from './lib/perlin.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

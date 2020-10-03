@@ -390,6 +390,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
         explorer.on('hash-rate', (hashRate) => {
           this.hashRatePerExplorer.set(ip, hashRate);
         });
+        explorer.emit('set-radius', this.worldRadius);
         return explorer;
       });
     }
@@ -539,6 +540,10 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private setRadius(worldRadius: number) {
     this.worldRadius = worldRadius;
+
+    this.explorers.forEach((explorer) => {
+      explorer.emit('set-radius', worldRadius);
+    });
 
     if (this.minerManager) {
       this.minerManager.setRadius(this.worldRadius);

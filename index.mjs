@@ -21,7 +21,7 @@ const initCoords = {
   y: 0,
 };
 
-const worldRadius = 66763;
+const worldRadius = 8969;
 const planetRarity = 16384;
 
 const chunkSize = MAX_CHUNK_SIZE;

@@ -194,7 +194,7 @@ const StyledUpgradeButton = styled.div<{ active: boolean }>`
   &,
   & span {
     ${({ active }) =>
-      active && `color: ${dfstyles.colors.background} !important`};
+    active && `color: ${dfstyles.colors.background} !important`};
   }
 
   &.disabled {
@@ -332,7 +332,7 @@ export function UpgradeDetailsPane({ hook }: { hook: ModalHook }) {
   const getSilverNeeded = (): number => {
     if (!selected || !uiManager) return 0;
     const totalLevel = selected.upgradeState.reduce((a, b) => a + b);
-    return (totalLevel + 1) * 0.2 * selected.silverCap;
+    return Math.floor((totalLevel + 1) * 0.2 * selected.silverCap);
   };
 
   const canUpgrade = (): boolean => {
@@ -534,10 +534,10 @@ export function UpgradeDetailsPane({ hook }: { hook: ModalHook }) {
           </SectionBuy>
         </UpgradeDetailsWrapper>
       ) : (
-        <Message>
-          <p>Please select a planet you own to view upgrades.</p>
-        </Message>
-      )}
+          <Message>
+            <p>Please select a planet you own to view upgrades.</p>
+          </Message>
+        )}
     </ModalPane>
   );
 }

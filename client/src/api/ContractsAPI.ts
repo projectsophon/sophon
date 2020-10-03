@@ -778,6 +778,11 @@ class ContractsAPI extends EventEmitter {
           rawPlanets[i],
           rawPlanetsExtendedInfo[i]
         );
+
+        if (planet.hatLevel > 0) {
+          console.log("hat detected lvl ", planet.hatLevel, "location: ", planet.locationId, "owner: ", planet.owner);
+        }
+
         planets[planet.locationId as string] = planet;
       }
     }

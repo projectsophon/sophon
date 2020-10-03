@@ -20,7 +20,7 @@ import {
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
 import dfstyles from '../../styles/dfstyles';
 import { EnergyIcon, SilverIcon } from '../Icons';
-import { ModalHook, ModalPlanetDetailsIcon } from './ModalPane';
+import { ModalHook, ModalPlanetDetailsIcon, ModalUpgradeDetailsIcon } from './ModalPane';
 import _ from 'lodash';
 import { Sub } from '../../components/Text';
 import { PlanetPreview } from './PlanetPreview';
@@ -227,7 +227,7 @@ export function Spinner({ hook }: { hook: NumberHook }) {
 const DEFAULT_ENERGY_PERCENT = 50;
 const DEFAULT_SILVER_PERCENT = 100;
 
-export function PlanetContextPane({ hook }: { hook: ModalHook }) {
+export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, upgradeDetHook: ModalHook }) {
   const [account, setAccount] = useState<EthAddress | null>(null);
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
@@ -349,7 +349,7 @@ export function PlanetContextPane({ hook }: { hook: ModalHook }) {
     <ContextPane
       name={ContextMenuType.Planet}
       title={planetName()}
-      headerItems={<ModalPlanetDetailsIcon hook={hook} />}
+      headerItems={<><ModalPlanetDetailsIcon hook={hook} /><ModalUpgradeDetailsIcon hook={upgradeDetHook} /></>}
     >
       <StyledPlanetContextPane>
         <StyledPlanetInfo>

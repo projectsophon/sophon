@@ -119,7 +119,7 @@ export function GameWindowLayout() {
           <LHSWrapper>
             <ContextMenu>
               <ExploreContextPane />
-              <PlanetContextPane hook={planetDetHook} />
+              <PlanetContextPane hook={planetDetHook} upgradeDetHook={upgradeDetHook} />
             </ContextMenu>
           </LHSWrapper>
         </CanvasContainer>

@@ -37,6 +37,7 @@ class CanvasRenderer {
 
   canvasRef: RefObject<HTMLCanvasElement>;
   canvas: HTMLCanvasElement;
+  offscreenCanvas: any;
   ctx: CanvasRenderingContext2D;
   frameRequestId: number;
   gameUIManager: GameUIManager;
@@ -51,7 +52,8 @@ class CanvasRenderer {
     image: HTMLImageElement
   ) {
     this.canvas = canvas;
-    const ctx = this.canvas.getContext('2d');
+    this.offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+    const ctx = this.offscreenCanvas.getContext('2d');
     if (!ctx) {
       throw new Error('Not a 2D canvas.');
     }
@@ -154,6 +156,12 @@ class CanvasRenderer {
     this.drawBorders();
 
     this.drawMiner();
+
+    const renderCtx = this.canvas.getContext('bitmaprenderer');
+    if (renderCtx) {
+      const offscreenBitmap = this.offscreenCanvas.transferToImageBitmap();
+      renderCtx.transferFromImageBitmap(offscreenBitmap);
+    }
 
     this.frameRequestId = window.requestAnimationFrame(this.frame.bind(this));
   }

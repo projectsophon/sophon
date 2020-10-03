@@ -63,6 +63,10 @@ import { getAllTwitters, verifyTwitterHandle } from './UtilityServerAPI';
 import EthereumAccountManager from './EthereumAccountManager';
 import { getRandomActionId } from '../utils/Utils';
 import NotificationManager from '../utils/NotificationManager';
+import {
+  planetRandomInt
+} from '../utils/ProcgenUtils';
+
 
 class GameManager extends EventEmitter implements AbstractGameManager {
   private readonly account: EthAddress | null;
@@ -116,8 +120,8 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     super();
 
     this.explorerIPs = [
-      'http://0.0.0.0:9000',
       'http://165.232.57.41',
+      'http://192.168.1.11:9000',
     ];
     this.lastChunkPerExplorer = new Map();
     this.hashRatePerExplorer = new Map();
@@ -202,10 +206,18 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     // while we are fetching
     const planets = await contractsAPI.getPlanets();
     for (const planetId in planets) {
+      let pid = locationIdFromHexStr(planetId);
+      const randInt = planetRandomInt(pid);
+
+      if (randInt() % 1024 === 0) {
+        console.log("Clown town alert", pid)
+      }
       if (planets.hasOwnProperty(planetId)) {
         planetVoyageIdMap[planetId] = [];
       }
     }
+
+
     for (const arrival of allArrivals) {
       planetVoyageIdMap[arrival.toPlanet].push(arrival.eventId);
       arrivals[arrival.eventId] = arrival;

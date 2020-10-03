@@ -312,7 +312,7 @@ impl MimcState {
     }
 
     pub fn sponge(inputs: &[i64], rounds: usize) -> U512 {
-        let mut state = MimcState::new(rounds, PrimeElem { x: U512::from(2) });
+        let mut state = MimcState::new(rounds, PrimeElem { x: U512::from(3) });
 
         inputs
             .into_iter()

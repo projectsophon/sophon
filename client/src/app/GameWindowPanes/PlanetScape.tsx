@@ -85,6 +85,9 @@ export function PlanetIcons({ planet }: { planet: Planet | null }) {
 
   return (
     <_PlanetIcons>
+      <TooltipTrigger name={TooltipName.None}>
+        <span>{planet.planetLevel}</span>
+      </TooltipTrigger>
       {planet.owner === emptyAddress && planet.energy > 0 && (
         <TooltipTrigger name={TooltipName.Pirates}>
           <PiratesIcon />

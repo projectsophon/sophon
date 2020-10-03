@@ -93,9 +93,10 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private readonly endTimeSeconds: number = 1609372800;
 
-  private primus;
-
-  private lastChunk: ChunkFootprint;
+  private explorerIPs: string[];
+  private explorers: any[];
+  lastChunkPerExplorer: Map<string, ChunkFootprint>;
+  hashRatePerExplorer: Map<string, number>;
 
   private constructor(
     account: EthAddress | null,
@@ -113,6 +114,13 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     useMockHash: boolean
   ) {
     super();
+
+    this.explorerIPs = [
+      'http://0.0.0.0:9000',
+      'http://165.232.57.41',
+    ];
+    this.lastChunkPerExplorer = new Map();
+    this.hashRatePerExplorer = new Map();
 
     this.account = account;
     this.balance = balance;
@@ -369,24 +377,28 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private initMiningManager(_: WorldCoords): void {
     if (window.Primus) {
-      this.primus = new window.Primus('http://0.0.0.0:9000');
-      this.primus.on('sync-map', (chunks) => {
-        chunks.forEach((chunk) => this.addNewChunk(chunk));
-      });
-      this.primus.on('new-chunk', (chunk) => {
-        this.lastChunk = chunk.chunkFootprint;
-        this.addNewChunk(chunk);
-        this.emit(GameManagerEvent.DiscoveredNewChunk, chunk);
-      });
-      this.primus.on('hash-rate', (hashRate) => {
-        this.hashRate = hashRate;
+      this.explorers = this.explorerIPs.map((ip) => {
+        const explorer = new window.Primus(ip);
+        explorer.on('sync-map', (chunks) => {
+          chunks.forEach((chunk) => this.addNewChunk(chunk));
+        });
+        explorer.on('new-chunk', (chunk) => {
+          this.lastChunkPerExplorer.set(ip, chunk.chunkFootprint);
+          this.addNewChunk(chunk);
+          this.emit(GameManagerEvent.DiscoveredNewChunk, chunk);
+        });
+        explorer.on('hash-rate', (hashRate) => {
+          this.hashRatePerExplorer.set(ip, hashRate);
+        });
+        return explorer;
       });
     }
   }
 
   setMiningPattern(pattern: MiningPattern): void {
-    if (this.primus) {
-      this.primus.emit('set-pattern', pattern.center);
+    // TODO: Select box to control any explorer IP
+    if (this.explorers) {
+      this.explorers[0].emit('set-pattern', pattern.center);
     }
     if (this.minerManager) {
       this.minerManager.setMiningPattern(pattern);
@@ -454,8 +466,8 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     return this.planetHelper.spaceTypeFromPerlin(perlin);
   }
 
-  getHashesPerSec(): number {
-    return this.hashRate;
+  getHashesPerSec(): Map<string, number> {
+    return this.hashRatePerExplorer;
   }
 
   async getSignedTwitter(twitter: string): Promise<string> {

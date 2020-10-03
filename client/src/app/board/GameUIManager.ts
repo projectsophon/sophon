@@ -491,8 +491,15 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     }
   }
 
-  getMinerLocation(): WorldCoords | null {
-    return this.minerLocation;
+  getMinerLocation(): WorldCoords[] {
+    let locs = [];
+    for (let { bottomLeft, sideLength } of this.gameManager.lastChunkPerExplorer.values()) {
+      locs.push({
+        x: bottomLeft.x + sideLength / 2,
+        y: bottomLeft.y + sideLength / 2,
+      });
+    }
+    return locs;
   }
 
   getMouseDownCoords(): WorldCoords | null {

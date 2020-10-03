@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ContextPane } from '../GameWindowComponents/ContextMenu';
 import { ContextMenuType } from '../GameWindow';
-import { Sub, White } from '../../components/Text';
+import { Sub, White, Blue } from '../../components/Text';
 import styled from 'styled-components';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
 import WindowManager, {
@@ -21,7 +21,6 @@ import TutorialManager, { TutorialState } from '../../utils/TutorialManager';
 
 const StyledExploreContextPane = styled.div`
   width: 18.5em;
-  height: 8em;
 
   & p:last-child {
     margin-top: 0.5em;
@@ -93,11 +92,11 @@ export function ExploreContextPane() {
       : '(0, 0)';
   };
 
-  const [hashRate, setHashRate] = useState<number>(0);
+  const [hashRates, setHashRates] = useState(new Map());
   useEffect(() => {
     if (!uiManager) return;
     const updateHashes = () => {
-      setHashRate(uiManager.getHashesPerSec());
+      setHashRates(uiManager.getHashesPerSec());
     };
 
     const intervalId = setInterval(updateHashes, 1000);
@@ -107,8 +106,8 @@ export function ExploreContextPane() {
     };
   }, [uiManager]);
 
-  const getHashes = () => {
-    return mining ? hashRate.toFixed(0) : '0';
+  const getHashes = (rate) => {
+    return mining ? rate.toFixed(0) : '0';
   };
 
   return (
@@ -154,14 +153,11 @@ export function ExploreContextPane() {
             <br />
             It will continue to explore as long as you leave this tab open.
           </p>
-          <p>
-            <White>{getHashes()}</White> hashes/sec{' '}
-            {mining && (
-              <>
-                around <White>{getCoords()}</White>
-              </>
-            )}
-          </p>
+          {Array.from(hashRates.entries()).map(([ip, hashRate]) => (
+            <p>
+              <Blue>{ip.replace('http://', '')}</Blue>: <White>{getHashes(hashRate)}</White> hashes/sec{' '}
+            </p>
+          ))}
         </Sub>
       </StyledExploreContextPane>
     </ContextPane>

@@ -166,7 +166,7 @@ const TimesTwo = () => (
   </TooltipTrigger>
 );
 
-export function IconSelector({
+export function EnergyIconSelector({
   icon,
   hook,
 }: {
@@ -183,6 +183,29 @@ export function IconSelector({
           className={percent >= i * 10 ? 'select' : 'noselect'}
         >
           {icon}
+        </span>
+      ))}
+    </StyledIconSelector>
+  );
+}
+
+export function SilverIconSelector({
+  icon,
+  hook,
+}: {
+  icon: React.ReactNode;
+  hook: NumberHook;
+}) {
+  const [percent, setPercent] = hook;
+  return (
+    <StyledIconSelector>
+      {_.range(0, 11).map((i) => (
+        <span
+          key={i}
+          onClick={() => setPercent(i * 10)}
+          className={percent >= i * 10 ? 'select' : 'noselect'}
+        >
+          {i > 0 ? icon : <span style={{ width: '0.5em', marginLeft: '0.5em', display: 'inline-block', position: 'relative', fontWeight: 'bold' }}>X</span>}
         </span>
       ))}
     </StyledIconSelector>
@@ -473,10 +496,10 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         >
           <p>Send Resources</p>
           <div className='statselect'>
-            <IconSelector
+            <EnergyIconSelector
               icon={<EnergyIcon />}
               hook={energyHook}
-            ></IconSelector>
+            ></EnergyIconSelector>
             <div>
               <p>
                 <Sub>Sending {getEnergy()} energy</Sub>
@@ -487,10 +510,10 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
           </div>
           {selected && selected.silver > 0 && (
             <div className='statselect'>
-              <IconSelector
+              <SilverIconSelector
                 icon={<SilverIcon />}
                 hook={silverHook}
-              ></IconSelector>
+              ></SilverIconSelector>
               <div>
                 <p>
                   <Sub>Sending {getSilver()} silver</Sub>

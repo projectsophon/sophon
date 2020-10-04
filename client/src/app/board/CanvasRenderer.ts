@@ -101,6 +101,14 @@ class CanvasRenderer {
     return canvasRenderer;
   }
 
+  setWidth(width) {
+    this.offscreenCanvas.width = width;
+  }
+
+  setHeight(height) {
+    this.offscreenCanvas.height = height;
+  }
+
   private frame() {
     const viewport = Viewport.getInstance();
 

@@ -121,7 +121,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
     this.explorerIPs = [
       'http://165.232.57.41',
-      'http://192.168.1.11:9000',
     ];
     this.lastChunkPerExplorer = new Map();
     this.hashRatePerExplorer = new Map();

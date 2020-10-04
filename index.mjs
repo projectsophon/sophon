@@ -32,24 +32,54 @@ const answers = await inquirer.prompt([
     default: PRELOAD_MAP ? path.resolve(process.cwd(), PRELOAD_MAP) : null,
     when: (answers) => answers.preload || PRELOAD_MAP,
     filter: (mapPath) => path.resolve(process.cwd(), mapPath),
+  },
+  {
+    type: 'number',
+    name: 'worldRadius',
+    message: `What's your current world radius?`,
+    default: 40500,
+  },
+  {
+    type: 'input',
+    name: 'initCoords',
+    message: `Which x,y coords do you want to start mining at? (comma-separated)`,
+    default: '0,0',
+    filter: (coords) => {
+      const [x = 0, y = 0] = coords.split(',').map((i) => i.trim());
+      return { x, y };
+    },
+    transformer: (coords) => {
+      if (typeof coords === 'object') {
+        return `${coords.x},${coords.y}`;
+      }
+      return coords;
+    },
+  },
+  {
+    type: 'list',
+    name: 'chunkSize',
+    message: `What size chunks do you want to explore? (bigger takes longer per chunk)`,
+    default: MIN_CHUNK_SIZE,
+    choices: [
+      MIN_CHUNK_SIZE, // 16
+      32,
+      64,
+      128,
+      MAX_CHUNK_SIZE, // 256
+    ],
   }
 ]);
 
 const {
   preloadMap,
+  worldRadius,
+  initCoords,
+  chunkSize,
 } = answers;
 
 const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'json' });
 
-const initCoords = {
-  x: 0,
-  y: 0,
-};
-
-const worldRadius = 10613;
 const planetRarity = 16384;
-
-const chunkSize = MAX_CHUNK_SIZE;
 
 const initPattern = new SpiralPattern(initCoords, chunkSize);
 

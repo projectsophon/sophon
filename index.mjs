@@ -9,11 +9,35 @@ const require = createRequire(import.meta.url);
 import level from 'level';
 import Primus from 'primus';
 import { createServer } from 'vite';
+import inquirer from 'inquirer';
 
 import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
 import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
 import { SpiralPattern } from './lib/SpiralPattern.mjs';
 import LocalStorageManager from './lib/LocalStorageManager.mjs';
+
+const { PRELOAD_MAP } = process.env;
+
+const answers = await inquirer.prompt([
+  {
+    type: 'confirm',
+    name: 'preload',
+    message: 'Would you like to pre-seed Sophon with a map?',
+    default: false,
+  },
+  {
+    type: 'input',
+    name: 'preloadMap',
+    message: `What's the path of your map?`,
+    default: PRELOAD_MAP ? path.resolve(process.cwd(), PRELOAD_MAP) : null,
+    when: (answers) => answers.preload || PRELOAD_MAP,
+    filter: (mapPath) => path.resolve(process.cwd(), mapPath),
+  }
+]);
+
+const {
+  preloadMap,
+} = answers;
 
 const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'json' });
 
@@ -31,10 +55,15 @@ const initPattern = new SpiralPattern(initCoords, chunkSize);
 
 const localStorageManager = await LocalStorageManager.create(db);
 
-if (process.env.PRELOAD_MAP) {
-  const chunks = require(process.env.PRELOAD_MAP);
+if (preloadMap) {
+  try {
+    const chunks = require(preloadMap);
 
-  chunks.forEach((chunk) => localStorageManager.updateChunk(chunk, false));
+    chunks.forEach((chunk) => localStorageManager.updateChunk(chunk, false));
+  } catch (err) {
+    console.error(`Error importing map: ${preloadMap}`);
+    process.exit(1);
+  }
 }
 
 const minerManager = MinerManager.create(

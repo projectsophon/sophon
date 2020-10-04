@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
+    "inquirer": "^7.3.3",
     "level": "^6.0.1",
     "neon-cli": "^0.4.2",
     "primus": "^7.3.5",

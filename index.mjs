@@ -43,7 +43,7 @@ const answers = await inquirer.prompt([
   {
     type: 'input',
     name: 'initCoords',
-    message: `Which x,y coords do you want to start mining at? (comma-separated)`,
+    message: `Which x,y coords do you want to start exploring at? (comma-separated)`,
     default: '0,0',
     filter: (coords) => {
       const [x = 0, y = 0] = coords.split(',').map((i) => i.trim());
@@ -175,6 +175,15 @@ if (isWebsocketServer) {
 
     spark.on('set-radius', (radius) => {
       minerManager.setRadius(radius);
+    });
+
+    spark.on('sync-chunk', (chunk) => {
+      localStorageManager.updateChunk(chunk, false);
+      primus.forEach((otherSpark, otherId) => {
+        if (otherId !== spark.id) {
+          otherSpark.emit('new-chunk', chunk);
+        }
+      });
     });
   });
 }

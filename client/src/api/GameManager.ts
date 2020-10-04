@@ -390,6 +390,11 @@ class GameManager extends EventEmitter implements AbstractGameManager {
           this.lastChunkPerExplorer.set(ip, chunk.chunkFootprint);
           this.addNewChunk(chunk);
           this.emit(GameManagerEvent.DiscoveredNewChunk, chunk);
+          this.explorers.forEach((otherExplorer, otherIp) => {
+            if (ip !== otherIp) {
+              otherExplorer.emit('sync-chunk', chunk);
+            }
+          });
         });
         explorer.on('hash-rate', (hashRate) => {
           this.hashRatePerExplorer.set(ip, hashRate);

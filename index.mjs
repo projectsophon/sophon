@@ -6,6 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 
+import http from 'http';
 import level from 'level';
 import Primus from 'primus';
 import { createServer } from 'vite';
@@ -21,7 +22,7 @@ const { PRELOAD_MAP } = process.env;
 const answers = await inquirer.prompt([
   {
     type: 'confirm',
-    name: 'preload',
+    name: 'shouldPreload',
     message: 'Would you like to pre-seed Sophon with a map?',
     default: false,
   },
@@ -30,7 +31,7 @@ const answers = await inquirer.prompt([
     name: 'preloadMap',
     message: `What's the path of your map?`,
     default: PRELOAD_MAP ? path.resolve(process.cwd(), PRELOAD_MAP) : null,
-    when: (answers) => answers.preload || PRELOAD_MAP,
+    when: (answers) => answers.shouldPreload || PRELOAD_MAP,
     filter: (mapPath) => path.resolve(process.cwd(), mapPath),
   },
   {
@@ -67,14 +68,37 @@ const answers = await inquirer.prompt([
       128,
       MAX_CHUNK_SIZE, // 256
     ],
+  },
+  {
+    type: 'confirm',
+    name: 'isClientServer',
+    message: `Do you want to serve the custom game client?`,
+    default: true,
+  },
+  {
+    type: 'confirm',
+    name: 'isWebsocketServer',
+    message: `Do you want to open a websocket channel to this explorer?`,
+    default: true,
+  },
+  {
+    type: 'number',
+    name: 'port',
+    message: `What port should we start the server on?`,
+    default: 8082,
+    when: (answers) => answers.isClientServer || answers.isWebsocketServer,
   }
 ]);
 
 const {
+  shouldPreload,
   preloadMap,
   worldRadius,
   initCoords,
   chunkSize,
+  isClientServer,
+  isWebsocketServer,
+  port,
 } = answers;
 
 const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'json' });
@@ -85,7 +109,7 @@ const initPattern = new SpiralPattern(initCoords, chunkSize);
 
 const localStorageManager = await LocalStorageManager.create(db);
 
-if (preloadMap) {
+if (shouldPreload && preloadMap) {
   try {
     const chunks = require(preloadMap);
 
@@ -103,54 +127,70 @@ const minerManager = MinerManager.create(
   planetRarity,
 );
 
+let server;
 
-const primus = Primus.createServer({
-  port: 9000,
-  iknowhttpsisbetter: true,
-  plugin: {
-    emit: require('primus-emit'),
-  }
-});
+if (isClientServer) {
+  server = createServer({
+    root: path.join(__dirname, 'client'),
+    alias: {
+      'react': '@pika/react',
+      'react-dom': '@pika/react-dom',
+      'auto-bind': 'auto-bind/index',
+      'crypto': 'crypto-browserify',
+      'http': 'http-browserify',
+      'https': 'https-browserify',
+      'stream': 'stream-browserify',
+    },
+    jsx: 'react',
+    plugins: [
+      require('vite-plugin-react')
+    ],
+    optimizeDeps: {
+      include: ['auto-bind/index'],
+    },
+    env: {
+      PORT: port,
+    },
+  });
+} else if (isWebsocketServer) {
+  server = http.createServer();
+}
 
-const server = createServer({
-  root: path.join(__dirname, 'client'),
-  alias: {
-    'react': '@pika/react',
-    'react-dom': '@pika/react-dom',
-    'auto-bind': 'auto-bind/index',
-    'crypto': 'crypto-browserify',
-    'http': 'http-browserify',
-    'https': 'https-browserify',
-    'stream': 'stream-browserify',
-  },
-  jsx: 'react',
-  plugins: [
-    require('vite-plugin-react')
-  ],
-  optimizeDeps: {
-    include: ['auto-bind/index'],
-  },
-}).listen(8082);
-
-primus.on('connection', (spark) => {
-  spark.emit('sync-map', Array.from(localStorageManager.allChunks()));
-
-  spark.on('set-pattern', (worldCoords) => {
-    const newPattern = new SpiralPattern(worldCoords, chunkSize);
-    minerManager.setMiningPattern(newPattern);
+let primus;
+if (isWebsocketServer) {
+  primus = new Primus(server, {
+    iknowhttpsisbetter: true,
+    plugin: {
+      emit: require('primus-emit'),
+    }
   });
 
-  spark.on('set-radius', (radius) => {
-    minerManager.setRadius(radius);
+  primus.on('connection', (spark) => {
+    spark.emit('sync-map', Array.from(localStorageManager.allChunks()));
+
+    spark.on('set-pattern', (worldCoords) => {
+      const newPattern = new SpiralPattern(worldCoords, chunkSize);
+      minerManager.setMiningPattern(newPattern);
+    });
+
+    spark.on('set-radius', (radius) => {
+      minerManager.setRadius(radius);
+    });
   });
-});
+}
+
+if (server && port) {
+  server.listen(port);
+}
 
 minerManager.on(MinerManagerEvent.DiscoveredNewChunk, (chunk, miningTimeMillis) => {
   const hashRate = chunk.chunkFootprint.sideLength ** 2 / (miningTimeMillis / 1000);
-  primus.forEach((spark) => {
-    spark.emit('new-chunk', chunk);
-    spark.emit('hash-rate', hashRate);
-  });
+  if (isWebsocketServer) {
+    primus.forEach((spark) => {
+      spark.emit('new-chunk', chunk);
+      spark.emit('hash-rate', hashRate);
+    });
+  }
   localStorageManager.updateChunk(chunk, false);
 });
 

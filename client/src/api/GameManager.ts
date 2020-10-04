@@ -93,8 +93,8 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private readonly endTimeSeconds: number = 1609372800;
 
-  private explorerIPs: string[];
-  private explorers: any[];
+  explorerIPs: string[];
+  explorers: Map<string, any>;
   lastChunkPerExplorer: Map<string, ChunkFootprint>;
   hashRatePerExplorer: Map<string, number>;
 
@@ -377,7 +377,9 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private initMiningManager(_: WorldCoords): void {
     if (window.Primus) {
-      this.explorers = this.explorerIPs.map((ip) => {
+      this.explorers = new Map();
+
+      this.explorerIPs.forEach((ip) => {
         const explorer = new window.Primus(ip);
         explorer.on('sync-map', (chunks) => {
           chunks.forEach((chunk) => this.addNewChunk(chunk));
@@ -391,15 +393,14 @@ class GameManager extends EventEmitter implements AbstractGameManager {
           this.hashRatePerExplorer.set(ip, hashRate);
         });
         explorer.emit('set-radius', this.worldRadius);
-        return explorer;
+        this.explorers.set(ip, explorer);
       });
     }
   }
 
-  setMiningPattern(pattern: MiningPattern): void {
-    // TODO: Select box to control any explorer IP
-    if (this.explorers) {
-      this.explorers[0].emit('set-pattern', pattern.center);
+  setMiningPattern(pattern: MiningPattern, whichExplorer): void {
+    if (this.explorers && this.explorers.has(whichExplorer)) {
+      this.explorers.get(whichExplorer).emit('set-pattern', pattern.center);
     }
     if (this.minerManager) {
       this.minerManager.setMiningPattern(pattern);
@@ -467,8 +468,8 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     return this.planetHelper.spaceTypeFromPerlin(perlin);
   }
 
-  getHashesPerSec(): Map<string, number> {
-    return this.hashRatePerExplorer;
+  getHashesPerSec(): [string, number] {
+    return Array.from(this.hashRatePerExplorer.entries());
   }
 
   async getSignedTwitter(twitter: string): Promise<string> {

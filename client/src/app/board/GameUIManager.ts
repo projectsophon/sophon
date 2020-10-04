@@ -330,8 +330,8 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   }
 
   // mining stuff
-  setMiningPattern(pattern: MiningPattern) {
-    this.gameManager.setMiningPattern(pattern);
+  setMiningPattern(pattern: MiningPattern, whichExplorer) {
+    this.gameManager.setMiningPattern(pattern, whichExplorer);
   }
   getMiningPattern(): MiningPattern | null {
     return this.gameManager.getMiningPattern();
@@ -628,7 +628,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     return this.gameManager.getSilverCurveAtPercent(planet, percent);
   }
 
-  getHashesPerSec(): number {
+  getHashesPerSec(): [string, number] {
     return this.gameManager.getHashesPerSec();
   }
 
@@ -726,6 +726,10 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
 
   private onEmitInitializedPlayerError(err) {
     this.emit(GameUIManagerEvent.InitializedPlayerError, err);
+  }
+
+  getExplorers() {
+    return this.gameManager.explorers;
   }
 }
 

@@ -18,12 +18,21 @@ import { TargetIcon, PauseIcon, PlayIcon } from '../Icons';
 import { IconButton } from './ModalPane';
 import { TooltipTrigger } from './Tooltip';
 import TutorialManager, { TutorialState } from '../../utils/TutorialManager';
+import dfstyles from '../../styles/dfstyles';
 
 const StyledExploreContextPane = styled.div`
   width: 18.5em;
 
   & p:last-child {
     margin-top: 0.5em;
+  }
+
+  .fill-target {
+    background: ${dfstyles.colors.text};
+    & path {
+      fill: ${dfstyles.colors.background};
+    }
+    color: ${dfstyles.colors.background};
   }
 `;
 
@@ -32,33 +41,25 @@ export function ExploreContextPane() {
   const windowManager = WindowManager.getInstance();
   const uiEmitter = UIEmitter.getInstance();
 
-  const [mining, setMining] = useState<boolean>(true);
-  useEffect(() => {
-    if (mining) uiManager?.startExplore();
-    else {
-      uiManager?.stopExplore();
-      const tutorialManager = TutorialManager.getInstance();
-      tutorialManager.acceptInput(TutorialState.MinerPause);
-    }
-  }, [mining, uiManager]);
+  const doTarget = (_e) => {
+    if (windowManager.getCursorState() === CursorState.TargetingExplorer)
+      windowManager.setCursorState(CursorState.Normal);
+    else windowManager.setCursorState(CursorState.TargetingExplorer);
+  };
 
-  const [pattern, setPattern] = useState<SpiralPattern | null>(null);
-  useEffect(() => {
-    if (!uiManager) return;
-    setPattern(uiManager.getMiningPattern() as SpiralPattern | null);
-  }, [uiManager]);
+  const [whichExplorer, setWhichExplorer] = useState(null);
 
   useEffect(() => {
     const doMouseDown = (worldCoords) => {
       if (windowManager.getCursorState() === CursorState.TargetingExplorer) {
         windowManager.acceptInputForTarget(worldCoords);
+        setWhichExplorer(null);
       }
     };
 
     const updatePattern = (worldCoords: WorldCoords) => {
       const newpattern = new SpiralPattern(worldCoords, MIN_CHUNK_SIZE);
-      uiManager?.setMiningPattern(newpattern);
-      setPattern(newpattern);
+      uiManager?.setMiningPattern(newpattern, whichExplorer);
 
       const tutorialManager = TutorialManager.getInstance();
       tutorialManager.acceptInput(TutorialState.MinerMove);
@@ -73,26 +74,9 @@ export function ExploreContextPane() {
         updatePattern
       );
     };
-  }, [uiEmitter, windowManager, uiManager]);
+  }, [uiEmitter, windowManager, uiManager, whichExplorer]);
 
-  const doTarget = (_e) => {
-    if (windowManager.getCursorState() === CursorState.TargetingExplorer)
-      windowManager.setCursorState(CursorState.Normal);
-    else windowManager.setCursorState(CursorState.TargetingExplorer);
-  };
-
-  const getCorner = (pattern: SpiralPattern) => ({
-    x: pattern.fromChunk.bottomLeft.x,
-    y: pattern.fromChunk.bottomLeft.y,
-  });
-
-  const getCoords = () => {
-    return pattern
-      ? `(${getCorner(pattern).x}, ${getCorner(pattern).y})`
-      : '(0, 0)';
-  };
-
-  const [hashRates, setHashRates] = useState(new Map());
+  const [hashRates, setHashRates] = useState([]);
   useEffect(() => {
     if (!uiManager) return;
     const updateHashes = () => {
@@ -106,46 +90,22 @@ export function ExploreContextPane() {
     };
   }, [uiManager]);
 
-  const getHashes = (rate) => {
-    return mining ? rate.toFixed(0) : '0';
+  const getHashes = (rate = 0) => {
+    return rate.toFixed(0)
   };
 
+  const [explorers, setExplorers] = useState([]);
+  useEffect(() => {
+    if (!uiManager) return;
+
+    const e = uiManager.getExplorers();
+    if (e) {
+      setExplorers(Array.from(e.entries()));
+    }
+  }, [uiManager])
+
   return (
-    <ContextPane
-      name={ContextMenuType.None}
-      title='Explore'
-      headerItems={
-        <>
-          <TooltipTrigger
-            needsShift
-            name={TooltipName.MiningTarget}
-            style={{
-              height: '1.5em',
-            }}
-            className={
-              windowManager.getCursorState() === CursorState.TargetingExplorer
-                ? 'fill-target'
-                : ''
-            }
-          >
-            <span onClick={doTarget}>
-              <IconButton width={'4em'}>
-                Move <TargetIcon />
-              </IconButton>
-            </span>
-          </TooltipTrigger>
-          <TooltipTrigger
-            needsShift
-            name={TooltipName.MiningPause}
-            style={{ height: '1.5em' }}
-          >
-            <span onClick={() => setMining((b) => !b)}>
-              <IconButton>{mining ? <PauseIcon /> : <PlayIcon />}</IconButton>
-            </span>
-          </TooltipTrigger>
-        </>
-      }
-    >
+    <ContextPane name={ContextMenuType.None} title='Explore'>
       <StyledExploreContextPane>
         <Sub>
           <p>
@@ -153,11 +113,32 @@ export function ExploreContextPane() {
             <br />
             It will continue to explore as long as you leave this tab open.
           </p>
-          {Array.from(hashRates.entries()).map(([ip, hashRate]) => (
-            <p>
-              <Blue>{ip.replace('http://', '')}</Blue>: <White>{getHashes(hashRate)}</White> hashes/sec{' '}
-            </p>
-          ))}
+          {explorers.map(([ip, explorer]) => {
+            // TODO: Refactor into component
+            const hashRate = hashRates.filter(([key]) => key === ip)?.[0]?.[1];
+            const moveHandler = () => {
+              setWhichExplorer(ip);
+              doTarget();
+            };
+            let className = '';
+            if (windowManager.getCursorState() === CursorState.TargetingExplorer && whichExplorer === ip) {
+              className = 'fill-target';
+            }
+            return (
+              <p key={ip}>
+                <TooltipTrigger
+                  needsShift
+                  name={TooltipName.MiningTarget}
+                  style={{ height: '1.5em', marginRight: '1em', display: 'inline-block' }}
+                  className={className}>
+                  <span onClick={moveHandler}>
+                    <IconButton> <TargetIcon /> </IconButton>
+                  </span>
+                </TooltipTrigger>
+                <Blue>{ip.replace('http://', '')}</Blue>: <White>{getHashes(hashRate)}</White> hashes/sec{' '}
+              </p>
+            );
+          })}
         </Sub>
       </StyledExploreContextPane>
     </ContextPane>

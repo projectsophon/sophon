@@ -115,8 +115,10 @@ class GameManager extends EventEmitter implements AbstractGameManager {
   ) {
     super();
 
+    const port = import.meta.env.PORT ? `:${import.meta.env.PORT}` : '';
+
     this.explorerIPs = [
-      'http://0.0.0.0:9000',
+      `http://0.0.0.0${port}`,
       'http://165.232.57.41',
     ];
     this.lastChunkPerExplorer = new Map();

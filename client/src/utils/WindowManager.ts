@@ -24,9 +24,6 @@ export enum WindowManagerEvent {
   StateChanged = 'StateChanged',
   MiningCoordsUpdate = 'MiningCoordsUpdate',
   TooltipUpdated = 'TooltipUpdated',
-
-  ShiftDown = 'ShiftDown',
-  ShiftUp = 'ShiftUp',
 }
 
 export enum CursorState {
@@ -106,23 +103,6 @@ class WindowManager extends EventEmitter {
     this.lastZIndex = 0;
     this.tooltipStack = [];
     this.shiftPressed = false;
-
-    // this might be slow, consider refactor
-    this.setMaxListeners(40); // however many tooltips there are
-
-    // is it bad that this doesn't get cleaned up?
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Shift') {
-        this.shiftPressed = true;
-        this.emit(WindowManagerEvent.ShiftDown);
-      }
-    });
-    window.addEventListener('keyup', (e) => {
-      if (e.key === 'Shift') {
-        this.shiftPressed = false;
-        this.emit(WindowManagerEvent.ShiftUp);
-      }
-    });
   }
 
   static getInstance(): WindowManager {

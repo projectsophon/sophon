@@ -105,11 +105,9 @@ export class PlanetHelper {
     // set interval to update all planets every 120s
     setInterval(() => {
       for (let planet of this.planets.values()) {
-        setTimeout(() => {
-          if (planet && hasOwner(planet)) {
-            this.updatePlanetToTime(planet, Date.now());
-          }
-        }, Math.floor(120000 * Math.random())); // evenly distribute updates
+        if (planet && hasOwner(planet)) {
+          this.updatePlanetToTime(planet, Date.now());
+        }
       }
     }, 120000);
   }

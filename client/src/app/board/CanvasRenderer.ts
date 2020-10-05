@@ -37,7 +37,6 @@ class CanvasRenderer {
 
   canvasRef: RefObject<HTMLCanvasElement>;
   canvas: HTMLCanvasElement;
-  offscreenCanvas: any;
   ctx: CanvasRenderingContext2D;
   frameRequestId: number;
   gameUIManager: GameUIManager;
@@ -160,12 +159,6 @@ class CanvasRenderer {
     this.drawBorders();
 
     this.drawMiner();
-
-    const renderCtx = this.canvas.getContext('bitmaprenderer');
-    if (renderCtx) {
-      const offscreenBitmap = this.offscreenCanvas.transferToImageBitmap();
-      renderCtx.transferFromImageBitmap(offscreenBitmap);
-    }
 
     this.frameRequestId = window.requestAnimationFrame(this.frame.bind(this));
   }

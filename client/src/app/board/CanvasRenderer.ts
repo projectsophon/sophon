@@ -52,8 +52,7 @@ class CanvasRenderer {
     image: HTMLImageElement
   ) {
     this.canvas = canvas;
-    this.offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
-    const ctx = this.offscreenCanvas.getContext('2d', {
+    const ctx = canvas.getContext('2d', {
       // https://developers.google.com/web/updates/2019/05/desynchronized
       desynchronized: true,
       // https://wiki.whatwg.org/wiki/Canvas_Context_Loss_and_Restoration
@@ -104,14 +103,6 @@ class CanvasRenderer {
     CanvasRenderer.instance = canvasRenderer;
 
     return canvasRenderer;
-  }
-
-  setWidth(width) {
-    this.offscreenCanvas.width = width;
-  }
-
-  setHeight(height) {
-    this.offscreenCanvas.height = height;
   }
 
   private frame() {

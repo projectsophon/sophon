@@ -182,9 +182,7 @@ export interface ArrivalWithTimer {
   timer: ReturnType<typeof setTimeout>;
 }
 
-export interface PlanetMap {
-  [planetId: string]: Planet;
-}
+export type PlanetMap = Map<string, Planet>
 
 export interface PlanetLocationMap {
   [planetId: string]: Location;

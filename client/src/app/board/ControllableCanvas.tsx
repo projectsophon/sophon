@@ -50,10 +50,6 @@ export default function ControllableCanvas() {
       setHeight(canvasRef.current.clientHeight);
       uiEmitter.emit(UIEmitterEvent.WindowResize);
     }
-    if (CanvasRenderer.instance) {
-      CanvasRenderer.instance.setWidth(canvasRef.current.clientWidth);
-      CanvasRenderer.instance.setHeight(canvasRef.current.clientHeight);
-    }
   }, [uiEmitter]);
 
   useLayoutEffect(() => {

@@ -262,7 +262,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
 
         const dist = Math.sqrt(
           (mouseDownCoords.x - mouseUpOverCoords.x) ** 2 +
-            (mouseDownCoords.y - mouseUpOverCoords.y) ** 2
+          (mouseDownCoords.y - mouseUpOverCoords.y) ** 2
         );
         const myAtk: number = moveShipsDecay(forces, mouseDownPlanet, dist);
         const effPercentSilver = Math.min(
@@ -701,7 +701,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
         if (
           planet &&
           this.radiusMap[planet.planetLevel] >
-            Math.max(Math.abs(x - coords.x), Math.abs(y - coords.y))
+          Math.max(Math.abs(x - coords.x), Math.abs(y - coords.y))
         ) {
           // coords is in hitbox
           if (this.radiusMap[planet.planetLevel] < smallestPlanetRadius) {

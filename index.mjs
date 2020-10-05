@@ -181,7 +181,7 @@ if (isWebsocketServer) {
       localStorageManager.updateChunk(chunk, false);
       primus.forEach((otherSpark, otherId) => {
         if (otherId !== spark.id) {
-          otherSpark.emit('new-chunk', chunk);
+          otherSpark.emit('new-sync-chunk', chunk);
         }
       });
     });

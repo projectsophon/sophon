@@ -30,6 +30,26 @@ interface MoveInfo {
   distMax: string;
 }
 
+async function proveMove(input) {
+  const worker = new Worker('/src/api/snark.worker.js');
+  worker.postMessage(input);
+
+  return new Promise((resolve, reject) => {
+    worker.addEventListener('error', (err) => {
+      reject(err);
+    }, { once: 'true' });
+    worker.addEventListener('messageerror', (err) => {
+      reject(err);
+    }, { once: true });
+    worker.addEventListener('message', ({ data }) => {
+      resolve(data);
+    }, { once: true });
+    worker.addEventListener('unhandledrejection', (err) => {
+      reject(err);
+    }, { once: true });
+  });
+}
+
 class SnarkArgsHelper {
   private readonly useMockHash: boolean;
 

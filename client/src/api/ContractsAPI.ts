@@ -770,7 +770,7 @@ class ContractsAPI extends EventEmitter {
       true
     );
 
-    const planets: PlanetMap = {};
+    const planets: PlanetMap = new Map();
     for (let i = 0; i < nPlanets; i += 1) {
       if (!!rawPlanets[i] && !!rawPlanetsExtendedInfo[i]) {
         const planet = this.rawPlanetToObject(
@@ -778,7 +778,7 @@ class ContractsAPI extends EventEmitter {
           rawPlanets[i],
           rawPlanetsExtendedInfo[i]
         );
-        planets[planet.locationId as string] = planet;
+        planets.set(planet.locationId, planet);
       }
     }
     return planets;

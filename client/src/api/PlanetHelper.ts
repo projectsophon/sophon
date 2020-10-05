@@ -71,25 +71,22 @@ export class PlanetHelper {
     const planetArrivalIds: PlanetVoyageIdMap = {};
     const arrivals: VoyageMap = {};
     this.endTimeSeconds = endTimeSeconds;
-    for (const planetId in planets) {
-      if (planets.hasOwnProperty(planetId)) {
-        const planet = planets[planetId];
-        const arrivalsForPlanet = unprocessedPlanetArrivalIds[planetId]
-          .map((arrivalId) => unprocessedArrivals[arrivalId] || null)
-          .filter((x) => !!x);
-        const arrivalsWithTimers = this.processArrivalsForPlanet(
-          planet.locationId,
-          arrivalsForPlanet
-        );
-        planetArrivalIds[planetId] = arrivalsWithTimers.map(
-          (arrival) => arrival.arrivalData.eventId
-        );
-        for (const arrivalWithTimer of arrivalsWithTimers) {
-          const arrivalId = arrivalWithTimer.arrivalData.eventId;
-          arrivals[arrivalId] = arrivalWithTimer;
-        }
-        this.updateScore(planetId as LocationId);
+    for (let [planetId, planet] of planets.entries()) {
+      const arrivalsForPlanet = unprocessedPlanetArrivalIds[planetId]
+        .map((arrivalId) => unprocessedArrivals[arrivalId] || null)
+        .filter((x) => !!x);
+      const arrivalsWithTimers = this.processArrivalsForPlanet(
+        planet.locationId,
+        arrivalsForPlanet
+      );
+      planetArrivalIds[planetId] = arrivalsWithTimers.map(
+        (arrival) => arrival.arrivalData.eventId
+      );
+      for (const arrivalWithTimer of arrivalsWithTimers) {
+        const arrivalId = arrivalWithTimer.arrivalData.eventId;
+        arrivals[arrivalId] = arrivalWithTimer;
       }
+      this.updateScore(planetId as LocationId);
     }
 
     const allChunks = chunkStore.allChunks();
@@ -107,9 +104,8 @@ export class PlanetHelper {
 
     // set interval to update all planets every 120s
     setInterval(() => {
-      for (const planetId of Object.keys(this.planets)) {
+      for (let planet of this.planets.values()) {
         setTimeout(() => {
-          const planet = this.planets[planetId];
           if (planet && hasOwner(planet)) {
             this.updatePlanetToTime(planet, Date.now());
           }
@@ -120,7 +116,7 @@ export class PlanetHelper {
 
   // get planet by ID - must be in contract or known chunks
   public getPlanetWithId(planetId: LocationId): Planet | null {
-    const planet = this.planets[planetId];
+    const planet = this.planets.get(planetId);
     if (planet) {
       this.updatePlanetIfStale(planet);
       return planet;
@@ -133,7 +129,7 @@ export class PlanetHelper {
   // returns null if this planet is neither in contract nor in known chunks
   // fast query that doesn't update planet if stale
   public getPlanetLevel(planetId: LocationId): PlanetLevel | null {
-    const planet = this.planets[planetId];
+    const planet = this.planets.get(planetId);
     if (planet) {
       return planet.planetLevel;
     }
@@ -143,7 +139,7 @@ export class PlanetHelper {
   // returns null if this planet is neither in contract nor in known chunks
   // fast query that doesn't update planet if stale
   public getPlanetDetailLevel(planetId: LocationId): number | null {
-    const planet = this.planets[planetId];
+    const planet = this.planets.get(planetId);
     if (planet) {
       let detailLevel = planet.planetLevel;
       if (hasOwner(planet)) {
@@ -161,17 +157,17 @@ export class PlanetHelper {
   ): void {
     // does not modify unconfirmed departures or upgrades
     // that is handled by onTxConfirm
-    if (this.planets[planet.locationId]) {
+    if (this.planets.has(planet.locationId)) {
       const {
         unconfirmedDepartures,
         unconfirmedUpgrades,
         unconfirmedBuyHats,
-      } = this.planets[planet.locationId];
+      } = this.planets.get(planet.locationId);
       planet.unconfirmedDepartures = unconfirmedDepartures;
       planet.unconfirmedUpgrades = unconfirmedUpgrades;
       planet.unconfirmedBuyHats = unconfirmedBuyHats;
     }
-    this.planets[planet.locationId] = planet;
+    this.planets.set(planet.locationId, planet);
     this.clearOldArrivals(planet);
     const updatedAwts = this.processArrivalsForPlanet(
       planet.locationId,
@@ -202,15 +198,16 @@ export class PlanetHelper {
   // returns an empty planet if planet is not in contract
   // returns null if this isn't a planet, according to hash and coords
   public getPlanetWithLocation(location: Location): Planet | null {
-    if (!!this.planets[location.hash]) {
-      const planet = this.planets[location.hash];
+    if (!!this.planets.has(location.hash)) {
+      const planet = this.planets.get(location.hash);
       this.updatePlanetIfStale(planet);
-      return this.planets[location.hash];
+      // return this.planets.get(location.hash);
+      return planet;
     }
     // return a default unowned planet
     const myPlanet = this.defaultPlanetFromLocation(location);
 
-    this.planets[location.hash] = myPlanet;
+    this.planets.set(location.hash, myPlanet);
 
     return myPlanet;
   }
@@ -220,10 +217,10 @@ export class PlanetHelper {
     const { x, y } = planetLocation.coords;
     if (!this.coordsToLocation[x]) this.coordsToLocation[x] = {};
     this.coordsToLocation[x][y] = planetLocation;
-    if (!this.planets[planetLocation.hash]) {
-      this.planets[planetLocation.hash] = this.defaultPlanetFromLocation(
+    if (!this.planets.has(planetLocation.hash)) {
+      this.planets.set(planetLocation.hash, this.defaultPlanetFromLocation(
         planetLocation
-      );
+      ));
     }
   }
 
@@ -232,7 +229,13 @@ export class PlanetHelper {
   }
 
   public getAllOwnedPlanets(): Planet[] {
-    return Object.values(this.planets).filter(hasOwner);
+    let ownedPlanets = [];
+    for (let planet of this.planets.values()) {
+      if (hasOwner(planet)) {
+        ownedPlanets.push(planet);
+      }
+    }
+    return ownedPlanets;
   }
 
   public getAllVoyages(): QueuedArrival[] {
@@ -345,7 +348,7 @@ export class PlanetHelper {
       if (
         toPlanet.energy >
         Math.floor((shipsMoved * contractPrecision * 100) / toPlanet.defense) /
-          contractPrecision
+        contractPrecision
       ) {
         // attack reduces target planet's garrison but doesn't conquer it
         toPlanet.energy -=
@@ -360,7 +363,7 @@ export class PlanetHelper {
           Math.floor(
             (toPlanet.energy * contractPrecision * toPlanet.defense) / 100
           ) /
-            contractPrecision;
+          contractPrecision;
         this.updateScore(toPlanet.locationId);
       }
     } else {
@@ -390,13 +393,13 @@ export class PlanetHelper {
       try {
         if (
           nowInSeconds - arrival.arrivalTime > 0 &&
-          this.planets[arrival.fromPlanet] &&
-          this.planets[arrival.toPlanet]
+          this.planets.has(arrival.fromPlanet) &&
+          this.planets.has(arrival.toPlanet)
         ) {
           // if arrival happened in the past, run this arrival
           this.arrive(
-            this.planets[arrival.fromPlanet],
-            this.planets[arrival.toPlanet],
+            this.planets.get(arrival.fromPlanet),
+            this.planets.get(arrival.toPlanet),
             arrival
           );
         } else {
@@ -404,13 +407,13 @@ export class PlanetHelper {
           // and append it to arrivalsWithTimers
           const applyFutureArrival = setTimeout(() => {
             this.arrive(
-              this.planets[arrival.fromPlanet],
-              this.planets[arrival.toPlanet],
+              this.planets.get(arrival.fromPlanet),
+              this.planets.get(arrival.toPlanet),
               arrival
             );
 
             const notifManager = NotificationManager.getInstance();
-            const toPlanet = this.planets[arrival.toPlanet];
+            const toPlanet = this.planets.get(arrival.toPlanet);
             if (
               this.planetCanUpgrade(toPlanet) &&
               toPlanet.owner === this.address
@@ -680,7 +683,7 @@ export class PlanetHelper {
     const timeElapsed = atTimeMillis / 1000 - planet.lastUpdated;
     const denominator =
       Math.exp((-4 * planet.energyGrowth * timeElapsed) / planet.energyCap) *
-        (planet.energyCap / planet.energy - 1) +
+      (planet.energyCap / planet.energy - 1) +
       1;
     return planet.energyCap / denominator;
   }
@@ -758,7 +761,7 @@ export class PlanetHelper {
   }
 
   private updateScore(planetId: LocationId) {
-    const planet = this.planets[planetId];
+    const planet = this.planets.get(planetId);
     if (!planet) {
       return;
     }

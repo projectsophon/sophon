@@ -203,10 +203,8 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     // fetch planets after allArrivals, since an arrival to a new planet might be sent
     // while we are fetching
     const planets = await contractsAPI.getPlanets();
-    for (const planetId in planets) {
-      if (planets.hasOwnProperty(planetId)) {
-        planetVoyageIdMap[planetId] = [];
-      }
+    for (let planetId of planets.keys()) {
+      planetVoyageIdMap[planetId] = [];
     }
     for (const arrival of allArrivals) {
       planetVoyageIdMap[arrival.toPlanet].push(arrival.eventId);

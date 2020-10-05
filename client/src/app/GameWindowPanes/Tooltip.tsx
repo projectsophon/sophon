@@ -19,27 +19,10 @@ type TooltipProps = {
   className?: string;
 };
 
-const fadeShift = keyframes`
-  from {
-    background: ${dfstyles.colors.dfblue}; 
-  }
-  to {
-    background: ${dfstyles.colors.backgroundlight};
-  }
-`;
-
-const animation = css`
-  animation: ${fadeShift} 1s ${dfstyles.game.styles.animProps};
-`;
-
-// background: ${(props) => props.anim ? dfstyles.colors.dfblue : 'none' };
 const StyledTooltipTrigger = styled.span<{
-  anim: boolean;
   display?: DisplayType;
 }>`
   border-radius: 2px;
-  transition: background 0.2s;
-  ${(props) => (props.anim ? animation : 'animation: none;')}
 
   display: ${(props) => props.display || 'inline'};
 `;
@@ -52,65 +35,18 @@ export function TooltipTrigger({
   style,
   className,
 }: TooltipProps) {
-  // the model for this is a state machine on the state of {shift, hovering}
-  const [shift, setShift] = useState<boolean>(false);
-  const [hovering, setHovering] = useState<boolean>(false);
-
-  const [pushed, setPushed] = useState<boolean>(false);
-
-  const windowManager = WindowManager.getInstance();
-
-  useEffect(() => {
-    const doShiftDown = () => setShift(true);
-    const doShiftUp = () => setShift(false);
-
-    windowManager.on(WindowManagerEvent.ShiftDown, doShiftDown);
-    windowManager.on(WindowManagerEvent.ShiftUp, doShiftUp);
-    return () => {
-      windowManager.removeListener(WindowManagerEvent.ShiftDown, doShiftDown);
-      windowManager.removeListener(WindowManagerEvent.ShiftUp, doShiftUp);
-    };
-  }, [windowManager]);
-
-  // manage state machine
-  useEffect(() => {
-    const getShift = () => {
-      if (!needsShift) return true;
-      else return shift;
-    };
-
-    if (!pushed) {
-      // not pushed yet
-      if (hovering && getShift()) {
-        windowManager.pushTooltip(name);
-        setPushed(true);
-      }
-    } else {
-      // is pushed already
-      if (!hovering || !getShift()) {
-        windowManager.popTooltip();
-        setPushed(false);
-      }
-    }
-  }, [hovering, shift, pushed, windowManager, name, needsShift]);
-
   return (
     <StyledTooltipTrigger
       display={display}
       style={{ ...style }}
       className={className}
-      anim={shift}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
     >
       {children}
     </StyledTooltipTrigger>
   );
 }
 
-const StyledTooltip = styled.div<{
-  visible: boolean;
-}>`
+const StyledTooltip = styled.div`
   position: absolute;
   width: fit-content;
   height: fit-content;
@@ -122,99 +58,10 @@ const StyledTooltip = styled.div<{
   border-radius: 3px;
 
   z-index: ${GameWindowZIndex.Tooltip};
-  display: ${(props) => (props.visible ? 'block' : 'none')};
 `;
 
 export function Tooltip() {
-  const [top, setTop] = useState<number>(0);
-  const [left, setLeft] = useState<number>(0);
-
-  const [visible, setVisible] = useState<boolean>(false);
-
-  const windowManager = WindowManager.getInstance();
-
-  const [current, setCurrent] = useState<TooltipName>(TooltipName.None);
-
-  const [leftOffset, setLeftOffset] = useState<number>(10);
-  const [topOffset, setTopOffset] = useState<number>(10);
-
-  const elRef = useRef<HTMLDivElement>(document.createElement('div'));
-  const [height, setHeight] = useState<number>(20);
-  const [width, setWidth] = useState<number>(20);
-
-  // sync current
-  useEffect(() => {
-    const checkTooltip = () => {
-      const current = windowManager.getTooltip();
-      setCurrent(current);
-    };
-    windowManager.on(WindowManagerEvent.TooltipUpdated, checkTooltip);
-    return () => {
-      windowManager.removeListener(
-        WindowManagerEvent.TooltipUpdated,
-        checkTooltip
-      );
-    };
-  }, [windowManager]);
-
-  useEffect(() => {
-    const doMouseMove = (e) => {
-      setLeft(e.clientX);
-      setTop(e.clientY);
-    };
-
-    const checkTooltip = () => {
-      const current = windowManager.getTooltip();
-      if (current === TooltipName.None) setVisible(false);
-      else setVisible(true);
-    };
-
-    window.addEventListener('mousemove', doMouseMove);
-    windowManager.on(WindowManagerEvent.TooltipUpdated, checkTooltip);
-
-    return () => {
-      window.removeEventListener('mousemove', doMouseMove);
-      windowManager.removeListener(
-        WindowManagerEvent.TooltipUpdated,
-        checkTooltip
-      );
-    };
-  }, [windowManager, height, width]);
-
-  useLayoutEffect(() => {
-    setHeight(elRef.current.offsetHeight);
-    setWidth(elRef.current.offsetWidth);
-  }, [elRef.current.offsetHeight, elRef, visible]);
-
-  useLayoutEffect(() => {
-    if (left < window.innerWidth / 2) {
-      setLeftOffset(10);
-    } else {
-      setLeftOffset(-10 - width);
-    }
-
-    if (top < window.innerHeight / 2) {
-      setTopOffset(10);
-    } else {
-      setTopOffset(-10 - height);
-    }
-  }, [left, top, width, height]);
-
-  const tooltipArr: Array<React.ReactNode> = [];
-  tooltipArr[TooltipName.None] = <></>;
-
   return (
-    <StyledTooltip
-      ref={elRef}
-      onMouseEnter={(e) => e.preventDefault()}
-      onMouseLeave={(e) => e.preventDefault()}
-      style={{
-        top: `${top + topOffset}px`,
-        left: `${left + leftOffset}px`,
-      }}
-      visible={visible}
-    >
-      <TooltipContent name={current} />
-    </StyledTooltip>
+    null
   );
 }

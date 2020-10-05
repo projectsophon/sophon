@@ -52,13 +52,7 @@ class CanvasRenderer {
     image: HTMLImageElement
   ) {
     this.canvas = canvas;
-    this.offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
-    const ctx = this.offscreenCanvas.getContext('2d', {
-      // https://developers.google.com/web/updates/2019/05/desynchronized
-      desynchronized: true,
-      // https://wiki.whatwg.org/wiki/Canvas_Context_Loss_and_Restoration
-      storage: 'discardable',
-    });
+    const ctx = this.canvas.getContext('webgl-2d');
     if (!ctx) {
       throw new Error('Not a 2D canvas.');
     }
@@ -104,14 +98,6 @@ class CanvasRenderer {
     CanvasRenderer.instance = canvasRenderer;
 
     return canvasRenderer;
-  }
-
-  setWidth(width) {
-    this.offscreenCanvas.width = width;
-  }
-
-  setHeight(height) {
-    this.offscreenCanvas.height = height;
   }
 
   private frame() {
@@ -170,12 +156,6 @@ class CanvasRenderer {
 
     this.drawMiner();
 
-    const renderCtx = this.canvas.getContext('bitmaprenderer');
-    if (renderCtx) {
-      const offscreenBitmap = this.offscreenCanvas.transferToImageBitmap();
-      renderCtx.transferFromImageBitmap(offscreenBitmap);
-    }
-
     this.frameRequestId = window.requestAnimationFrame(this.frame.bind(this));
   }
 
@@ -193,13 +173,13 @@ class CanvasRenderer {
       ctx.translate(loc.x, loc.y);
       ctx.scale(1 / 16, 1 / 16);
 
-      const path = new Path2D(
-        'M512 224h-50.462c-13.82-89.12-84.418-159.718-173.538-173.538v-50.462h-64v50.462c-89.12 13.82-159.718 84.418-173.538 173.538h-50.462v64h50.462c13.82 89.12 84.418 159.718 173.538 173.538v50.462h64v-50.462c89.12-13.82 159.718-84.418 173.538-173.538h50.462v-64zM396.411 224h-49.881c-9.642-27.275-31.255-48.889-58.53-58.53v-49.881c53.757 12.245 96.166 54.655 108.411 108.411zM256 288c-17.673 0-32-14.327-32-32s14.327-32 32-32c17.673 0 32 14.327 32 32s-14.327 32-32 32zM224 115.589v49.881c-27.275 9.641-48.889 31.255-58.53 58.53h-49.881c12.245-53.756 54.655-96.166 108.411-108.411zM115.589 288h49.881c9.641 27.275 31.255 48.889 58.53 58.53v49.881c-53.756-12.245-96.166-54.654-108.411-108.411zM288 396.411v-49.881c27.275-9.642 48.889-31.255 58.53-58.53h49.881c-12.245 53.757-54.654 96.166-108.411 108.411z'
-      );
-      ctx.translate(-256, -256);
+      // const path = new window.FakePath2D(
+      //   'M512 224h-50.462c-13.82-89.12-84.418-159.718-173.538-173.538v-50.462h-64v50.462c-89.12 13.82-159.718 84.418-173.538 173.538h-50.462v64h50.462c13.82 89.12 84.418 159.718 173.538 173.538v50.462h64v-50.462c89.12-13.82 159.718-84.418 173.538-173.538h50.462v-64zM396.411 224h-49.881c-9.642-27.275-31.255-48.889-58.53-58.53v-49.881c53.757 12.245 96.166 54.655 108.411 108.411zM256 288c-17.673 0-32-14.327-32-32s14.327-32 32-32c17.673 0 32 14.327 32 32s-14.327 32-32 32zM224 115.589v49.881c-27.275 9.641-48.889 31.255-58.53 58.53h-49.881c12.245-53.756 54.655-96.166 108.411-108.411zM115.589 288h49.881c9.641 27.275 31.255 48.889 58.53 58.53v49.881c-53.756-12.245-96.166-54.654-108.411-108.411zM288 396.411v-49.881c27.275-9.642 48.889-31.255 58.53-58.53h49.881c-12.245 53.757-54.654 96.166-108.411 108.411z'
+      // );
+      // ctx.translate(-256, -256);
 
-      ctx.fillStyle = 'white';
-      ctx.fill(path);
+      // ctx.fillStyle = 'white';
+      // ctx.fill(path);
 
       ctx.restore();
     });
@@ -760,14 +740,14 @@ class CanvasRenderer {
     ctx.translate(-pathWidth / 2, -pathHeight / 2);
 
     ctx.fillStyle = fill1;
-    for (const pathStr of hat.bottomLayer) {
-      ctx.fill(new Path2D(pathStr));
-    }
+    // for (const pathStr of hat.bottomLayer) {
+    //   ctx.fill(new window.FakePath2D(pathStr));
+    // }
 
-    ctx.fillStyle = fill2;
-    for (const pathStr of hat.topLayer) {
-      ctx.fill(new Path2D(pathStr));
-    }
+    // ctx.fillStyle = fill2;
+    // for (const pathStr of hat.topLayer) {
+    //   ctx.fill(new window.FakePath2D(pathStr));
+    // }
 
     ctx.restore();
   }

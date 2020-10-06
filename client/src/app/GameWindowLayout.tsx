@@ -32,6 +32,8 @@ import {
   ModalHelpIcon,
   ModalLeaderboardIcon,
   ModalSettingsIcon,
+  ModalPlanetDexIcon,
+  ModalTwitterVerifyIcon,
 } from './GameWindowPanes/ModalPane';
 import { ExploreContextPane } from './GameWindowPanes/ExploreContextPane';
 import { PlanetContextPane } from './GameWindowPanes/PlanetContextPane';
@@ -46,11 +48,11 @@ import GameUIManagerContext from './board/GameUIManagerContext';
 import { PrivatePane } from './GameWindowPanes/PrivatePane';
 
 export function GameWindowLayout() {
-  const planetDetHook = useState<boolean>(true);
+  const planetDetailsHook = useState<boolean>(false);
   const helpHook = useState<boolean>(false);
   const leaderboardHook = useState<boolean>(false);
-  const planetdexHook = useState<boolean>(false);
-  const upgradeDetHook = useState<boolean>(false);
+  const planetDexHook = useState<boolean>(false);
+  const upgradeDetailsHook = useState<boolean>(false);
   const twitterVerifyHook = useState<boolean>(false);
   const twitterBroadcastHook = useState<boolean>(false);
   const hatHook = useState<boolean>(false);
@@ -71,37 +73,34 @@ export function GameWindowLayout() {
       {/* modals (fragment is purely semantic) */}
       <>
         <PlanetDetailsPane
-          hook={planetDetHook}
+          hook={planetDetailsHook}
           broadcastHook={twitterBroadcastHook}
-          upgradeDetHook={upgradeDetHook}
+          upgradeDetHook={upgradeDetailsHook}
           hatHook={hatHook}
         />
         <HelpPane hook={helpHook} />
         <LeaderboardPane hook={leaderboardHook} />
-        <PlanetDexPane hook={planetdexHook} />
-        <UpgradeDetailsPane hook={upgradeDetHook} />
+        <PlanetDexPane hook={planetDexHook} />
+        <UpgradeDetailsPane hook={upgradeDetailsHook} />
         <TwitterVerifyPane hook={twitterVerifyHook} />
         <TwitterBroadcastPane hook={twitterBroadcastHook} />
         <HatPane hook={hatHook} />
         <SettingsPane hook={settingsHook} privateHook={privateHook} />
         <PrivatePane hook={privateHook} />
+        {/* <PlayerInfoPane hook={} /> */}
       </>
 
       <OnboardingPane newPlayerHook={newPlayerHook} />
 
       <MainWindow>
-        {/* sidebar */}
-        <Sidebar>
-          <PlayerInfoPane hook={twitterVerifyHook} />
-          <PlanetDexPane small hook={planetdexHook} />
-        </Sidebar>
-
         {/* canvas and stuff */}
         <CanvasContainer>
           <UpperLeft>
             <MenuBar>
+              <ModalTwitterVerifyIcon hook={twitterVerifyHook} />
               <ModalHelpIcon hook={helpHook} />
               <ModalLeaderboardIcon hook={leaderboardHook} />
+              <ModalPlanetDexIcon hook={planetDexHook} />
               <ModalSettingsIcon hook={settingsHook} />
             </MenuBar>
             <ZoomPane />
@@ -119,7 +118,7 @@ export function GameWindowLayout() {
           <LHSWrapper>
             <ContextMenu>
               <ExploreContextPane />
-              <PlanetContextPane hook={planetDetHook} upgradeDetHook={upgradeDetHook} />
+              <PlanetContextPane hook={planetDetailsHook} upgradeDetHook={upgradeDetailsHook} />
             </ContextMenu>
           </LHSWrapper>
         </CanvasContainer>

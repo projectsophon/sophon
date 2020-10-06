@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
 import { UIDataKey, useStoredUIState } from '../../api/UIStateStorageManager';
 import { White } from '../../components/Text';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import TutorialManager, {
   TutorialManagerEvent,
   TutorialState,

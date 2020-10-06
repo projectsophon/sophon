@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { SidebarPane } from '../GameWindowComponents/GameWindowComponents';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
 import { EthAddress } from '../../_types/global/GlobalTypes';

@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { GameWindowZIndex } from '../../utils/WindowManager';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
 import { UIDataKey, useStoredUIState } from '../../api/UIStateStorageManager';

@@ -23,7 +23,7 @@ import {
   PlanetStatsInfo,
 } from '../../utils/Utils';
 import { RightarrowIcon } from '../Icons';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import GameUIManagerContext from '../board/GameUIManagerContext';
 import GameUIManager from '../board/GameUIManager';
 import { getPlanetTitle, getPlanetName } from '../../utils/ProcgenUtils';

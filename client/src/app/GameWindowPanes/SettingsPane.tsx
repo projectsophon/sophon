@@ -3,7 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useStoredUIState, UIDataKey } from '../../api/UIStateStorageManager';
 import { Sub, Red, White } from '../../components/Text';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { ONE_DAY } from '../../utils/Utils';
 import { EthAddress } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';

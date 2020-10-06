@@ -5,7 +5,7 @@ import GameUIManager from '../board/GameUIManager';
 import { Green, Sub, White, Red } from '../../components/Text';
 import styled from 'styled-components';
 import { Btn } from '../GameWindowComponents/GameWindowComponents';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 
 const TwitterWrapper = styled.div`
   width: 30em;

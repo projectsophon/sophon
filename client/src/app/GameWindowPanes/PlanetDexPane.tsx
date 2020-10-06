@@ -17,7 +17,7 @@ import {
   formatNumber,
   getPlanetRank,
 } from '../../utils/Utils';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { getPlanetName, getPlanetColors } from '../../utils/ProcgenUtils';
 import _ from 'lodash';
 import { SelectedContext } from '../GameWindow';

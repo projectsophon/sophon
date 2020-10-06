@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { GameWindowZIndex } from '../../utils/WindowManager';
 
 export const WindowWrapper = styled.div`

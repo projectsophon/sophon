@@ -70,7 +70,7 @@ export enum InitRenderState {
   COMPLETE,
 }
 
-export default function GameLandingPage(_props: { replayMode: boolean }) {
+export function GameLandingPage(_props: { replayMode: boolean }) {
   const history = useHistory();
   /* terminal stuff */
   const isProd = true;

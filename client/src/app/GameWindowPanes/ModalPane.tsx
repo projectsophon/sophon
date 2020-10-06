@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import WindowManager, { TooltipName, GameWindowZIndex } from '../../utils/WindowManager';
 import {
   HelpIcon,

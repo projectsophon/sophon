@@ -10,7 +10,7 @@ import {
   getPlanetTagline,
 } from '../utils/ProcgenUtils';
 import LandingPageCanvas from './LandingPageCanvas';
-import dfstyles from '../styles/dfstyles';
+import dfstyles from '../styles/dfstyles.bs.js';
 import { Sub } from '../components/Text';
 
 const PlanetCard = styled.div`

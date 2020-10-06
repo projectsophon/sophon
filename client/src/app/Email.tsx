@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Button from '../components/Button';
-import dfstyles from '../styles/dfstyles';
+import dfstyles from '../styles/dfstyles.bs.js';
 import { EmailResponse, submitInterestedEmail } from '../api/UtilityServerAPI';
 
 const styles: {

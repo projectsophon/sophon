@@ -23,65 +23,8 @@ import _ from 'lodash';
 import { SelectedContext } from '../GameWindow';
 import { SilverIcon, RankIcon } from '../Icons';
 
-const DexWrapperSmall = styled.div`
-  max-height: 12em;
-  overflow-y: scroll;
-
-  & > span > div {
-    // rows
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    & > span:last-child {
-      width: 2.5em;
-      height: 30px;
-    }
-
-    &.selected {
-      & > span:first-child {
-        text-decoration: underline;
-        color: ${dfstyles.colors.text};
-      }
-    }
-    &:hover {
-      cursor: pointer;
-      & > span:first-child {
-        color: ${dfstyles.colors.text};
-      }
-    }
-  }
-`;
-
-function DexSmallRow({
-  planet,
-  className,
-}: {
-  planet: Planet;
-  className: string;
-}) {
-  const getFormatName = (planet: Planet): string => {
-    const myName = getPlanetName(planet);
-    if (myName.length >= 20) return myName.substring(0, 17) + '...';
-    else return myName;
-  };
-  return (
-    <PlanetLink planet={planet}>
-      <div className={className}>
-        <Sub>{getFormatName(planet)}</Sub>
-        <span>
-          <PlanetThumb planet={planet} />
-        </span>
-      </div>
-    </PlanetLink>
-  );
-}
-
 const DexWrapper = styled.div`
-  min-height: 15em;
-  height: fit-content;
-  max-height: 25.2em; // exact size so a row is cut off
+  height: 12.2em; // exact size so a row is cut off
   overflow-y: scroll;
 `;
 
@@ -94,7 +37,9 @@ const DexRow = styled.div`
   height: 30px; // 5 + 3 * 7 + 4px
 
   & > span {
-    &:nth-child(1) {}
+    &:nth-child(1) {
+      width: 2em;
+    }
     &:nth-child(2) {
       display: flex;
       flex-direction: row;

@@ -324,15 +324,21 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       ? formatNumber((energyPercent / 100) * selectedStats.energy)
       : '0';
 
-  const getSilver = (): number => {
-    if (!selectedStats) return 0;
-    return selectedStats.silver;
+  const getSilver = () =>
+    selectedStats
+      ? formatNumber((silverPercent / 100) * selectedStats.silver)
+      : '0';
+
+  const getUpgradeSilver = () => {
+    if (!selected || !uiManager) return '0';
+    return formatNumber(selectedStats.silver);
   };
 
-  const getSilverNeeded = (): number => {
-    if (!selected || !uiManager) return 0;
+  const getUpgradeSilverNeeded = () => {
+    if (!selected || !uiManager) return '??';
     const totalLevel = selected.upgradeState.reduce((a, b) => a + b);
-    return Math.floor((totalLevel + 1) * 0.2 * selected.silverCap);
+    const totalNeeded = Math.floor((totalLevel + 1) * 0.2 * selected.silverCap);
+    return formatNumber(totalNeeded);
   };
 
   /*
@@ -363,7 +369,6 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
     const uiEmitter = UIEmitter.getInstance();
 
-    console.log('do send!');
     if (windowManager.getCursorState() === CursorState.TargetingForces) {
       setSending(false);
       windowManager.setCursorState(CursorState.Normal);
@@ -407,16 +412,6 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         <StyledPlanetInfo>
           <PlanetPreview selected={selected} />
           <div>
-
-            <div>
-              <span>
-                <Sub><UpgradeIcon /></Sub>
-              </span>
-              <span>
-                {Math.floor(getSilver())} <Sub>/</Sub>{' '}
-                {Math.ceil(getSilverNeeded())}
-              </span>
-            </div>
 
             <div>
               <span>
@@ -494,19 +489,15 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
               <span>{getFormatProp(selected, 'defense')}</span>
             </div>
 
-
-            {/* <div>
-              <span>
-                <RangeIcon />
-              </span>
-              <span>{getFormatProp(selected, 'range')}</span>
-            </div>
             <div>
               <span>
-                <SpeedIcon />
+                <Sub><UpgradeIcon /></Sub>
               </span>
-              <span>{getFormatProp(selected, 'speed')}</span>
-            </div> */}
+              <span>
+                {getUpgradeSilver()} <Sub>/</Sub>{' '}
+                {getUpgradeSilverNeeded()}
+              </span>
+            </div>
           </div>
         </StyledPlanetInfo>
         <StyledFleets

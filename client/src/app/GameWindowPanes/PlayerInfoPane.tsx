@@ -121,13 +121,13 @@ export function PlayerInfoPane({ hook: twitterHook }: { hook: ModalHook }) {
             {twitter ? (
               <span>@{twitter}</span>
             ) : (
-              <span
-                onClick={() => twitterHook[1]((b) => !b)}
-                className='twitter-connect'
-              >
-                Connect Twitter
-              </span>
-            )}
+                <span
+                  onClick={() => twitterHook[1]((b) => !b)}
+                  className='twitter-connect'
+                >
+                  Connect Twitter
+                </span>
+              )}
           </span>
         </div>
         <div>

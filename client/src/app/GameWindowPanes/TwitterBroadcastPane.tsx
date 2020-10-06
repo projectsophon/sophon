@@ -129,8 +129,8 @@ export function TwitterBroadcastPane({ hook }: { hook: ModalHook }) {
           </p>
         </BroadcastWrapper>
       ) : (
-        <p>Please select an occupied planet to broadcast coordinates.</p>
-      )}
+          <p>Please select an occupied planet to broadcast coordinates.</p>
+        )}
     </ModalPane>
   );
 }

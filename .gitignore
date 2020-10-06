@@ -113,3 +113,10 @@ native/artifacts.json
 
 # Our additions
 known_board*/
+esy.lock/
+_esy/
+.merlin
+.bsb.lock
+lib/bs/
+.vscode
+*.bs.js

@@ -6,6 +6,8 @@
   "author": "Blaine Bublitz <blaine.bublitz@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@ahrefs/bs-emotion": "^2.0.0",
+    "@davesnx/styled-ppx": "^0.20.0",
     "@ethersproject/providers": "^5.0.5",
     "@pika/react": "^16.13.1",
     "@pika/react-dom": "^16.13.1",
@@ -23,12 +25,14 @@
     "lodash": "^4.17.15",
     "react-router-dom": "^5.1.2",
     "react-typist": "^2.0.5",
+    "reason-react": "^0.9.1",
     "stream-browserify": "^3.0.0",
     "styled-components": "^5.0.1",
     "url": "^0.11.0",
     "util": "^0.12.3"
   },
   "devDependencies": {
+    "bs-platform": "^8.2.0",
     "cross-env": "^7.0.2",
     "inquirer": "^7.3.3",
     "level": "^6.0.1",
@@ -44,6 +48,8 @@
     "start": "cross-env NODE_ENV=production node .",
     "prepare": "yarn build",
     "build": "yarn build-rust",
+    "re:watch": "bsb -make-world -w",
+    "re:clean": "bsb -clean-world",
     "build-rust": "neon build --release"
   }
 }

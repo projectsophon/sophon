@@ -19,7 +19,6 @@ import TerminalEmitter, {
 } from '../utils/TerminalEmitter';
 import Terminal from './Terminal';
 import { useHistory } from 'react-router-dom';
-import ModalWindow from './ModalWindow';
 import GameWindow from './GameWindow';
 import {
   Wrapper,
@@ -58,12 +57,6 @@ enum InitState {
   TERMINATED,
 }
 
-// doing it this way because I plan to add more later
-enum ModalState {
-  NONE,
-  GAS_PRICES,
-}
-
 export enum InitRenderState {
   NONE,
   LOADING,
@@ -73,7 +66,6 @@ export enum InitRenderState {
 export function GameLandingPage(_props: { replayMode: boolean }) {
   const history = useHistory();
   /* terminal stuff */
-  const isProd = true;
 
   let initState = InitState.NONE;
   const [initRenderState, setInitRenderState] = useState<InitRenderState>(
@@ -83,9 +75,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     const uiEmitter = UIEmitter.getInstance();
     uiEmitter.emit(UIEmitterEvent.UIChange);
   }, [initRenderState]);
-
-  const [modal, setModal] = useState<ModalState>(ModalState.NONE);
-  const modalClose = () => setModal(ModalState.NONE);
 
   const gameUIManagerRef = useRef<GameUIManager | null>(null);
 
@@ -118,18 +107,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     terminalEmitter.disableUserInput();
 
     return ret.trim();
-  };
-
-  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-  const animEllipsis = async () => {
-    const terminalEmitter = TerminalEmitter.getInstance();
-    const delay = 0; // TODOPR 250
-    for (const _i in _.range(3)) {
-      await wait(delay).then(() => terminalEmitter.print('.'));
-    }
-    await wait(delay * 1.5);
-    return;
   };
 
   const submitHiddenEmailForm = async (email: string) => {
@@ -172,7 +149,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     terminalEmitter.println('Initializing Dark Forest...');
 
     terminalEmitter.print('Loading zkSNARK proving key');
-    await animEllipsis();
     terminalEmitter.print(' ');
     terminalEmitter.println(
       'Proving key loaded. (14.3MB)',
@@ -180,7 +156,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     );
 
     terminalEmitter.print('Verifying zkSNARK params');
-    await animEllipsis();
     terminalEmitter.print(' ');
     terminalEmitter.println(
       '28700 constraints verified.',
@@ -188,12 +163,10 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     );
 
     terminalEmitter.print('Connecting to Ethereum L2');
-    await animEllipsis();
     terminalEmitter.print(' ');
     terminalEmitter.println('Connected to xDAI STAKE.', TerminalTextStyle.Blue);
 
     terminalEmitter.print('Installing flux capacitor');
-    await animEllipsis();
     terminalEmitter.print(' ');
     terminalEmitter.println(
       'Flux capacitor installed.',
@@ -208,7 +181,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     terminalEmitter.bashShell('df check');
 
     terminalEmitter.print('Checking compatibility');
-    await animEllipsis();
     terminalEmitter.print(' ');
     terminalEmitter.println(
       'Initiating (3) compatibility checks.',
@@ -216,7 +188,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     );
 
     terminalEmitter.print('Checking if device is compatible');
-    await animEllipsis();
     terminalEmitter.print(' ');
     if (issues.includes(Incompatibility.MobileOrTablet)) {
       terminalEmitter.println(
@@ -231,7 +202,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     }
 
     terminalEmitter.print('Checking if IndexedDB is present');
-    await animEllipsis();
     terminalEmitter.print(' ');
     if (issues.includes(Incompatibility.NoIDB)) {
       terminalEmitter.println(
@@ -243,7 +213,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     }
 
     terminalEmitter.print('Checking if browser is supported');
-    await animEllipsis();
     terminalEmitter.print(' ');
     if (issues.includes(Incompatibility.UnsupportedBrowser)) {
       terminalEmitter.println(
@@ -255,16 +224,13 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     }
 
     terminalEmitter.print('Checking Ethereum Mainnet');
-    await animEllipsis();
     terminalEmitter.print(' ');
     terminalEmitter.printLink(
       'ERROR: Gas prices too high!',
-      () => setModal(ModalState.GAS_PRICES),
       TerminalTextStyle.White
     );
     terminalEmitter.newline();
     terminalEmitter.print('Falling back to L2');
-    await animEllipsis();
     terminalEmitter.print(' ');
     terminalEmitter.println(
       'Connected to xDAI L2 network.',
@@ -287,42 +253,14 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
 
   const advanceStateFromCompatibilityPassed = async () => {
     const terminalEmitter = TerminalEmitter.getInstance();
-    terminalEmitter.bashShell('df log');
-    terminalEmitter.newline();
-    terminalEmitter.print('    ');
-    terminalEmitter.print('Version', TerminalTextStyle.Underline);
-    terminalEmitter.print('    ');
-    terminalEmitter.print('Date', TerminalTextStyle.Underline);
-    terminalEmitter.print('              ');
-    terminalEmitter.print('Champion', TerminalTextStyle.Underline);
-    terminalEmitter.newline();
-
-    terminalEmitter.print('    v0.1       ');
-    terminalEmitter.println(
-      '02/05/2020        Dylan Field',
-      TerminalTextStyle.White
-    );
-    terminalEmitter.print('    v0.2       ');
-    terminalEmitter.println(
-      '06/06/2020        Nate Foss',
-      TerminalTextStyle.White
-    );
-    terminalEmitter.print('    v0.3       ');
-    terminalEmitter.print('08/07/2020        ', TerminalTextStyle.White);
-    terminalEmitter.printLink(
-      '[ANON] Singer',
-      () => {
-        window.open('https://twitter.com/hideandcleanse');
-      },
-      TerminalTextStyle.White
-    );
-    terminalEmitter.newline();
-    terminalEmitter.print('    v0.4       ');
-    terminalEmitter.print('10/02/2020        ', TerminalTextStyle.White);
-    terminalEmitter.println('<tbd>', TerminalTextStyle.White);
-    terminalEmitter.newline();
-
     const knownAddrs = EthereumAccountManager.getInstance().getKnownAccounts();
+    if (knownAddrs.length === 1) {
+      terminalEmitter.println(
+        `Found account for ${knownAddrs[0]}. Logging in...`
+      );
+      initState = InitState.DISPLAY_ACCOUNTS;
+      return;
+    }
     terminalEmitter.println(
       `Found ${knownAddrs.length} accounts on this device.`
     );
@@ -350,6 +288,21 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     const ethConnection = EthereumAccountManager.getInstance();
 
     const knownAddrs = ethConnection.getKnownAccounts();
+    if (knownAddrs.length === 1) {
+      const addr = knownAddrs[0];
+      try {
+        ethConnection.setAccount(addr);
+        initState = InitState.ACCOUNT_SET;
+        return;
+      } catch (e) {
+        console.log
+        terminalEmitter.println(
+          'An unknown error occurred. please try again.',
+          TerminalTextStyle.Red
+        );
+      }
+    }
+
     terminalEmitter.println(`Select an account.`, TerminalTextStyle.White);
     for (let i = 0; i < knownAddrs.length; i += 1) {
       terminalEmitter.println(`(${i + 1}): ${knownAddrs[i]}`);
@@ -447,23 +400,11 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     const isWhitelisted = await isAddressWhitelisted(address);
 
     terminalEmitter.bashShell('df join v0.4');
-    terminalEmitter.print('Checking if whitelisted... (address ');
-    terminalEmitter.print(address, TerminalTextStyle.White);
-    terminalEmitter.println(')');
-
     if (isWhitelisted) {
-      terminalEmitter.println('Player whitelisted.', TerminalTextStyle.Green);
       terminalEmitter.println(
         `Welcome, player ${address}.`,
         TerminalTextStyle.White
       );
-      if (!isProd) {
-        // in development, automatically get some ether from faucet
-        const balance = await ethConnection.getBalance(address);
-        if (balance === 0) {
-          await requestDevFaucet(address);
-        }
-      }
       initState = InitState.FETCHING_ETH_DATA;
     } else {
       initState = InitState.ASKING_HAS_WHITELIST_KEY;
@@ -741,8 +682,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
 
   const advanceStateFromAllChecksPass = async () => {
     const terminalEmitter = TerminalEmitter.getInstance();
-    terminalEmitter.println('Press ENTER to begin.');
-    await getUserInput();
     initState = InitState.COMPLETE;
 
     terminalEmitter.emit(TerminalEvent.SkipAllTyping);
@@ -834,17 +773,9 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
 
   return (
     <Wrapper initRender={initRenderState} terminalEnabled={terminalEnabled}>
-      {modal === ModalState.GAS_PRICES && (
-        <ModalWindow close={modalClose}>
-          <img
-            style={{ margin: '0 auto' }}
-            src={'/public/img/toodamnhigh.jpg'}
-          />
-        </ModalWindow>
-      )}
 
       {/* everything inside of GameWindowWrapper and TerminalWrapper
-          should basically assume that they are in a fresh div. 
+          should basically assume that they are in a fresh div.
           the children should never exceed the contents of that div.
       */}
       <GameWindowWrapper

@@ -136,7 +136,7 @@ export function TwitterVerifyPane({ hook }: { hook: ModalHook }) {
             <div className='row'>
               <span> </span>
               <Btn
-                onClick={tweeted ? onVerifyClick : () => {}}
+                onClick={tweeted ? onVerifyClick : () => { }}
                 className={tweeted ? '' : 'btn-disabled'}
               >
                 Verify

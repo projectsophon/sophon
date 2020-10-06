@@ -17,7 +17,7 @@ export const ContextMenu = styled.div`
   background: ${dfstyles.colors.background};
 `;
 
-const StyledContextMenuPane = styled(StyledPane)<{ visible: boolean }>`
+const StyledContextMenuPane = styled(StyledPane) <{ visible: boolean }>`
   display: ${(props) => (props.visible ? 'block' : 'none')};
 
   // TODO there's def a better way to do this

@@ -42,7 +42,7 @@ const SilverGrowthSVG = () => (
     x='0px'
     y='0px'
     viewBox='0 0 512 512'
-    // style="enable-background:new 0 0 512 512;"
+  // style="enable-background:new 0 0 512 512;"
   >
     <path
       d='M-0.5,166.3v305.1h512V166.3H-0.5z M95.8,441.7h-64v-64h32v32h32V441.7z M95.8,226.6h-32v32h-32v-64h64V226.6z M237.2,371.3
@@ -64,7 +64,7 @@ const SilverSVG = () => (
     x='0px'
     y='0px'
     viewBox='0 0 512 512'
-    // style="enable-background:new 0 0 512 512;"
+  // style="enable-background:new 0 0 512 512;"
   >
     <g id='icomoon-ignore'></g>
     <path

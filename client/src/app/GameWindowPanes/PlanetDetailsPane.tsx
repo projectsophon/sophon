@@ -290,9 +290,9 @@ export function PlanetDetailsPane({
   const sharePlanet = (): void => {
     const str = `I found an awesome level ${
       selected?.planetLevel
-    } planet named ${getPlanetName(
-      selected
-    )}! @darkforest_eth (https://zkga.me/planet${selected?.locationId})`;
+      } planet named ${getPlanetName(
+        selected
+      )}! @darkforest_eth (https://zkga.me/planet${selected?.locationId})`;
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURI(
         str
@@ -375,8 +375,8 @@ export function PlanetDetailsPane({
                       <span>{getFormatProp(selectedStats, 'energy')}</span>
                     </TooltipTrigger>
                   ) : (
-                    <>{getFormatProp(selectedStats, 'energy')}</>
-                  )}{' '}
+                      <>{getFormatProp(selectedStats, 'energy')}</>
+                    )}{' '}
                   <Sub>/</Sub> {getFormatProp(selected, 'energyCap')}
                 </span>
               </div>
@@ -467,8 +467,8 @@ export function PlanetDetailsPane({
               </TooltipTrigger>
             </span>
             <span>{getPop(90)}</span>
-          </DetailsRowDouble> 
-          
+          </DetailsRowDouble>
+
           {selected && selected.planetResource === PlanetResource.SILVER && (
             <DetailsRowDouble>
               <Sub>Silver Growth</Sub>
@@ -477,7 +477,7 @@ export function PlanetDetailsPane({
               <span>{getSilver(100)}</span>
             </DetailsRowDouble>
           )}
-          
+
           */}
           <StyledPlanetDetails>
             <DetailsRowSingle className='margin-top'>
@@ -526,8 +526,8 @@ export function PlanetDetailsPane({
                       View Upgrades
                     </Btn>
                   ) : (
-                    Math.floor(getSilverLeft())
-                  )}
+                      Math.floor(getSilverLeft())
+                    )}
                 </span>
               </DetailsRowSingle>
             )}

@@ -379,7 +379,7 @@ export default function Terminal() {
             }}
             onKeyUp={onKeyUp}
             onKeyDown={preventEnterDefault}
-            onKeyPress={isFirefox() ? () => {} : preventEnterDefault}
+            onKeyPress={isFirefox() ? () => { } : preventEnterDefault}
             value={inputText}
             onChange={(e) => {
               if (userInputEnabled) {

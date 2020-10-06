@@ -52,7 +52,7 @@ import {
   SilverIcon,
   SpeedIcon,
 } from '../Icons';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { HAT_SIZES } from '../../utils/constants';
 
 const PlanetscapeWrapper = styled.div`

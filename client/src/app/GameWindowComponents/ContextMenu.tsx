@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { ContextMenuContext, ContextMenuType } from '../GameWindow';
 import { PaneProps, StyledPane } from './GameWindowComponents';
 

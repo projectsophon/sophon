@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, RefObject } from 'react';
 import autoBind from 'auto-bind';
-import dfstyles from '../styles/dfstyles';
+import dfstyles from '../styles/dfstyles.bs.js';
 import { hasTouchscreen, isMobileOrTablet } from '../api/BrowserChecks';
 
 export const enum LandingPageZIndex {

@@ -9,7 +9,7 @@ import {
   BlinkCursor,
 } from '../components/Text';
 import { EmailCTA } from './Email';
-import dfstyles from '../styles/dfstyles';
+import dfstyles from '../styles/dfstyles.bs.js';
 import styled from 'styled-components';
 import T from 'react-typist';
 import LandingPageCanvas, { LandingPageZIndex } from './LandingPageCanvas';

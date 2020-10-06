@@ -14,7 +14,7 @@ import {
   TxLink,
 } from '../components/Text';
 import { ExploredChunkData, Planet } from '../_types/global/GlobalTypes';
-import dfstyles from '../styles/dfstyles';
+import dfstyles from '../styles/dfstyles.bs.js';
 
 export enum NotificationType {
   Tx,

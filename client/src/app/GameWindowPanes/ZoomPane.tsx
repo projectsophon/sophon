@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { GameWindowZIndex } from '../../utils/WindowManager';
 
 const _ZoomPane = styled.div`

@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import dfstyles from '../styles/dfstyles';
+import dfstyles from '../styles/dfstyles.bs.js';
 import React, { useLayoutEffect } from 'react';
 import { InitRenderState } from './GameLandingPage';
 import UIEmitter, { UIEmitterEvent } from '../utils/UIEmitter';

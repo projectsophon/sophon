@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import App from './app/App';
+import App from './app/App.bs.js';
 import './styles/preflight.css';
 import './styles/font/stylesheet.css';
 

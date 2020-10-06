@@ -18,7 +18,7 @@ import { TargetIcon, PauseIcon, PlayIcon } from '../Icons';
 import { IconButton } from './ModalPane';
 import { TooltipTrigger } from './Tooltip';
 import TutorialManager, { TutorialState } from '../../utils/TutorialManager';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 
 const StyledExploreContextPane = styled.div`
   width: 18.5em;

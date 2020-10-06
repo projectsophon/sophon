@@ -1,7 +1,7 @@
 import React from 'react';
 import { ModalName, ModalPane, ModalHook } from './ModalPane';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { White } from '../../components/Text';
 import TutorialManager from '../../utils/TutorialManager';
 

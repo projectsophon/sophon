@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Planet, EthAddress } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 import { Btn } from '../GameWindowComponents/GameWindowComponents';
 import { Sub, Red } from '../../components/Text';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';

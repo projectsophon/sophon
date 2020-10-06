@@ -24,7 +24,7 @@ import {
   PlanetStatsInfo,
 } from '../../utils/Utils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
-import dfstyles from '../../styles/dfstyles';
+import dfstyles from '../../styles/dfstyles.bs.js';
 
 import {
   DefenseIcon,

@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { UIDataKey } from '../api/UIStateStorageManager';
-import dfstyles from '../styles/dfstyles';
+import dfstyles from '../styles/dfstyles.bs.js';
 import NotificationManager, {
   NotificationInfo,
   NotificationManagerEvent,

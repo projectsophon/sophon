@@ -20,10 +20,6 @@ import LocalStorageManager from './LocalStorageManager';
 import { MIN_CHUNK_SIZE } from '../utils/constants';
 import mimcHash from '../miner/mimc';
 import ContractsAPI from './ContractsAPI';
-import MinerManager, {
-  HomePlanetMinerChunkStore,
-  MinerManagerEvent,
-} from './MinerManager';
 import SnarkHelper from './SnarkArgsHelper';
 import { WorldCoords } from '../utils/Coordinates';
 import _ from 'lodash';
@@ -77,7 +73,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private readonly useMockHash: boolean;
 
-  private minerManager?: MinerManager;
   private hashRate: number;
 
   private homeCoords: WorldCoords | null;
@@ -160,13 +155,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
   }
 
   public destroy(): void {
-    // removes singletons of ContractsAPI, LocalStorageManager, MinerManager
-    if (this.minerManager) {
-      this.minerManager.removeAllListeners(
-        MinerManagerEvent.DiscoveredNewChunk
-      );
-      this.minerManager.destroy();
-    }
     this.contractsAPI.removeAllListeners(ContractsAPIEvent.PlayerInit);
     this.contractsAPI.removeAllListeners(ContractsAPIEvent.PlanetUpdate);
     this.contractsAPI.destroy();
@@ -402,21 +390,14 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     if (this.explorers && this.explorers.has(whichExplorer)) {
       this.explorers.get(whichExplorer).emit('set-pattern', pattern.center);
     }
-    if (this.minerManager) {
-      this.minerManager.setMiningPattern(pattern);
-    }
   }
   getMiningPattern(): MiningPattern | null {
-    if (this.minerManager) return this.minerManager.getMiningPattern();
-    else return null;
+    return null;
   }
 
   getCurrentlyExploringChunk(): ChunkFootprint | null {
     if (this.lastChunk) {
       return this.lastChunk;
-    }
-    if (this.minerManager) {
-      return this.minerManager.getCurrentlyExploringChunk();
     }
     return null;
   }
@@ -527,16 +508,11 @@ class GameManager extends EventEmitter implements AbstractGameManager {
   }
 
   startExplore(): void {
-    if (this.minerManager) {
-      this.minerManager.startExplore();
-    }
+
   }
 
   stopExplore(): void {
-    if (this.minerManager) {
-      this.hashRate = 0;
-      this.minerManager.stopExplore();
-    }
+
   }
 
   private setRadius(worldRadius: number) {
@@ -545,10 +521,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     this.explorers.forEach((explorer) => {
       explorer.emit('set-radius', worldRadius);
     });
-
-    if (this.minerManager) {
-      this.minerManager.setRadius(this.worldRadius);
-    }
   }
 
   private async refreshTwitters(): Promise<void> {

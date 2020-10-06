@@ -31,6 +31,7 @@ import {
   EnergyGrowthIcon,
   EnergyIcon,
   RangeIcon,
+  UpgradeIcon,
   SpeedIcon,
   SilverIcon
 } from '../Icons';
@@ -323,12 +324,10 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       ? formatNumber((energyPercent / 100) * selectedStats.energy)
       : '0';
 
-  const getSilver = () =>
-    selectedStats
-      ? formatNumber((silverPercent / 100) * selectedStats.silver)
-      : '0';
-
-
+  const getSilver = (): number => {
+    if (!selectedStats) return 0;
+    return selectedStats.silver;
+  };
 
   const getSilverNeeded = (): number => {
     if (!selected || !uiManager) return 0;
@@ -411,7 +410,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
             <div>
               <span>
-                <Sub>Upgrade</Sub>
+                <Sub><UpgradeIcon /></Sub>
               </span>
               <span>
                 {Math.floor(getSilver())} <Sub>/</Sub>{' '}

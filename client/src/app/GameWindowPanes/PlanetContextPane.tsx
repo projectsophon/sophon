@@ -328,6 +328,14 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       ? formatNumber((silverPercent / 100) * selectedStats.silver)
       : '0';
 
+
+
+  const getSilverNeeded = (): number => {
+    if (!selected || !uiManager) return 0;
+    const totalLevel = selected.upgradeState.reduce((a, b) => a + b);
+    return Math.floor((totalLevel + 1) * 0.2 * selected.silverCap);
+  };
+
   /*
   useEffect(() => {
     console.log('updating percent values');
@@ -400,6 +408,17 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         <StyledPlanetInfo>
           <PlanetPreview selected={selected} />
           <div>
+
+            <div>
+              <span>
+                <Sub>Upgrade</Sub>
+              </span>
+              <span>
+                {Math.floor(getSilver())} <Sub>/</Sub>{' '}
+                {Math.ceil(getSilverNeeded())}
+              </span>
+            </div>
+
             <div>
               <span>
                 <TooltipTrigger name={TooltipName.Energy} needsShift>

@@ -17,11 +17,13 @@ Custom dark-forest tools
 
 Install dependencies by running `yarn`, this will also kick off the first Rust build.
 
-Once all that succeeds, use `yarn start` to start the explorer/websocket server.
+Once all that succeeds, use `yarn start`, which will ask you a series of questions about how to configure your explorer!
 
 ## Rebuilding
 
-If you change any Rust code, you need to run `yarn build` for the native bindings to be regenerated.
+If you change any **Rust** or **Reason** code, you need to run `yarn build` for the native bindings to be regenerated.
+
+If you are continuously working on Reason code, you can run the build in watch mode by running `yarn re:watch`.
 
 ## "Known Board"
 

@@ -146,7 +146,7 @@ if (isClientServer) {
       require('vite-plugin-react')
     ],
     optimizeDeps: {
-      include: ['auto-bind/index'],
+      include: ['auto-bind/index', 'stylis-rule-sheet'],
     },
     env: {
       PORT: port,

@@ -1,0 +1,8 @@
+{
+  "name": "sophon",
+  "dependencies": {
+    "@esy-ocaml/reason": "*",
+    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
+    "ocaml": "4.6.x"
+  }
+}

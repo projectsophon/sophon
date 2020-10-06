@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rescript-lang/rescript-compiler/master/docs/docson/build-schema.json",
+  "name": "sophon",
+  "version": "0.1.0",
+  "reason": {
+    "react-jsx": 3
+  },
+  "refmt": 3,
+  "bsc-flags": [
+    "-bs-super-errors"
+  ],
+  "sources": {
+    "dir": "client/src",
+    "subdirs": true
+  },
+  "package-specs": {
+    "module": "es6",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "bs-dependencies": [
+    "reason-react",
+    "@ahrefs/bs-emotion"
+  ],
+  "ppx-flags": [
+    "@davesnx/styled-ppx/styled-ppx"
+  ],
+  "warnings": {
+    "error": "+101"
+  }
+}

@@ -47,9 +47,10 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node .",
     "prepare": "yarn build",
-    "build": "yarn build-rust",
+    "build": "yarn re:build && yarn rust:build",
+    "re:build": "bsb -make-world",
     "re:watch": "bsb -make-world -w",
     "re:clean": "bsb -clean-world",
-    "build-rust": "neon build --release"
+    "rust:build": "neon build --release"
   }
 }

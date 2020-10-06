@@ -516,11 +516,13 @@ class GameManager extends EventEmitter implements AbstractGameManager {
   }
 
   private setRadius(worldRadius: number) {
-    this.worldRadius = worldRadius;
+    if (this.worldRadius !== worldRadius) {
+      this.worldRadius = worldRadius;
 
-    this.explorers.forEach((explorer) => {
-      explorer.emit('set-radius', worldRadius);
-    });
+      this.explorers.forEach((explorer) => {
+        explorer.emit('set-radius', worldRadius);
+      });
+    }
   }
 
   private async refreshTwitters(): Promise<void> {

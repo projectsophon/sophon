@@ -514,7 +514,8 @@ export const SettingsIcon = () => {
 export const RankIcon = ({ planet }: { planet: Planet | null }) => {
   const rank = getPlanetRank(planet);
   if (isFullRank(planet)) return <FullRankIcon />;
-  if (rank === 1) return <Rank1Icon />;
+  if (rank === 0) return null;
+  else if (rank === 1) return <Rank1Icon />;
   else if (rank === 2) return <Rank2Icon />;
   else if (rank === 3) return <Rank3Icon />;
   return <Rank4Icon />;

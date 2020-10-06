@@ -63,6 +63,7 @@ export enum ModalName {
   Settings,
   Onboarding,
   Private,
+  PlayerInfo
 }
 
 export function ModalIcon({
@@ -71,7 +72,7 @@ export function ModalIcon({
 }: {
   modal: ModalName;
   hook: ModalHook;
-}) {
+} = {}) {
   const child = (): React.ReactNode => {
     if (modal === ModalName.Help) return <HelpIcon />;
     else if (modal === ModalName.PlanetDetails) return <PlanetIcon />;

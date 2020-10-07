@@ -18,7 +18,6 @@ import {
   Tooltip,
   CoordsPane,
   PlanetDetailsPane,
-  PlayerInfoPane,
   HelpPane,
   LeaderboardPane,
   PlanetDexPane,
@@ -87,7 +86,6 @@ export function GameWindowLayout() {
         <HatPane hook={hatHook} />
         <SettingsPane hook={settingsHook} privateHook={privateHook} />
         <PrivatePane hook={privateHook} />
-        {/* <PlayerInfoPane hook={} /> */}
       </>
 
       <OnboardingPane newPlayerHook={newPlayerHook} />

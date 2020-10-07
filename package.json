@@ -45,7 +45,7 @@
     "ws": "^7.3.1"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=production node .",
+    "start": "node .",
     "prepare": "yarn build",
     "build": "yarn re:build && yarn rust:build",
     "re:build": "bsb -make-world",

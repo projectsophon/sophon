@@ -1,6 +1,6 @@
 import React from 'react';
 import EventEmitter from 'events';
-import { getRandomActionId } from './Utils';
+import { getRandomActionId, planetCanUpgrade } from './Utils';
 import {
   EthTxStatus,
   SubmittedTx,
@@ -224,12 +224,14 @@ class NotificationManager extends EventEmitter {
   }
 
   planetCanUpgrade(planet: Planet): void {
-    this.notify(
-      NotificationType.CanUpgrade,
-      <span>
-        Your planet <PlanetNameLink planet={planet} /> can upgrade! <br />
-      </span>
-    );
+    if (planetCanUpgrade(planet)) {
+      this.notify(
+        NotificationType.CanUpgrade,
+        <span>
+          Your planet <PlanetNameLink planet={planet} /> can upgrade! <br />
+        </span>
+      );
+    }
   }
 
   balanceEmpty(): void {

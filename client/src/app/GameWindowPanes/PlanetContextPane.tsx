@@ -6,7 +6,7 @@ import {
 } from '../GameWindow';
 import { ContextPane } from '../GameWindowComponents/ContextMenu';
 import styled, { css } from 'styled-components';
-import { Sub, Green } from '../../components/Text';
+import { Sub, Green, White } from '../../components/Text';
 
 import {
   EthAddress, Bonus, StatIdx,
@@ -83,7 +83,7 @@ const StyledPlanetInfo = styled.div`
 
 const StyledFleets = styled.div<{ visible: boolean }>`
   display: ${({ visible }) => (visible ? 'block' : 'none')};
-  margin-top: 1.5em;
+
   & > p:first-child {
     color: ${dfstyles.colors.subtext};
     text-decoration: underline;
@@ -262,6 +262,101 @@ export function Spinner({ hook, children }: { hook: NumberHook }) {
   );
 }
 
+const SectionButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0.5em 0;
+`;
+
+const StyledUpgradeButton = styled.div<{ active: boolean }>`
+  min-width: 72.5px;
+  border-radius: 2px;
+  border: 1px solid ${dfstyles.colors.subtext};
+  padding: 0.2em;
+
+  text-align: center;
+
+  &:hover {
+    cursor: pointer;
+    border: 1px solid ${dfstyles.colors.text};
+  }
+
+  background: ${({ active }) => (active ? dfstyles.colors.text : 'none')};
+
+  &,
+  & span {
+    ${({ active }) =>
+    active && `color: ${dfstyles.colors.background} !important`};
+  }
+
+  & svg path {
+    ${({ active }) => active && `fill: ${dfstyles.colors.background} !important`}
+  }
+
+  & p > span {
+    vertical-align: middle;
+  }
+
+  &.disabled {
+    border: 1px solid ${dfstyles.colors.subtext} !important;
+    &,
+    & span {
+      color: ${dfstyles.colors.subtext} !important;
+      cursor: auto !important;
+    }
+  }
+`;
+
+function UpgradeButton({
+  branch,
+  hook,
+  disabled,
+  planet,
+}: {
+  branch: UpgradeBranchName;
+  hook: BranchHook;
+  disabled: boolean;
+  planet: Planet | null;
+}) {
+  if (!planet) return <></>;
+
+  const [myBranch, setBranch] = hook;
+  let branchIcon;
+  switch (branch) {
+    case 0:
+      branchIcon = <DefenseIcon />
+      break;
+    case 1:
+      branchIcon = <RangeIcon />
+      break;
+    case 2:
+      branchIcon = <SpeedIcon />
+      break;
+  }
+
+  return (
+    <StyledUpgradeButton
+      onClick={() => disabled || setBranch(branch)}
+      active={branch === myBranch}
+      className={disabled ? 'disabled' : ''}
+    >
+      <p>
+        <Sub>
+          <White>{branchIcon}</White> (lv
+          <White>{planet.upgradeState[branch]}</White>)
+        </Sub>
+      </p>
+    </StyledUpgradeButton>
+  );
+}
+
+const isPending = (selected): boolean => {
+  if (!selected) return true;
+  if (!selected.unconfirmedUpgrades) return false;
+  return selected.unconfirmedUpgrades.length > 0;
+};
+
 const DEFAULT_ENERGY_PERCENT = 50;
 const DEFAULT_SILVER_PERCENT = 100;
 
@@ -277,6 +372,8 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
   const windowManager = WindowManager.getInstance();
 
   const [bonus, setBonus] = useState<Bonus | null>(null);
+  const branchHook = useState<UpgradeBranchName | null>(null);
+  const [branch, _setBranch] = branchHook;
 
   useEffect(() => {
     if (!uiManager) return;
@@ -324,15 +421,15 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       : '0';
 
   const getUpgradeSilver = () => {
-    if (!selected || !uiManager) return '0';
-    return formatNumber(selectedStats.silver);
+    if (!selected || !uiManager) return 0;
+    return selectedStats.silver;
   };
 
   const getUpgradeSilverNeeded = () => {
-    if (!selected || !uiManager) return '??';
+    if (!selected || !uiManager) return 0;
     const totalLevel = selected.upgradeState.reduce((a, b) => a + b);
     const totalNeeded = Math.floor((totalLevel + 1) * 0.2 * selected.silverCap);
-    return formatNumber(totalNeeded);
+    return totalNeeded;
   };
 
   /*
@@ -395,6 +492,16 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       uiEmitter.removeListener(UIEmitterEvent.SendCompleted, onComplete);
     };
   });
+
+  const silver = getUpgradeSilver();
+  const silverNeeded = getUpgradeSilverNeeded();
+  const canUpgrade = planetCanUpgrade(selected);
+  const isUpgradePending = isPending(selected);
+  const isUpgradeDisabled = isUpgradePending || !canUpgrade || (silverNeeded && silver < silverNeeded);
+  const doUpgrade = (_e) => {
+    if (!canUpgrade || !uiManager || !selected || branch === null) return;
+    uiManager.upgrade(selected, branch);
+  };
 
   return (
     <ContextPane
@@ -488,13 +595,26 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
                 <Sub><UpgradeIcon /></Sub>
               </span>
               <span>
-                {planetCanUpgrade(selected)
-                  ? <> {getUpgradeSilver()} <Sub>/</Sub>{' '} {getUpgradeSilverNeeded()} </>
+                {canUpgrade
+                  ? <> {formatNumber(silver)} <Sub>/</Sub>{' '} {formatNumber(silverNeeded)} </>
                   : 'N/A'}
               </span>
             </div>
           </div>
         </StyledPlanetInfo>
+
+        <SectionButtons>
+          <UpgradeButton branch={0} hook={branchHook} planet={selected} disabled={isUpgradeDisabled} />
+          <UpgradeButton branch={1} hook={branchHook} planet={selected} disabled={isUpgradeDisabled} />
+          <UpgradeButton branch={2} hook={branchHook} planet={selected} disabled={isUpgradeDisabled} />
+          <StyledUpgradeButton
+            className={isUpgradeDisabled ? 'disabled' : undefined}
+            onClick={doUpgrade}
+          >
+            {isUpgradePending ? 'Pending' : canUpgrade ? 'Upgrade' : 'N/A'}
+          </StyledUpgradeButton>
+        </SectionButtons>
+
         <StyledFleets
           visible={selected !== null && selected.owner !== emptyAddress}
         >

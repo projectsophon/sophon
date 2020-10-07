@@ -30,7 +30,6 @@ export function CoordsText() {
         },
         sideLength: MIN_CHUNK_SIZE,
       };
-      if (!uiManager.hasMinedChunk(chunkLoc)) return '???';
 
       const per = perlin(vec, false);
       const spaceType = uiManager.spaceTypeFromPerlin(per);
@@ -86,8 +85,8 @@ export function CoordsPane() {
       ) : hovering ? (
         <span>Click to hide</span>
       ) : (
-        <CoordsText />
-      )}
+            <CoordsText />
+          )}
     </StyledCoordsPane>
   );
 }

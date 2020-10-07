@@ -20,8 +20,9 @@ import {
 import dfstyles from '../../styles/dfstyles.bs.js';
 import { getPlanetName, getPlanetColors } from '../../utils/ProcgenUtils';
 import _ from 'lodash';
-import { SelectedContext } from '../GameWindow';
+import { SelectedContext, AccountContext } from '../GameWindow';
 import { SilverIcon, RankIcon } from '../Icons';
+import { calculateRankAndScore } from './LeaderboardPane';
 
 const DexWrapper = styled.div`
   height: 12.2em; // exact size so a row is cut off
@@ -58,6 +59,7 @@ const DexRow = styled.div`
     // planet level
     &:nth-child(5) {
       width: 3em;
+      text-align: center;
     }
     // rank
     &:nth-child(6) {
@@ -73,9 +75,9 @@ const DexRow = styled.div`
       width: 6.5em;
     }
     // score
-    &:nth-child(9) {
-      width: 7em;
-    }
+    // &:nth-child(9) {
+    //   width: 7em;
+    // }
   }
 
   &.title-row > span {
@@ -192,6 +194,64 @@ const getPlanetScore = (planet: Planet, rank: number) => {
   return baseScore + totalSilver / 10;
 };
 
+const PlayerInfoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  height: 30px; // 5 + 3 * 7 + 4px
+
+  & > div > span:last-of-type {
+    margin-left: 0.5em;
+  }
+`;
+
+const PlayerInfoRow = () => {
+  const account = useContext<EthAddress | null>(AccountContext);
+  const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
+  const players = uiManager.getAllPlayers();
+  const planets = uiManager.getAllOwnedPlanets();
+  const [rank, score] = calculateRankAndScore(
+    players,
+    planets,
+    account
+  );
+
+  return (
+    <>
+      <div>
+        <span>Total Energy</span>
+        <Sub>:</Sub>
+        <span>
+          {account && uiManager
+            ? formatNumber(uiManager.getEnergyOfPlayer(account))
+            : '...'}
+        </span>
+      </div>
+      <div>
+        <span>Total Silver</span>
+        <Sub>:</Sub>
+        <span>
+          {account && uiManager
+            ? formatNumber(uiManager.getSilverOfPlayer(account))
+            : '...'}
+        </span>
+      </div>
+      <div>
+        <span>Score</span>
+        <Sub>:</Sub>
+        <span>{Math.floor(score)}</span>
+      </div>
+      <div>
+        <span>Rank</span>
+        <Sub>:</Sub>
+        <span>{rank}</span>
+      </div>
+    </>
+  );
+};
+
 function DexEntry({
   planet,
   className,
@@ -223,12 +283,16 @@ function DexEntry({
           <Sub>lv</Sub> {planet.planetLevel}
         </span>
         <span><RankIcon planet={planet} /></span>
-        <span style={energyStyle}>{formatNumber(planet.energy)}/{formatNumber(planet.energyCap)}</span>
-        <span style={silverStyle}>{formatNumber(planet.silver)}/{formatNumber(planet.silverCap)}</span>
-        <span>
+        <span style={energyStyle}>
+          {formatNumber(planet.energy)}<Sub>/</Sub>{formatNumber(planet.energyCap)}
+        </span>
+        <span style={silverStyle}>
+          {formatNumber(planet.silver)}<Sub>/</Sub>{formatNumber(planet.silverCap)}
+        </span>
+        {/* <span>
           {formatNumber(score)}
           <Sub> pts</Sub>
-        </span>
+        </span> */}
       </DexRow>
     </PlanetLink>
   );
@@ -331,6 +395,9 @@ export function PlanetDexPane({
 
   return (
     <ModalPane hook={hook} title='Planet Dex' name={ModalName.PlanetDex}>
+      <PlayerInfoWrapper>
+        <PlayerInfoRow />
+      </PlayerInfoWrapper>
       <DexWrapper>
         <DexRow className='title-row'>
           <span>#</span>
@@ -366,12 +433,12 @@ export function PlanetDexPane({
           >
             Silver
           </span>
-          <span
+          {/* <span
             className={sortBy === Columns.Points ? 'selected' : ''}
             onClick={() => setSortBy(Columns.Points)}
           >
             Points
-          </span>
+          </span> */}
         </DexRow>
         {planets
           .sort((a, b) => b.energyCap - a.energyCap)
@@ -381,7 +448,7 @@ export function PlanetDexPane({
             <DexEntry
               key={i}
               planet={planet}
-              score={getPlanetScore(planet, i)}
+              // score={getPlanetScore(planet, i)}
               rank={rank + 1}
               className={
                 selected?.locationId === planet.locationId ? 'selected' : ''

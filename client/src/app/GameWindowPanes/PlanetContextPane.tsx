@@ -290,6 +290,10 @@ const StyledUpgradeButton = styled.div<{ active: boolean }>`
     active && `color: ${dfstyles.colors.background} !important`};
   }
 
+  & svg path {
+    ${({ active }) => active && `fill: ${dfstyles.colors.background} !important`}
+  }
+
   & p > span {
     vertical-align: middle;
   }

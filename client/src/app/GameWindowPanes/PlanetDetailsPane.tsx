@@ -16,6 +16,7 @@ import {
   getPlanetRank,
   planetCanUpgrade,
   PlanetStatsInfo,
+  getPlayerShortHash,
 } from '../../utils/Utils';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
@@ -53,7 +54,7 @@ import {
   SpeedIcon,
 } from '../Icons';
 import dfstyles from '../../styles/dfstyles.bs.js';
-import { HAT_SIZES } from '../../utils/constants';
+import { HAT_SIZES, BLOCK_EXPLORER_URL } from '../../utils/constants';
 
 const PlanetscapeWrapper = styled.div`
   width: 100%;
@@ -141,6 +142,11 @@ const DetailsRowSingle = styled(DetailsRow)`
       margin-left: 0.5em;
       flex-grow: 1;
     }
+  }
+
+  a:hover {
+    text-decoration: underline;
+    cursor: pointer;
   }
 `;
 
@@ -240,7 +246,7 @@ export function PlanetDetailsPane({
 
   // total length 40 - 3 = 37
   const formatOwner = (owner: string): string => {
-    return owner;
+    return getPlayerShortHash(owner);
   };
 
   /*
@@ -435,7 +441,7 @@ export function PlanetDetailsPane({
             <Sub>Owner</Sub>
             <span>
               {selected
-                ? formatOwner(selected.owner)
+                ? <a onClick={() => window.open(`${BLOCK_EXPLORER_URL}/address/${selected.owner}`)}>{formatOwner(selected.owner)}</a>
                 : '0'}
             </span>
           </DetailsRowSingle>

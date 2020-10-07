@@ -7,6 +7,8 @@ import { EthAddress, Planet, Player } from '../../_types/global/GlobalTypes';
 import { Sub } from '../../components/Text';
 import dfstyles from '../../styles/dfstyles.bs.js';
 import { PlanetThumb, PlanetLink } from './PlanetDexPane';
+import { getPlayerShortHash } from '../../utils/Utils';
+import { BLOCK_EXPLORER_URL } from '../../utils/constants';
 
 const LeaderboardWrapper = styled.div`
   width: 42em;
@@ -30,30 +32,33 @@ const LeaderboardWrapper = styled.div`
       &:last-child {
         margin-left: 0;
       }
+      // rank
       &:nth-child(1) {
-        // rank
         width: 3em;
       }
       &:nth-child(2) {
-        // playername
+        margin-right: 1em;
+      }
+      // playername
+      &:nth-child(3) {
         flex-grow: 1;
       }
-      &:nth-child(3) {
-        // planet icons
+      // planet icons
+      &:nth-child(4) {
         width: 10em;
 
         display: flex;
         flex-direction: row;
         justify-content: space-between;
       }
-      &:nth-child(4) {
+      &:nth-child(5) {
         width: 4em;
         margin-left: 1em;
       }
     }
 
     // lmao make this shit a class
-    &:not(:first-child) > span:nth-child(3) > span {
+    &:not(:first-child) > span:nth-child(4) > span {
       width: 3em;
       cursor: pointer;
       transition: filter 0.2s;
@@ -66,6 +71,7 @@ const LeaderboardWrapper = styled.div`
   & a {
     &:hover {
       text-decoration: underline;
+      cursor: pointer;
       color: ${dfstyles.colors.subtext};
     }
   }
@@ -195,10 +201,14 @@ export function LeaderboardPane({ hook }: { hook: ModalHook }) {
               <Sub>#{idx + 1}</Sub>
             </span>
 
-            <span>{entry.playerId}</span>
+            <span>
+              <a onClick={() => window.open(`${BLOCK_EXPLORER_URL}/address/${entry.playerId}`)}>
+                {getPlayerShortHash(entry.playerId)}
+              </a>
+            </span>
             <span>
               {entry.twitter &&
-                <a href={`http://twitter.com/${entry.twitter}`}>
+                <a onClick={() => window.open(`http://twitter.com/${entry.twitter}`)}>
                   @{entry.twitter}
                 </a>
               }

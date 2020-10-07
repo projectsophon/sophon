@@ -21,6 +21,7 @@ import {
   HelpPane,
   LeaderboardPane,
   PlanetDexPane,
+  EnergyDexPane,
   UpgradeDetailsPane,
   TwitterVerifyPane,
   TwitterBroadcastPane,
@@ -32,6 +33,7 @@ import {
   ModalLeaderboardIcon,
   ModalSettingsIcon,
   ModalPlanetDexIcon,
+  ModalEnergyDexIcon,
   ModalTwitterVerifyIcon,
 } from './GameWindowPanes/ModalPane';
 import { ExploreContextPane } from './GameWindowPanes/ExploreContextPane';
@@ -51,6 +53,7 @@ export function GameWindowLayout() {
   const helpHook = useState<boolean>(false);
   const leaderboardHook = useState<boolean>(false);
   const planetDexHook = useState<boolean>(false);
+  const energyDexHook = useState<boolean>(false);
   const upgradeDetailsHook = useState<boolean>(false);
   const twitterVerifyHook = useState<boolean>(false);
   const twitterBroadcastHook = useState<boolean>(false);
@@ -80,6 +83,7 @@ export function GameWindowLayout() {
         <HelpPane hook={helpHook} />
         <LeaderboardPane hook={leaderboardHook} />
         <PlanetDexPane hook={planetDexHook} />
+        <EnergyDexPane hook={energyDexHook} />
         <UpgradeDetailsPane hook={upgradeDetailsHook} />
         <TwitterVerifyPane hook={twitterVerifyHook} />
         <TwitterBroadcastPane hook={twitterBroadcastHook} />
@@ -99,6 +103,7 @@ export function GameWindowLayout() {
               <ModalHelpIcon hook={helpHook} />
               <ModalLeaderboardIcon hook={leaderboardHook} />
               <ModalPlanetDexIcon hook={planetDexHook} />
+              <ModalEnergyDexIcon hook={energyDexHook} />
               <ModalSettingsIcon hook={settingsHook} />
             </MenuBar>
             <ZoomPane />

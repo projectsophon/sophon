@@ -288,8 +288,7 @@ export function PlanetDetailsPane({
   };
 
   const sharePlanet = (): void => {
-    const str = `I found an awesome level ${
-      selected?.planetLevel
+    const str = `I found an awesome level ${selected?.planetLevel
       } planet named ${getPlanetName(
         selected
       )}! @darkforest_eth (https://zkga.me/planet${selected?.locationId})`;
@@ -436,12 +435,23 @@ export function PlanetDetailsPane({
             <Sub>Owner</Sub>
             <span>
               {selected
-                ? planetOwnerTwitter
-                  ? '@' + planetOwnerTwitter
-                  : formatOwner(selected.owner)
+                ? formatOwner(selected.owner)
                 : '0'}
             </span>
           </DetailsRowSingle>
+
+          <DetailsRowSingle className='margin-top' style={{ marginTop: '1em' }}>
+            <Sub>Twitter</Sub>
+            <span>
+              {selected
+                ? planetOwnerTwitter
+                  ? '@' + planetOwnerTwitter
+                  : ' '
+                : '0'}
+            </span>
+          </DetailsRowSingle>
+
+
           <DetailsRowSingle>
             <Sub>Location</Sub>
             <LocationViewer planet={selected} />

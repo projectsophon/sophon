@@ -167,6 +167,11 @@ export function LeaderboardPane({ hook }: { hook: ModalHook }) {
           </span>
           <span>
             <Sub>
+              <u>Twitter?</u>
+            </Sub>
+          </span>
+          <span>
+            <Sub>
               <u>Top Planets</u>
             </Sub>
           </span>
@@ -189,14 +194,14 @@ export function LeaderboardPane({ hook }: { hook: ModalHook }) {
             <span>
               <Sub>#{idx + 1}</Sub>
             </span>
+
+            <span>{entry.playerId}</span>
             <span>
-              {entry.twitter ? (
+              {entry.twitter &&
                 <a href={`http://twitter.com/${entry.twitter}`}>
                   @{entry.twitter}
                 </a>
-              ) : (
-                  <span>{entry.playerId}</span>
-                )}
+              }
             </span>
             <span>
               {entry.sortedPlanets.slice(0, 3).map((planet, i) => (

@@ -129,6 +129,8 @@ const minerManager = MinerManager.create(
 
 let server;
 
+import VitePluginReact from 'vite-plugin-react';
+
 if (isClientServer) {
   server = createServer({
     root: path.join(__dirname, 'client'),
@@ -142,15 +144,16 @@ if (isClientServer) {
       'stream': 'stream-browserify',
     },
     jsx: 'react',
-    plugins: [
-      require('vite-plugin-react')
-    ],
     optimizeDeps: {
       include: ['auto-bind/index', 'stylis-rule-sheet'],
     },
     env: {
       PORT: port,
     },
+    // Explictly don't add the plugin resolvers because
+    // we want prod React to make warnings go away
+    configureServer: [VitePluginReact.configureServer],
+    transforms: [...VitePluginReact.transforms],
   });
 } else if (isWebsocketServer) {
   server = http.createServer();

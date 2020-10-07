@@ -6,6 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 
+import fs from 'fs';
 import http from 'http';
 import level from 'level';
 import Primus from 'primus';
@@ -33,6 +34,12 @@ const answers = await inquirer.prompt([
     default: PRELOAD_MAP ? path.resolve(process.cwd(), PRELOAD_MAP) : null,
     when: (answers) => answers.shouldPreload || PRELOAD_MAP,
     filter: (mapPath) => path.resolve(process.cwd(), mapPath),
+  },
+  {
+    type: 'confirm',
+    name: 'shouldDump',
+    message: `Do you want to dump the current map?`,
+    default: true,
   },
   {
     type: 'number',
@@ -93,6 +100,7 @@ const answers = await inquirer.prompt([
 const {
   shouldPreload,
   preloadMap,
+  shouldDump,
   worldRadius,
   initCoords,
   chunkSize,
@@ -111,13 +119,21 @@ const localStorageManager = await LocalStorageManager.create(db);
 
 if (shouldPreload && preloadMap) {
   try {
-    const chunks = require(preloadMap);
+    const chunks = JSON.parse(fs.readFileSync(preloadMap, 'utf8'));
 
     chunks.forEach((chunk) => localStorageManager.updateChunk(chunk, false));
   } catch (err) {
     console.error(`Error importing map: ${preloadMap}`);
     process.exit(1);
   }
+}
+
+if (shouldDump) {
+  const now = new Date();
+  const mapPath = path.resolve(process.cwd(), `./map-export-${now.toISOString()}.json`);
+  const chunks = Array.from(localStorageManager.allChunks());
+  fs.writeFileSync(mapPath, JSON.stringify(chunks), 'utf8');
+  console.log(`Map exported to ${mapPath}`);
 }
 
 const minerManager = MinerManager.create(

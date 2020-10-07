@@ -22,6 +22,7 @@ import {
   getPlanetShortHash,
   getPlayerShortHash,
   PlanetStatsInfo,
+  planetCanUpgrade,
 } from '../../utils/Utils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
 import dfstyles from '../../styles/dfstyles.bs.js';
@@ -217,9 +218,7 @@ const defaultTransform = css`scale(2, 0.8)`;
 
 const StyledSpinner = styled.span`
   display: inline-flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 1em;
+  flex-direction: row;
   height: 1.5em;
 
   position: relative;
@@ -228,23 +227,12 @@ const StyledSpinner = styled.span`
   ${dfstyles.prefabs.noselect};
 
   & > span {
-    height: 0.7em;
-    width: 0.5em;
     background: ${dfstyles.colors.text};
     border-radius: 2px;
     text-align: center;
     color: ${dfstyles.colors.background};
     display: inline-block;
-    transform: ${defaultTransform};
-
-    & span {
-      position: relative;
-      bottom: 3px;
-    }
-
-    &:last-child {
-      transform: ${defaultTransform} rotate(180deg);
-    }
+    width: 1em;
 
     &:hover {
       cursor: pointer;
@@ -253,16 +241,22 @@ const StyledSpinner = styled.span`
   }
 `;
 
-export function Spinner({ hook }: { hook: NumberHook }) {
+const Percent = styled.p`
+  width: 2.5em;
+  text-align: center;
+`;
+
+export function Spinner({ hook, children }: { hook: NumberHook }) {
   const [, setPercent] = hook;
 
   return (
     <StyledSpinner>
-      <span onClick={() => setPercent((x) => Math.min(x + 1, 100))}>
-        <span>^</span>
-      </span>
       <span onClick={() => setPercent((x) => Math.max(x - 1, 0))}>
-        <span>^</span>
+        <span>{'<'}</span>
+      </span>
+      {children}
+      <span onClick={() => setPercent((x) => Math.min(x + 1, 100))}>
+        <span>{'>'}</span>
       </span>
     </StyledSpinner>
   );
@@ -494,8 +488,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
                 <Sub><UpgradeIcon /></Sub>
               </span>
               <span>
-                {getUpgradeSilver()} <Sub>/</Sub>{' '}
-                {getUpgradeSilverNeeded()}
+                {planetCanUpgrade(selected)
+                  ? <> {getUpgradeSilver()} <Sub>/</Sub>{' '} {getUpgradeSilverNeeded()} </>
+                  : 'N/A'}
               </span>
             </div>
           </div>
@@ -513,8 +508,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
               <p>
                 <Sub>Sending {getEnergy()} energy</Sub>
               </p>
-              <p>{energyPercent}%</p>
-              <Spinner hook={energyHook} />
+              <Spinner hook={energyHook}>
+                <Percent>{energyPercent}%</Percent>
+              </Spinner>
             </div>
           </div>
           {selected && selected.silver > 0 && (
@@ -527,8 +523,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
                 <p>
                   <Sub>Sending {getSilver()} silver</Sub>
                 </p>
-                <p>{silverPercent}%</p>
-                <Spinner hook={silverHook} />
+                <Spinner hook={silverHook}>
+                  <Percent>{silverPercent}%</Percent>
+                </Spinner>
               </div>
             </div>
           )}

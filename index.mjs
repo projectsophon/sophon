@@ -169,8 +169,6 @@ if (isWebsocketServer) {
   });
 
   primus.on('connection', (spark) => {
-    spark.emit('sync-map', Array.from(localStorageManager.allChunks()));
-
     spark.on('set-pattern', (worldCoords) => {
       const newPattern = new SpiralPattern(worldCoords, chunkSize);
       minerManager.setMiningPattern(newPattern);

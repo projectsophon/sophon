@@ -41,7 +41,7 @@ export class PlanetHelper {
   private readonly planets: PlanetMap;
   private readonly arrivals: VoyageMap;
   private readonly planetArrivalIds: PlanetVoyageIdMap;
-  private readonly planetLocationMap: PlanetLocationMap;
+  private readonly planetLocationMap: Map<string, Location>;
   private readonly contractConstants: ContractConstants;
   private readonly coordsToLocation: MemoizedCoordHashes;
   private readonly unconfirmedMoves: Record<string, UnconfirmedMove>;
@@ -65,7 +65,7 @@ export class PlanetHelper {
     this.planets = planets;
     this.contractConstants = contractConstants;
     this.coordsToLocation = new Map();
-    this.planetLocationMap = {};
+    this.planetLocationMap = new Map();
     const planetArrivalIds: PlanetVoyageIdMap = {};
     const arrivals: VoyageMap = {};
     this.endTimeSeconds = endTimeSeconds;
@@ -206,7 +206,7 @@ export class PlanetHelper {
   }
 
   public addPlanetLocation(planetLocation: Location): void {
-    this.planetLocationMap[planetLocation.hash] = planetLocation;
+    this.planetLocationMap.set(planetLocation.hash, planetLocation);
     const { x, y } = planetLocation.coords;
     this.coordsToLocation.set(`${x}-${y}`, planetLocation);
     if (!this.planets.has(planetLocation.hash)) {
@@ -217,7 +217,7 @@ export class PlanetHelper {
   }
 
   public getLocationOfPlanet(planetId: LocationId): Location | null {
-    return this.planetLocationMap[planetId] || null;
+    return this.planetLocationMap.get(planetId) || null;
   }
 
   public getAllOwnedPlanets(): Planet[] {

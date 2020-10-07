@@ -111,7 +111,7 @@ class CanvasRenderer {
     this.zone0ChunkMap = new Map<string, ExploredChunkData>();
     this.zone1ChunkMap = new Map<string, ExploredChunkData>();
     this.zone2ChunkMap = new Map<string, ExploredChunkData>();
-    let planetLocations: Location[] = [];
+    let planetLocations = new Set();
     for (const exploredChunk of exploredChunks) {
       if (viewport.intersectsViewport(exploredChunk)) {
         let chunkMap: Map<string, ExploredChunkData>;
@@ -124,23 +124,10 @@ class CanvasRenderer {
         }
         addToChunkMap(chunkMap, exploredChunk, false);
         for (const planetLocation of exploredChunk.planetLocations) {
-          planetLocations.push(planetLocation);
+          planetLocations.add(planetLocation);
         }
       }
     }
-
-    planetLocations = planetLocations.sort((a, b) => {
-      const aLevel = this.gameUIManager.getPlanetLevel(a.hash);
-      const bLevel = this.gameUIManager.getPlanetLevel(b.hash);
-      // TODO: throw error if either is null
-      if (aLevel === null) {
-        return 1;
-      }
-      if (bLevel === null) {
-        return -1;
-      }
-      return bLevel - aLevel;
-    });
 
     this.drawCleanBoard();
     this.drawKnownChunks([

@@ -35,9 +35,7 @@ import {
 } from './ContractsAPI';
 import NotificationManager from '../utils/NotificationManager';
 
-interface MemoizedCoordHashes {
-  [x: number]: { [y: number]: Location };
-}
+type MemoizedCoordHashes = Map<string, Location>;
 
 export class PlanetHelper {
   private readonly planets: PlanetMap;
@@ -66,7 +64,7 @@ export class PlanetHelper {
     this.address = address;
     this.planets = planets;
     this.contractConstants = contractConstants;
-    this.coordsToLocation = {};
+    this.coordsToLocation = new Map();
     this.planetLocationMap = {};
     const planetArrivalIds: PlanetVoyageIdMap = {};
     const arrivals: VoyageMap = {};
@@ -183,10 +181,7 @@ export class PlanetHelper {
   // returns null if this isn't a planet, according to hash and coords
   public getPlanetWithCoords(coords: WorldCoords): Planet | null {
     const { x, y } = coords;
-    let location: Location | null = null;
-    if (this.coordsToLocation[x] && this.coordsToLocation[x][y]) {
-      location = this.coordsToLocation[x][y];
-    }
+    let location = this.coordsToLocation.get(`${x}-${y}`);
     if (!location) {
       return null;
     }
@@ -213,8 +208,7 @@ export class PlanetHelper {
   public addPlanetLocation(planetLocation: Location): void {
     this.planetLocationMap[planetLocation.hash] = planetLocation;
     const { x, y } = planetLocation.coords;
-    if (!this.coordsToLocation[x]) this.coordsToLocation[x] = {};
-    this.coordsToLocation[x][y] = planetLocation;
+    this.coordsToLocation.set(`${x}-${y}`, planetLocation);
     if (!this.planets.has(planetLocation.hash)) {
       this.planets.set(planetLocation.hash, this.defaultPlanetFromLocation(
         planetLocation

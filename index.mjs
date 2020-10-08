@@ -246,6 +246,18 @@ if (isWebsocketServer) {
         .then(() => console.log(`Updated WORLD_RADIUS to ${radius} in .env`))
         .catch(() => console.log(`Failed to update WORLD_RADIUS to ${radius} in .env`));
     });
+
+    // Only send sync chunks with 200 objects in them
+    let chunks = [];
+    for (let chunk of localStorageManager.allChunks()) {
+      if (chunks.length < 200) {
+        chunks.push(chunk);
+      } else {
+        spark.emit('sync-chunks', chunks);
+        chunks = [];
+      }
+    }
+    chunks = null;
   });
 }
 

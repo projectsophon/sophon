@@ -368,11 +368,16 @@ class GameManager extends EventEmitter implements AbstractGameManager {
       this.explorers = new Map();
 
       this.explorerIPs.forEach((ip) => {
-        const explorer = new window.Primus(ip);
+        const explorer = new window.Primus(ip, {
+          strategy: ['disconnect', 'online']
+        });
         explorer.on('new-chunk', (chunk) => {
           this.lastChunkPerExplorer.set(ip, chunk.chunkFootprint);
           this.addNewChunk(chunk);
           this.emit(GameManagerEvent.DiscoveredNewChunk, chunk);
+        });
+        explorer.on('sync-chunks', (chunks) => {
+          chunks.forEach((chunk) => this.addNewChunk(chunk));
         });
         explorer.on('hash-rate', (hashRate) => {
           this.hashRatePerExplorer.set(ip, hashRate);

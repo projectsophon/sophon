@@ -4289,6 +4289,11 @@ universalify@^1.0.0:
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-1.0.0.tgz#b61a1da173e8435b2fe3c67d29b9adf8594bd16d"
   integrity sha512-rb6X1W158d7pRQBg5gkR8uPaSfiids68LTJQYOtEUhoJUWBdaQHsuT/EUduxXYxcrt4r5PJ4fuHW1MHT6p0qug==
 
+update-dotenv@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/update-dotenv/-/update-dotenv-1.1.1.tgz#17146f302f216c3c92419d5a327a45be910050ca"
+  integrity sha512-3cIC18In/t0X/yH793c00qqxcKD8jVCgNOPif/fGQkFpYMGecM9YAc+kaAKXuZsM2dE9I9wFI7KvAuNX22SGMQ==
+
 url@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/url/-/url-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"

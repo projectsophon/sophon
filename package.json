@@ -34,12 +34,14 @@
   "devDependencies": {
     "bs-platform": "^8.2.0",
     "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
     "level": "^6.0.1",
     "neon-cli": "^0.4.2",
     "primus": "^7.3.5",
     "primus-emit": "^1.0.0",
     "snarkjs": "^0.3.33",
+    "update-dotenv": "^1.1.1",
     "vite": "^1.0.0-rc.4",
     "vite-plugin-react": "^3.0.2",
     "ws": "^7.3.1"

@@ -12,13 +12,39 @@ import level from 'level';
 import Primus from 'primus';
 import { createServer } from 'vite';
 import inquirer from 'inquirer';
+import dotenv from 'dotenv';
+import updateDotenv from 'update-dotenv';
 
 import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
 import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
 import { SpiralPattern } from './lib/SpiralPattern.mjs';
 import LocalStorageManager from './lib/LocalStorageManager.mjs';
+import { toBoolean, toNumber, toObject } from './lib/parse-utils.mjs';
 
-const { PRELOAD_MAP } = process.env;
+let env = dotenv.config();
+
+if (env && env.error) {
+  if (env.error.code !== 'ENOENT') {
+    console.error('Problem loading your `.env` file - please delete it and run again.');
+    process.exit(1);
+  }
+
+  env = {
+    parsed: {}
+  };
+}
+
+const {
+  SHOULD_PRELOAD,
+  PRELOAD_MAP,
+  SHOULD_DUMP,
+  WORLD_RADIUS,
+  INIT_COORDS,
+  CHUNK_SIZE,
+  IS_CLIENT_SERVER,
+  IS_WEBSOCKET_SERVER,
+  PORT,
+} = env.parsed;
 
 const answers = await inquirer.prompt([
   {
@@ -26,13 +52,15 @@ const answers = await inquirer.prompt([
     name: 'shouldPreload',
     message: 'Would you like to pre-seed Sophon with a map?',
     default: false,
+    when: () => SHOULD_PRELOAD == null,
   },
   {
     type: 'input',
     name: 'preloadMap',
     message: `What's the path of your map?`,
     default: PRELOAD_MAP ? path.resolve(process.cwd(), PRELOAD_MAP) : null,
-    when: (answers) => answers.shouldPreload || PRELOAD_MAP,
+    // Blah, string compare here
+    when: (answers) => answers.shouldPreload || SHOULD_PRELOAD === 'true' || PRELOAD_MAP,
     filter: (mapPath) => path.resolve(process.cwd(), mapPath),
   },
   {
@@ -40,18 +68,21 @@ const answers = await inquirer.prompt([
     name: 'shouldDump',
     message: `Do you want to dump the current map?`,
     default: true,
+    when: () => SHOULD_DUMP == null,
   },
   {
     type: 'number',
     name: 'worldRadius',
     message: `What's your current world radius?`,
     default: 40500,
+    when: () => WORLD_RADIUS == null,
   },
   {
     type: 'input',
     name: 'initCoords',
     message: `Which x,y coords do you want to start mining at? (comma-separated)`,
     default: '0,0',
+    when: () => INIT_COORDS == null,
     filter: (coords) => {
       const [x = 0, y = 0] = coords.split(',').map((i) => i.trim());
       return { x, y };
@@ -75,39 +106,54 @@ const answers = await inquirer.prompt([
       128,
       MAX_CHUNK_SIZE, // 256
     ],
+    when: () => CHUNK_SIZE == null,
   },
   {
     type: 'confirm',
     name: 'isClientServer',
     message: `Do you want to serve the custom game client?`,
     default: true,
+    when: () => IS_CLIENT_SERVER == null,
   },
   {
     type: 'confirm',
     name: 'isWebsocketServer',
     message: `Do you want to open a websocket channel to this explorer?`,
     default: true,
+    when: () => IS_WEBSOCKET_SERVER == null,
   },
   {
     type: 'number',
     name: 'port',
     message: `What port should we start the server on?`,
     default: 8082,
-    when: (answers) => answers.isClientServer || answers.isWebsocketServer,
+    when: (answers) => PORT == null && (answers.isClientServer || answers.isWebsocketServer),
   }
 ]);
 
 const {
-  shouldPreload,
+  shouldPreload = toBoolean(SHOULD_PRELOAD),
   preloadMap,
-  shouldDump,
-  worldRadius,
-  initCoords,
-  chunkSize,
-  isClientServer,
-  isWebsocketServer,
-  port,
+  shouldDump = toBoolean(SHOULD_DUMP),
+  worldRadius = toNumber(WORLD_RADIUS),
+  initCoords = toObject(INIT_COORDS),
+  chunkSize = toNumber(CHUNK_SIZE),
+  isClientServer = toBoolean(IS_CLIENT_SERVER),
+  isWebsocketServer = toBoolean(IS_WEBSOCKET_SERVER),
+  port = toNumber(PORT),
 } = answers;
+
+await updateDotenv({
+  SHOULD_PRELOAD: `${shouldPreload}`,
+  SHOULD_DUMP: `${shouldDump}`,
+  WORLD_RADIUS: `${worldRadius}`,
+  INIT_COORDS: `${JSON.stringify(initCoords)}`,
+  CHUNK_SIZE: `${chunkSize}`,
+  IS_CLIENT_SERVER: `${isClientServer}`,
+  IS_WEBSOCKET_SERVER: `${isWebsocketServer}`,
+  PORT: `${port}`,
+});
+console.log('Config written to `.env` file - edit/delete this file to change settings');
 
 const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'json' });
 
@@ -188,10 +234,17 @@ if (isWebsocketServer) {
     spark.on('set-pattern', (worldCoords) => {
       const newPattern = new SpiralPattern(worldCoords, chunkSize);
       minerManager.setMiningPattern(newPattern);
+      const coords = `${worldCoords.x},${worldCoords.y}`;
+      updateDotenv({ INIT_COORDS: `${JSON.stringify(worldCoords)}` })
+        .then(() => console.log(`Updated INIT_COORDS to ${coords} in .env`))
+        .catch(() => console.log(`Failed to update INIT_COORDS to ${coords} in .env`));
     });
 
     spark.on('set-radius', (radius) => {
       minerManager.setRadius(radius);
+      updateDotenv({ WORLD_RADIUS: `${radius}` })
+        .then(() => console.log(`Updated WORLD_RADIUS to ${radius} in .env`))
+        .catch(() => console.log(`Failed to update WORLD_RADIUS to ${radius} in .env`));
     });
   });
 }

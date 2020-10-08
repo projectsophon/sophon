@@ -12,8 +12,8 @@ class EthereumAccountManager {
   private readonly knownAddresses: EthAddress[];
 
   private constructor() {
-    const url = 'wss://rpc.xdaichain.com/wss';
-    this.provider = new providers.WebSocketProvider(url);
+    const url = 'https://rpc.xdaichain.com/';
+    this.provider = new providers.JsonRpcProvider(url);
     this.signer = null;
     this.knownAddresses = [];
     const knownAddressesStr = localStorage.getItem('KNOWN_ADDRESSES');

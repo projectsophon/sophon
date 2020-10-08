@@ -6,8 +6,6 @@
   "author": "Blaine Bublitz <blaine.bublitz@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@ahrefs/bs-emotion": "^2.0.0",
-    "@davesnx/styled-ppx": "^0.20.0",
     "@ethersproject/providers": "^5.0.5",
     "@pika/react": "^16.13.1",
     "@pika/react-dom": "^16.13.1",
@@ -33,7 +31,6 @@
   },
   "devDependencies": {
     "bs-platform": "^8.2.0",
-    "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
     "level": "^6.0.1",

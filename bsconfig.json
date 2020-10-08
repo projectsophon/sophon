@@ -19,11 +19,7 @@
   },
   "suffix": ".bs.js",
   "bs-dependencies": [
-    "reason-react",
-    "@ahrefs/bs-emotion"
-  ],
-  "ppx-flags": [
-    "@davesnx/styled-ppx/styled-ppx"
+    "reason-react"
   ],
   "warnings": {
     "error": "+101"

@@ -437,24 +437,30 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       ? formatNumber((silverPercent / 100) * selectedStats.silver)
       : '0';
 
+  const [inputValue, setInputValue] = useState(null);
+
   const manualChange = (evt) => {
     const { value } = evt.target;
-    if (selectedStats) {
-      try {
-        let f = parseFloat(value.replace(/[kK]$/, ''));
-        if (/[kK]$/.test(value)) {
-          f *= 1000;
-        }
-        const percent = f / selectedStats.silver * 100;
-        if (percent > 0 && percent <= 100) {
-          setSilverPercent(percent);
-        }
-      } catch (err) {
-        console.log('Unable to parse silver value', err);
+    setInputValue(value);
+  };
+
+  useEffect(() => {
+    if (selectedStats && inputValue) {
+      let f = parseFloat(inputValue.replace(/[kK]$/, ''));
+      if (Number.isNaN(f) || inputValue.endsWith('.')) {
+        return;
+      }
+
+      if (/[kK]$/.test(inputValue)) {
+        f *= 1000;
+      }
+      const percent = f / selectedStats.silver * 100;
+      if (percent > 0 && percent <= 100) {
+        setSilverPercent(percent);
+        setInputValue(null);
       }
     }
-  }
-
+  }, [inputValue, selectedStats]);
 
   const getUpgradeSilver = () => {
     if (!selected || !uiManager) return 0;
@@ -677,7 +683,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
               ></SilverIconSelector>
               <div>
                 <p>
-                  <Sub>Sending <ManualInput onChange={manualChange} value={getSilver()} /> silver</Sub>
+                  <Sub>Sending <ManualInput onChange={manualChange} value={inputValue || getSilver()} /> silver</Sub>
                 </p>
                 <Spinner hook={silverHook}>
                   <Percent>{Math.floor(silverPercent)}%</Percent>

@@ -422,7 +422,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
   const getUpgradeSilver = () => {
     if (!selected || !uiManager) return 0;
-    return selectedStats.silver;
+    return selected.silver;
   };
 
   const getUpgradeSilverNeeded = () => {

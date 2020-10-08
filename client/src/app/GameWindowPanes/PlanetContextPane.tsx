@@ -308,6 +308,23 @@ const StyledUpgradeButton = styled.div<{ active: boolean }>`
   }
 `;
 
+const ManualInput = styled.input`
+  transition: background 0.2s, color 0.2s, width: 0.2s !important;
+  outline: none;
+  background: ${dfstyles.colors.background};
+  color: ${dfstyles.colors.subtext};
+  border-radius: 4px;
+  border: 1px solid ${dfstyles.colors.text};
+  margin-left: 0.75em;
+  width: 6em;
+  padding: 2px 6px;
+
+  &:focus {
+    background: ${dfstyles.colors.backgroundlight};
+    color: ${dfstyles.colors.text};
+  }
+`;
+
 function UpgradeButton({
   branch,
   hook,
@@ -408,7 +425,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       ? uiManager.getForcesSending(selected.locationId)
       : DEFAULT_SILVER_PERCENT
   );
-  const [silverPercent, _setSilverPercent] = silverHook;
+  const [silverPercent, setSilverPercent] = silverHook;
 
   const getEnergy = () =>
     selectedStats
@@ -419,6 +436,25 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
     selectedStats
       ? formatNumber((silverPercent / 100) * selectedStats.silver)
       : '0';
+
+  const manualChange = (evt) => {
+    const { value } = evt.target;
+    if (selectedStats) {
+      try {
+        let f = parseFloat(value.replace(/[kK]$/, ''));
+        if (/[kK]$/.test(value)) {
+          f *= 1000;
+        }
+        const percent = f / selectedStats.silver * 100;
+        if (percent > 0 && percent <= 100) {
+          setSilverPercent(percent);
+        }
+      } catch (err) {
+        console.log('Unable to parse silver value', err);
+      }
+    }
+  }
+
 
   const getUpgradeSilver = () => {
     if (!selected || !uiManager) return 0;
@@ -641,10 +677,10 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
               ></SilverIconSelector>
               <div>
                 <p>
-                  <Sub>Sending {getSilver()} silver</Sub>
+                  <Sub>Sending <ManualInput onChange={manualChange} value={getSilver()} /> silver</Sub>
                 </p>
                 <Spinner hook={silverHook}>
-                  <Percent>{silverPercent}%</Percent>
+                  <Percent>{Math.floor(silverPercent)}%</Percent>
                 </Spinner>
               </div>
             </div>

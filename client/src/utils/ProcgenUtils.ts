@@ -24,11 +24,17 @@ export const hslStr: (h: number, s: number, l: number) => string = (
 ) => {
   return `hsl(${h % 360},${s}%,${l}%)`;
 };
+
+const huesByHash = new Map();
 function hashToHue(hash: string): number {
+  if (huesByHash.has(hash)) {
+    return huesByHash.get(hash);
+  }
   let seed = bigInt(hash, 16).and(0xffffff).toString(16);
   seed = '0x' + '0'.repeat(6 - seed.length) + seed;
 
   const baseHue = parseInt(seed) % 360;
+  huesByHash.set(hash, baseHue);
   return baseHue;
 }
 

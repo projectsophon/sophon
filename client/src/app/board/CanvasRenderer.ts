@@ -24,6 +24,7 @@ import dfstyles from '../../styles/dfstyles.bs.js';
 import { getPlanetColors, getOwnerColor } from '../../utils/ProcgenUtils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
 import { hatFromType, HatType } from '../../utils/Hats';
+import perlin from '../../miner/perlin';
 
 function convertSeconds(time: number) {
   return `${Math.floor(time / 60)} mins ${Math.floor(time % 60)} s`;
@@ -52,7 +53,8 @@ class CanvasRenderer {
   private constructor(
     canvas: HTMLCanvasElement,
     gameUIManager: GameUIManager,
-    image: HTMLImageElement
+    image: HTMLImageElement,
+    background,
   ) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d', {
@@ -65,6 +67,9 @@ class CanvasRenderer {
       throw new Error('Not a 2D canvas.');
     }
     this.ctx = ctx;
+
+    this.background = background;
+    this.bgCtx = background.getContext('2d');
 
     this.gameUIManager = gameUIManager;
     this.perlinThreshold1 = gameUIManager.getPerlinThresholds()[0];
@@ -100,9 +105,10 @@ class CanvasRenderer {
   static initialize(
     canvas: HTMLCanvasElement,
     gameUIManager: GameUIManager,
-    image: HTMLImageElement
+    image: HTMLImageElement,
+    background,
   ) {
-    const canvasRenderer = new CanvasRenderer(canvas, gameUIManager, image);
+    const canvasRenderer = new CanvasRenderer(canvas, gameUIManager, image, background);
     CanvasRenderer.instance = canvasRenderer;
 
     return canvasRenderer;
@@ -134,11 +140,11 @@ class CanvasRenderer {
     }
 
     this.drawCleanBoard();
-    this.drawKnownChunks([
-      this.zone0ChunkMap.values(),
-      this.zone1ChunkMap.values(),
-      this.zone2ChunkMap.values(),
-    ]);
+    // this.drawKnownChunks([
+    //   this.zone0ChunkMap.values(),
+    //   this.zone1ChunkMap.values(),
+    //   this.zone2ChunkMap.values(),
+    // ]);
 
     this.drawSelectedRangeRing();
     this.drawVoyages();
@@ -184,8 +190,31 @@ class CanvasRenderer {
     const viewport = Viewport.getInstance();
 
     this.ctx.clearRect(0, 0, viewport.viewportWidth, viewport.viewportHeight);
-    this.ctx.fillStyle = 'grey';
-    this.ctx.fillRect(0, 0, viewport.viewportWidth, viewport.viewportHeight);
+    // this.ctx.fillStyle = 'grey';
+    // this.ctx.fillRect(0, 0, viewport.viewportWidth, viewport.viewportHeight);
+    for (const chunkLoc of viewport.allChunksInViewport()) {
+      const center = {
+        x: chunkLoc.bottomLeft.x + chunkLoc.sideLength / 2,
+        y: chunkLoc.bottomLeft.y + chunkLoc.sideLength / 2,
+      };
+      const p = perlin(center, false);
+
+      let fill: CanvasPattern | string = 'black';
+
+      if (p < this.perlinThreshold1) {
+        fill = '#303080';
+      } else if (p < this.perlinThreshold2) {
+        fill = '#202060';
+      }
+
+      this.drawRectWithCenter(
+        this.bgCtx,
+        center,
+        chunkLoc.sideLength,
+        chunkLoc.sideLength,
+        fill
+      );
+    }
   }
 
   private drawKnownChunks(
@@ -214,6 +243,7 @@ class CanvasRenderer {
         }
 
         this.drawRectWithCenter(
+          this.ctx,
           center,
           chunkLoc.sideLength,
           chunkLoc.sideLength,
@@ -764,12 +794,12 @@ class CanvasRenderer {
   }
 
   private drawRectWithCenter(
+    ctx,
     center: WorldCoords,
     width: number, // TODO we should label w/h with world vs canvas coords
     height: number,
     fill: string | CanvasPattern = 'white'
   ) {
-    const { ctx } = this;
     const viewport = Viewport.getInstance();
 
     const centerCanvasCoords = viewport.worldToCanvasCoords(center);

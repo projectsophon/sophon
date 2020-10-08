@@ -133,6 +133,28 @@ class Viewport {
     };
   }
 
+  allChunksInViewport() {
+    const { viewportWidth, viewportHeight } = this;
+    const { canvasToWorldCoords } = this;
+    function* chunkGen() {
+      let y = 0;
+      let x = 0;
+      while (y < viewportHeight) {
+        y += 16
+        while (x < viewportWidth) {
+          x += 16
+          const worldCoords = canvasToWorldCoords({ x, y });
+          yield {
+            bottomLeft: worldCoords,
+            sideLength: 16,
+          };
+        }
+        x = 0;
+      }
+    }
+    return chunkGen();
+  }
+
   zoomIn(): void {
     this.onScroll(-300, true);
   }

@@ -21,6 +21,7 @@ export default function ControllableCanvas() {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const backgroundRef = useRef<HTMLCanvasElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
   const uiEmitter: UIEmitter = UIEmitter.getInstance();
@@ -79,6 +80,7 @@ export default function ControllableCanvas() {
     }
 
     const canvas = canvasRef.current;
+    const backgroundCanvas = canvasRef.current;
     const img = imgRef.current;
     if (!canvas || !img) {
       console.error('');
@@ -86,7 +88,7 @@ export default function ControllableCanvas() {
     }
 
     Viewport.initialize(gameUIManager, 250, canvas);
-    CanvasRenderer.initialize(canvas, gameUIManager, img);
+    CanvasRenderer.initialize(canvas, gameUIManager, img, backgroundCanvas);
     // We can't attach the wheel event onto the canvas due to:
     // https://www.chromestatus.com/features/6662647093133312
     canvas.addEventListener('wheel', onWheel);
@@ -137,6 +139,18 @@ export default function ControllableCanvas() {
       />
       <canvas
         style={{
+          position: 'absolute',
+          zIndex: '-1',
+          width: '100%',
+          height: '100%',
+        }}
+        ref={backgroundRef}
+        width={width}
+        height={height}
+      />
+      <canvas
+        style={{
+          zIndex: '1',
           width: '100%',
           height: '100%',
         }}

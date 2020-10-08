@@ -18,25 +18,18 @@ module Route = {
 [@bs.module "./GameLandingPage"] [@bs.val]
 external gameLandingPage: React.component(unit) = "GameLandingPage";
 
-let color = Dfstyles.dfstyles.colors.text;
-let background = Dfstyles.dfstyles.colors.backgrounddark;
-
-module Application = [%styled.div
-  {j|
-  height: 100%;
-  width: 100%;
-  color: $color;
-  background: $background;
-|j}
-];
+// TODO: cleanup
+%bs.raw
+{| import classes from "./application.module.css" |};
+let applicationClass: string = [%bs.raw {|classes.application |}];
 
 let default = () =>
-  <Application>
+  <div className=applicationClass>
     <Router>
       <Switch>
         <Route path="/" component=gameLandingPage />
         <Route path="/game1" component=gameLandingPage />
       </Switch>
     </Router>
-  </Application>;
+  </div>;
 // <Route path="/wallet/:addr/:actionId/:balance/:method" component={TxConfirmPopup} />

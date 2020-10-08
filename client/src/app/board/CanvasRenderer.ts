@@ -25,6 +25,10 @@ import { getPlanetColors, getOwnerColor } from '../../utils/ProcgenUtils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
 import { hatFromType, HatType } from '../../utils/Hats';
 
+function convertSeconds(time: number) {
+  return `${Math.floor(time / 60)} mins ${Math.floor(time % 60)} s`;
+}
+
 class CanvasRenderer {
   static instance: CanvasRenderer | null;
 
@@ -365,6 +369,14 @@ class CanvasRenderer {
           );
 
           const myAtk: number = moveShipsDecay(shipsMoved, fromPlanet, dist);
+          const fleetSpeedMultiplier = fromPlanet.speed / 100;
+          const fleetMovementTimeEstimate = dist / fleetSpeedMultiplier;
+          this.drawText(
+            `ETA: ${convertSeconds(Math.round(fleetMovementTimeEstimate))}`,
+            15,
+            { x: toCoords.x, y: toCoords.y * 0.99 },
+            myAtk > 0 ? 'white' : 'red'
+          );
           if (uiManager.isOwnedByMe(planet) || planet.energy === 0) {
             energyString += ` (+${Math.floor(myAtk)})`;
           } else {
@@ -378,7 +390,7 @@ class CanvasRenderer {
           15,
           {
             x: center.x,
-            y: center.y - 1.1 * radius - (planet.owner ? 0.75 : 0.25),
+            y: center.y - 1.2 * radius - (planet.owner ? 0.75 : 0.25),
           },
           uiManager.isOwnedByMe(planet) ? 'white' : getOwnerColor(planet)
         );
@@ -410,7 +422,7 @@ class CanvasRenderer {
             15,
             {
               x: center.x,
-              y: center.y - 1.1 * radius - (planet.owner ? 0.75 : 0.25),
+              y: center.y - 1.2 * radius - (planet.owner ? 0.75 : 0.25),
             },
             '#996666'
           );
@@ -423,7 +435,7 @@ class CanvasRenderer {
           15,
           {
             x: center.x,
-            y: center.y + 1.1 * radius + (planet.owner ? 0.75 : 0.25),
+            y: center.y + 1.2 * radius - (planet.owner ? 0.75 : 0.25),
           },
           'gold'
         );
@@ -478,7 +490,7 @@ class CanvasRenderer {
         myMove ? 'blue' : 'red',
         true
       );
-      this.drawText(`${Math.floor(timeLeft)}s`, 15, {
+      this.drawText(`${convertSeconds(timeLeft)}`, 15, {
         x: toLoc.coords.x,
         y: toLoc.coords.y + radius * 1.1,
       });
@@ -502,9 +514,9 @@ class CanvasRenderer {
       this.drawCircleWithCenter(shipsLocation, 1, myMove ? 'blue' : 'red');
       const timeLeftSeconds = Math.floor(voyage.arrivalTime - now);
       this.drawText(
-        `${timeLeftSeconds.toString()}s`,
+        `${convertSeconds(timeLeftSeconds)}`,
         15,
-        { x: shipsLocationX, y: shipsLocationY - 1.1 },
+        { x: shipsLocationX, y: shipsLocationY - 5 },
         'white'
       );
     }
@@ -683,7 +695,15 @@ class CanvasRenderer {
           this.drawText(
             `Energy: ${Math.round(myAtk)}`,
             15,
-            { x: to.x, y: to.y },
+            { x: to.x, y: to.y * 0.99 },
+            myAtk > 0 ? 'white' : 'red'
+          );
+          const fleetSpeedMultiplier = myPlanet.speed / 100;
+          const fleetMovementTimeEstimate = dist / fleetSpeedMultiplier;
+          this.drawText(
+            `ETA: ${convertSeconds(Math.round(fleetMovementTimeEstimate))}`,
+            15,
+            { x: to.x, y: to.y * 1.01 },
             myAtk > 0 ? 'white' : 'red'
           );
         }

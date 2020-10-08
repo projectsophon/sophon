@@ -440,7 +440,7 @@ export function PlanetDexPane({
             Points
           </span> */}
         </DexRow>
-        {planets
+        {visible && planets
           .sort((a, b) => b.energyCap - a.energyCap)
           .map((planet, i) => [planet, i]) // pass the index
           .sort(sortingFn) // sort using planet + index

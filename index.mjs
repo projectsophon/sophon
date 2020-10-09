@@ -214,6 +214,7 @@ if (isClientServer) {
     },
     // Explictly don't add the plugin resolvers because
     // we want prod React to make warnings go away
+    // resolvers: [...VitePluginReact.resolvers],
     configureServer: [VitePluginReact.configureServer],
     transforms: [...VitePluginReact.transforms],
   });

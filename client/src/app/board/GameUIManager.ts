@@ -265,10 +265,9 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
           (mouseDownCoords.y - mouseUpOverCoords.y) ** 2
         );
         const myAtk: number = moveShipsDecay(forces, mouseDownPlanet, dist);
-        const effPercentSilver = Math.min(
-          this.getSilverSending(from.locationId),
-          98
-        );
+        const effPercentSilver = from.resource === PlanetResource.NONE
+          ? this.getSilverSending(from.locationId)
+          : Math.min(this.getSilverSending(from.locationId), 98);
         if (myAtk > 0) {
           const silver = Math.floor((from.silver * effPercentSilver) / 100);
           // TODO: do something like JSON.stringify(args) so we know formatting is correct

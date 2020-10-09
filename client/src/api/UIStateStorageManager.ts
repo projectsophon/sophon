@@ -5,7 +5,6 @@ import { EthAddress } from '../_types/global/GlobalTypes';
 
 export enum UIDataKey {
   terminalEnabled = 'terminalEnabled',
-  sidebarEnabled = 'sidebarEnabled',
 
   welcomedPlayer = 'welcomedPlayer',
   foundSpace = 'foundSpace',
@@ -19,7 +18,6 @@ export enum UIDataKey {
 export type UIDataValue = boolean;
 
 export type UIData = {
-  sidebarEnabled: boolean;
   terminalEnabled: boolean;
 
   welcomedPlayer: boolean;
@@ -34,7 +32,6 @@ export type UIData = {
 
 export const defaultUserData: UIData = {
   terminalEnabled: true,
-  sidebarEnabled: true,
 
   welcomedPlayer: false,
   foundSpace: false,

@@ -17,7 +17,6 @@ import { SpiralPattern } from '../../utils/MiningPatterns';
 import { TargetIcon, PauseIcon, PlayIcon } from '../Icons';
 import { IconButton } from './ModalPane';
 import { TooltipTrigger } from './Tooltip';
-import TutorialManager, { TutorialState } from '../../utils/TutorialManager';
 import dfstyles from '../../styles/dfstyles.bs.js';
 
 const StyledExploreContextPane = styled.div`
@@ -60,9 +59,6 @@ export function ExploreContextPane() {
     const updatePattern = (worldCoords: WorldCoords) => {
       const newpattern = new SpiralPattern(worldCoords, MIN_CHUNK_SIZE);
       uiManager?.setMiningPattern(newpattern, whichExplorer);
-
-      const tutorialManager = TutorialManager.getInstance();
-      tutorialManager.acceptInput(TutorialState.MinerMove);
     };
 
     uiEmitter.on(UIEmitterEvent.WorldMouseDown, doMouseDown);

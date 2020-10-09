@@ -4,7 +4,6 @@ import dfstyles from '../../styles/dfstyles.bs.js';
 import { GameWindowZIndex } from '../../utils/WindowManager';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
 import { UIDataKey, useStoredUIState } from '../../api/UIStateStorageManager';
-import TutorialManager, { TutorialState } from '../../utils/TutorialManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
 import GameUIManager from '../board/GameUIManager';
 
@@ -89,13 +88,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   useLayoutEffect(() => {
     uiEmitter.emit(UIEmitterEvent.UIChange);
   }, [visible, uiEmitter]);
-
-  useEffect(() => {
-    if (!visible) {
-      const tutorialManager = TutorialManager.getInstance();
-      tutorialManager.acceptInput(TutorialState.Sidebar);
-    }
-  }, [visible]);
 
   return (
     <StyledSidebar>

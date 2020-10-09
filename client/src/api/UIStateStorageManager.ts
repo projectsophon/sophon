@@ -6,7 +6,6 @@ import { EthAddress } from '../_types/global/GlobalTypes';
 export enum UIDataKey {
   terminalEnabled = 'terminalEnabled',
   sidebarEnabled = 'sidebarEnabled',
-  tutorialCompleted = 'tutorialCompleted',
 
   welcomedPlayer = 'welcomedPlayer',
   foundSpace = 'foundSpace',
@@ -16,14 +15,12 @@ export enum UIDataKey {
   foundComet = 'foundComet',
 
   notifMove = 'notifMove',
-  newPlayer = 'newPlayer',
 }
 export type UIDataValue = boolean;
 
 export type UIData = {
   sidebarEnabled: boolean;
   terminalEnabled: boolean;
-  tutorialCompleted: boolean;
 
   welcomedPlayer: boolean;
   foundSpace: boolean;
@@ -33,13 +30,11 @@ export type UIData = {
   foundComet: boolean;
 
   notifMove: boolean;
-  newPlayer: boolean;
 };
 
 export const defaultUserData: UIData = {
   terminalEnabled: true,
   sidebarEnabled: true,
-  tutorialCompleted: false,
 
   welcomedPlayer: false,
   foundSpace: false,
@@ -49,7 +44,6 @@ export const defaultUserData: UIData = {
   foundComet: false,
 
   notifMove: true,
-  newPlayer: true,
 };
 
 export function useStoredUIState<T extends UIDataValue>(

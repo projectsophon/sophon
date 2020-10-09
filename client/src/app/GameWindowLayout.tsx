@@ -4,7 +4,6 @@ import { ContextMenu } from './GameWindowComponents/ContextMenu';
 import ControllableCanvas from './board/ControllableCanvas';
 
 import {
-  Sidebar,
   CanvasContainer,
   CanvasWrapper,
   MainWindow,
@@ -18,7 +17,6 @@ import {
   Tooltip,
   CoordsPane,
   PlanetDetailsPane,
-  HelpPane,
   LeaderboardPane,
   PlanetDexPane,
   EnergyDexPane,
@@ -29,7 +27,6 @@ import {
 } from './GameWindowPanes/GameWindowPanes';
 
 import {
-  ModalHelpIcon,
   ModalLeaderboardIcon,
   ModalSettingsIcon,
   ModalPlanetDexIcon,
@@ -38,19 +35,15 @@ import {
 } from './GameWindowPanes/ModalPane';
 import { ExploreContextPane } from './GameWindowPanes/ExploreContextPane';
 import { PlanetContextPane } from './GameWindowPanes/PlanetContextPane';
-import { TutorialPane } from './GameWindowPanes/TutorialPane';
 import { HatPane } from './GameWindowPanes/HatPane';
 import { NotificationsPane } from './Notifications';
 import { SettingsPane } from './GameWindowPanes/SettingsPane';
-import OnboardingPane from './GameWindowPanes/OnboardingPane';
-import { useStoredUIState, UIDataKey } from '../api/UIStateStorageManager';
 import GameUIManager from './board/GameUIManager';
 import GameUIManagerContext from './board/GameUIManagerContext';
 import { PrivatePane } from './GameWindowPanes/PrivatePane';
 
 export function GameWindowLayout() {
   const planetDetailsHook = useState<boolean>(false);
-  const helpHook = useState<boolean>(false);
   const leaderboardHook = useState<boolean>(false);
   const planetDexHook = useState<boolean>(false);
   const energyDexHook = useState<boolean>(false);
@@ -61,12 +54,6 @@ export function GameWindowLayout() {
   const settingsHook = useState<boolean>(false);
 
   const privateHook = useState<boolean>(false);
-
-  const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
-  const newPlayerHook = useStoredUIState<boolean>(
-    UIDataKey.newPlayer,
-    uiManager
-  );
 
   return (
     <WindowWrapper>
@@ -80,7 +67,6 @@ export function GameWindowLayout() {
           upgradeDetHook={upgradeDetailsHook}
           hatHook={hatHook}
         />
-        <HelpPane hook={helpHook} />
         <LeaderboardPane hook={leaderboardHook} />
         <PlanetDexPane hook={planetDexHook} />
         <EnergyDexPane hook={energyDexHook} />
@@ -92,15 +78,12 @@ export function GameWindowLayout() {
         <PrivatePane hook={privateHook} />
       </>
 
-      <OnboardingPane newPlayerHook={newPlayerHook} />
-
       <MainWindow>
         {/* canvas and stuff */}
         <CanvasContainer>
           <UpperLeft>
             <MenuBar>
               <ModalTwitterVerifyIcon hook={twitterVerifyHook} />
-              <ModalHelpIcon hook={helpHook} />
               <ModalLeaderboardIcon hook={leaderboardHook} />
               <ModalPlanetDexIcon hook={planetDexHook} />
               <ModalEnergyDexIcon hook={energyDexHook} />
@@ -108,7 +91,6 @@ export function GameWindowLayout() {
             </MenuBar>
             <ZoomPane />
           </UpperLeft>
-          <TutorialPane newPlayerHook={newPlayerHook} />
 
           <NotificationsPane />
 

@@ -76,7 +76,11 @@ class CanvasRenderer {
 
     this.imgPattern = ctx.createPattern(image, 'repeat');
 
-    this.frame();
+    this.fps = 30;
+    this.fpsInterval = 1000 / this.fps;
+    this.lastTick = window.performance.now();
+
+    this.frame(window.performance.now());
     autoBind(this);
   }
 
@@ -108,7 +112,17 @@ class CanvasRenderer {
     return canvasRenderer;
   }
 
-  private frame() {
+  private frame(newTick) {
+    let elapsed = newTick - this.lastTick;
+
+    this.frameRequestId = window.requestAnimationFrame(this.frame.bind(this));
+
+    if (elapsed < this.fpsInterval) {
+      return;
+    }
+
+    this.lastTick = newTick - (elapsed % this.fpsInterval);
+
     const viewport = Viewport.getInstance();
 
     const exploredChunks = this.gameUIManager.getExploredChunks();
@@ -150,8 +164,6 @@ class CanvasRenderer {
     this.drawBorders();
 
     this.drawMiner();
-
-    this.frameRequestId = window.requestAnimationFrame(this.frame.bind(this));
   }
 
   private drawMiner() {

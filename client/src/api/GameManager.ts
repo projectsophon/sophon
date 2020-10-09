@@ -115,6 +115,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     this.explorerIPs = [
       `http://0.0.0.0${port}`,
       'http://165.232.57.41',
+
     ];
     this.lastChunkPerExplorer = new Map();
     this.hashRatePerExplorer = new Map();
@@ -317,6 +318,10 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   public getAllPlayers(): Player[] {
     return Object.values(this.players);
+  }
+
+  public getAllPlanets(): PlanetMap {
+    return this.planetHelper.getAllPlanets();
   }
 
   public getExploredChunks(): Iterable<ExploredChunkData> {

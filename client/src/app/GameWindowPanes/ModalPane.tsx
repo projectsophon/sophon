@@ -7,6 +7,7 @@ import {
   PlanetIcon,
   LeaderboardIcon,
   PlanetdexIcon,
+  EnergydexIcon,
   UpgradeIcon,
   TwitterIcon,
   BroadcastIcon,
@@ -54,6 +55,7 @@ export enum ModalName {
   PlanetDetails,
   Leaderboard,
   PlanetDex,
+  EnergyDex,
   UpgradeDetails,
   TwitterVerify,
   TwitterBroadcast,
@@ -78,6 +80,7 @@ export function ModalIcon({
     else if (modal === ModalName.PlanetDetails) return <PlanetIcon />;
     else if (modal === ModalName.Leaderboard) return <LeaderboardIcon />;
     else if (modal === ModalName.PlanetDex) return <PlanetdexIcon />;
+    else if (modal === ModalName.EnergyDex) return <EnergydexIcon />;
     else if (modal === ModalName.UpgradeDetails) return <UpgradeIcon />;
     else if (modal === ModalName.TwitterVerify) return <TwitterIcon />;
     else if (modal === ModalName.TwitterBroadcast) return <BroadcastIcon />;
@@ -122,6 +125,10 @@ export function ModalLeaderboardIcon({ hook }: { hook: ModalHook }) {
 
 export function ModalPlanetDexIcon({ hook }: { hook: ModalHook }) {
   return <ModalIcon hook={hook} modal={ModalName.PlanetDex} />;
+}
+
+export function ModalEnergyDexIcon({ hook }: { hook: ModalHook }) {
+  return <ModalIcon hook={hook} modal={ModalName.EnergyDex} />;
 }
 
 export function ModalUpgradeDetailsIcon({ hook }: { hook: ModalHook }) {

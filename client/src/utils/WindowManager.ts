@@ -77,6 +77,7 @@ export enum TooltipName {
   ModalPlanetDetails,
   ModalLeaderboard,
   ModalPlanetDex,
+  ModalEnergyDex,
   ModalUpgradeDetails,
   ModalTwitterVerification,
   ModalTwitterBroadcast,

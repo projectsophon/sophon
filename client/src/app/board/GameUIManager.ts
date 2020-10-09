@@ -2,6 +2,7 @@ import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
 import { compareWorldCoords, WorldCoords } from '../../utils/Coordinates';
 import {
   Planet,
+  PlanetMap,
   Location,
   LocationId,
   ExploredChunkData,
@@ -357,6 +358,10 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
 
   getAllPlayers(): Player[] {
     return this.gameManager.getAllPlayers();
+  }
+
+  getAllPlanets(): PlanetMap {
+    return this.gameManager.getAllPlanets();
   }
 
   getDetailLevel(): number {

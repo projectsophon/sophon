@@ -2,6 +2,7 @@ import {
   EthAddress,
   ExploredChunkData,
   Planet,
+  PlanetMap,
   Location,
   LocationId,
   QueuedArrival,
@@ -19,6 +20,7 @@ import {
 } from '../_types/darkforest/api/ContractsAPITypes';
 import { MiningPattern } from '../utils/MiningPatterns';
 
+
 export default interface AbstractGameManager extends EventEmitter {
   destroy(): void;
 
@@ -31,6 +33,7 @@ export default interface AbstractGameManager extends EventEmitter {
   getSilverCurveAtPercent(planet: Planet, percent: number): number | null;
 
   getAllPlayers(): Player[];
+  getAllPlanets(): PlanetMap;
   getExploredChunks(): Iterable<ExploredChunkData>;
   getWorldRadius(): number;
   getWorldSilver(): number;

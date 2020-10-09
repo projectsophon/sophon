@@ -1,6 +1,7 @@
 import { WorldCoords } from '../../utils/Coordinates';
 import {
   Planet,
+  PlanetMap,
   Location,
   LocationId,
   ExploredChunkData,
@@ -47,6 +48,7 @@ export default interface AbstractUIManager {
   setDetailLevel(level: number): void;
 
   getAllPlayers(): Player[];
+  getAllPlanets(): PlanetMap;
   getRadiusOfPlanetLevel(planetLevel: PlanetLevel): number;
   getPlanetWithId(planetId: LocationId): Planet | null;
   getPlanetLevel(planetId: LocationId): PlanetLevel | null;

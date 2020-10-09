@@ -4,25 +4,22 @@ import {
   ModalPane,
   ModalHook,
   ModalName,
-  ModalPlanetDexIcon,
 } from './ModalPane';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
 import { Planet, PlanetResource } from '../../_types/global/GlobalTypes';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
-import { SidebarPane } from '../GameWindowComponents/GameWindowComponents';
 import { Sub, Space } from '../../components/Text';
 import {
   getPlanetShortHash,
   formatNumber,
   getPlanetRank,
+  bonusFromHex
 } from '../../utils/Utils';
 import dfstyles from '../../styles/dfstyles.bs.js';
 import { getPlanetName, getPlanetColors } from '../../utils/ProcgenUtils';
-import _ from 'lodash';
-import { SelectedContext, AccountContext } from '../GameWindow';
+import { SelectedContext } from '../GameWindow';
 import { SilverIcon, RankIcon } from '../Icons';
-import { calculateRankAndScore } from './LeaderboardPane';
 
 const DexWrapper = styled.div`
   height: 12.2em; // exact size so a row is cut off
@@ -38,10 +35,8 @@ const DexRow = styled.div`
   height: 30px; // 5 + 3 * 7 + 4px
 
   & > span {
+    // planet icon
     &:nth-child(1) {
-      width: 2em;
-    }
-    &:nth-child(2) {
       display: flex;
       flex-direction: row;
       justify-content: space-around;
@@ -49,35 +44,32 @@ const DexRow = styled.div`
       width: 3em;
       position: relative; // for planetcircle
     }
-    &:nth-child(3) {
-      // short hash
+    // short hash
+    &:nth-child(2) {
       margin-right: 0.5em;
     }
-    &:nth-child(4) {
+    // planet name
+    &:nth-child(3) {
       flex-grow: 1;
     }
     // planet level
-    &:nth-child(5) {
+    &:nth-child(4) {
       width: 3em;
       text-align: center;
     }
     // rank
-    &:nth-child(6) {
+    &:nth-child(5) {
       width: 3em;
       text-align: center;
     }
     // energy
-    &:nth-child(7) {
+    &:nth-child(6) {
       width: 6.5em;
     }
     // silver
-    &:nth-child(8) {
+    &:nth-child(7) {
       width: 6.5em;
     }
-    // score
-    // &:nth-child(9) {
-    //   width: 7em;
-    // }
   }
 
   &.title-row > span {
@@ -188,88 +180,13 @@ export function PlanetThumb({ planet }: { planet: Planet }) {
   );
 }
 
-const getPlanetScore = (planet: Planet, rank: number) => {
-  const baseScore = rank < 10 ? planet.energyCap : 0;
-  const totalSilver = planet.silverSpent + planet.silver;
-  return baseScore + totalSilver / 10;
-};
-
-const PlayerInfoWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  height: 30px; // 5 + 3 * 7 + 4px
-
-  & > div > span:last-of-type {
-    margin-left: 0.5em;
-  }
-`;
-
-const PlayerInfoRow = () => {
-  const account = useContext<EthAddress | null>(AccountContext);
-  const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
-  const players = uiManager.getAllPlayers();
-  const planets = uiManager.getAllOwnedPlanets();
-  const [rank, score] = calculateRankAndScore(
-    players,
-    planets,
-    account
-  );
-
-  return (
-    <>
-      <div>
-        <span>Total Energy</span>
-        <Sub>:</Sub>
-        <span>
-          {account && uiManager
-            ? formatNumber(uiManager.getEnergyOfPlayer(account))
-            : '...'}
-        </span>
-      </div>
-      <div>
-        <span>Total Silver</span>
-        <Sub>:</Sub>
-        <span>
-          {account && uiManager
-            ? formatNumber(uiManager.getSilverOfPlayer(account))
-            : '...'}
-        </span>
-      </div>
-      <div>
-        <span>Score</span>
-        <Sub>:</Sub>
-        <span>{Math.floor(score)}</span>
-      </div>
-      <div>
-        <span>Rank</span>
-        <Sub>:</Sub>
-        <span>{rank}</span>
-      </div>
-    </>
-  );
-};
-
-function DexEntry({
-  planet,
-  className,
-  score,
-  rank,
-}: {
-  planet: Planet;
-  className: string;
-  score: number;
-}) {
+function DexEntry({ planet, className }: { planet: Planet; className: string; }) {
   let energyStyle = planet.energy === planet.energyCap ? { color: 'red' } : {};
   let silverStyle = planet.silver === planet.silverCap ? { color: 'red' } : {};
+
   return (
     <PlanetLink planet={planet}>
       <DexRow className={className}>
-        <span>
-          {rank}.
-        </span>
         <span>
           <PlanetThumb planet={planet} />
         </span>
@@ -289,10 +206,6 @@ function DexEntry({
         <span style={silverStyle}>
           {formatNumber(planet.silver)}<Sub>/</Sub>{formatNumber(planet.silverCap)}
         </span>
-        {/* <span>
-          {formatNumber(score)}
-          <Sub> pts</Sub>
-        </span> */}
       </DexRow>
     </PlanetLink>
   );
@@ -328,56 +241,31 @@ enum Columns {
   Points = 4,
 }
 
-export function PlanetDexPane({
-  hook,
-  small,
-}: {
-  small?: boolean;
-  hook: ModalHook;
-}) {
+export function EnergyDexPane({ hook }: { hook: ModalHook; }) {
   const [visible, _setVisible] = hook;
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
 
-  const [sortBy, setSortBy] = useState<Columns>(Columns.Points);
+  const createTable = (planets: [Planet]) => {
+    var dexes = [];
 
-  const scoreFn = (a: [Planet, number], b: [Planet, number]): number => {
-    const [scoreA, scoreB] = [getPlanetScore(...a), getPlanetScore(...b)];
-    return scoreB - scoreA;
-  };
+    function levelSort(a, b) {
+      return b.planetLevel - a.planetLevel;
+    }
 
-  const nameFn = (a: [Planet, number], b: [Planet, number]): number => {
-    const [nameA, nameB] = [getPlanetName(a[0]), getPlanetName(b[0])];
-    return nameA.localeCompare(nameB);
-  };
+    for (const [i, planet] of planets.sort(levelSort).entries()) {
 
-  const energyFn = (a: [Planet, number], b: [Planet, number]): number => {
-    return b[0].energy - a[0].energy;
-  };
+      dexes.push(<DexEntry
+        key={i}
+        planet={planet}
+        className={
+          selected?.locationId === planet.locationId ? 'selected' : ''
+        }
+      />);
+    }
+    return dexes.slice(0, 50);
+  }
 
-  const silverFn = (a: [Planet, number], b: [Planet, number]): number => {
-    return b[0].silver - a[0].silver;
-  };
-
-  const levelFn = (a: [Planet, number], b: [Planet, number]): number => {
-    return b[0].planetLevel - a[0].planetLevel;
-  };
-
-  const sortingFn = (a: [Planet, number], b: [Planet, number]): number => {
-    const [scoreA, scoreB] = [getPlanetScore(...a), getPlanetScore(...b)];
-    const myFn = [nameFn, levelFn, energyFn, silverFn, scoreFn][sortBy];
-    if (scoreA !== scoreB) return myFn(a, b);
-
-    if (!uiManager) return 0;
-    const locA = uiManager.getLocationOfPlanet(a[0].locationId);
-    const locB = uiManager.getLocationOfPlanet(a[0].locationId);
-    if (!locA || !locB) return 0;
-    const { x: xA, y: yA } = locA.coords;
-    const { x: xB, y: yB } = locB.coords;
-
-    if (xA !== xB) return xA - xB;
-    return yA - yB;
-  };
 
   const [planets, setPlanets] = useState<Planet[]>([]);
 
@@ -387,74 +275,49 @@ export function PlanetDexPane({
     if (!uiManager) return;
     const myAddr = uiManager.getAccount();
     if (!myAddr) return;
-    const ownedPlanets = uiManager
-      .getAllOwnedPlanets()
-      .filter((planet) => planet.owner === myAddr);
-    setPlanets(ownedPlanets);
+
+    let energy = [];
+
+    for (const [i, planet] of uiManager.getAllPlanets().entries()) {
+      const [
+        energyCapBonus,
+        energyGroBonus,
+        rangeBonus,
+        speedBonus,
+        defBonus,
+      ] = bonusFromHex(planet.locationId);
+      if (energyCapBonus) {
+        energy.push(planet);
+      }
+    }
+    setPlanets(energy);
   }, [visible, uiManager]);
 
   return (
-    <ModalPane hook={hook} title='Planet Dex' name={ModalName.PlanetDex}>
-      {visible ? <PlayerInfoWrapper>
-        <PlayerInfoRow />
-      </PlayerInfoWrapper> : null}
+    <ModalPane hook={hook} title='Energy Bonus Dex' name={ModalName.EnergyDex}>
       <DexWrapper>
         <DexRow className='title-row'>
-          <span>#</span>
           <span></span> {/* empty icon cell */}
           <span>
             <Space length={5} />
           </span>{' '}
-          {/* empty icon cell */}
-          <span
-            className={sortBy === Columns.Name ? 'selected' : ''}
-            onClick={() => setSortBy(Columns.Name)}
-          >
+          <span>
             Planet Name
           </span>
-          <span
-            className={sortBy === Columns.Level ? 'selected' : ''}
-            onClick={() => setSortBy(Columns.Level)}
-          >
+          <span>
             Level
           </span>
           <span>
             Rank
           </span>
-          <span
-            className={sortBy === Columns.Energy ? 'selected' : ''}
-            onClick={() => setSortBy(Columns.Energy)}
-          >
+          <span>
             Energy
           </span>
-          <span
-            className={sortBy === Columns.Silver ? 'selected' : ''}
-            onClick={() => setSortBy(Columns.Silver)}
-          >
+          <span>
             Silver
           </span>
-          {/* <span
-            className={sortBy === Columns.Points ? 'selected' : ''}
-            onClick={() => setSortBy(Columns.Points)}
-          >
-            Points
-          </span> */}
         </DexRow>
-        {visible && planets
-          .sort((a, b) => b.energyCap - a.energyCap)
-          .map((planet, i) => [planet, i]) // pass the index
-          .sort(sortingFn) // sort using planet + index
-          .map(([planet, i]: [Planet, number], rank) => (
-            <DexEntry
-              key={i}
-              planet={planet}
-              // score={getPlanetScore(planet, i)}
-              rank={rank + 1}
-              className={
-                selected?.locationId === planet.locationId ? 'selected' : ''
-              }
-            />
-          ))}
+        {visible && createTable(planets)}
       </DexWrapper>
     </ModalPane>
   );

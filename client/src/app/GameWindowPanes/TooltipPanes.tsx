@@ -155,8 +155,8 @@ export function SelectedEnergyTooltipPane() {
           </div>
         </TooltipInfo>
       ) : (
-        <>Select a planet to view more about its stats.</>
-      )}
+          <>Select a planet to view more about its stats.</>
+        )}
     </div>
   );
 }
@@ -219,14 +219,14 @@ export function SelectedSilverTooltipPane() {
               <span>{selected.silverGrowth * 60}</span>
             </div>
           ) : (
-            <div>
-              <Red>This planet does not produce silver.</Red>
-            </div>
-          )}
+              <div>
+                <Red>This planet does not produce silver.</Red>
+              </div>
+            )}
         </TooltipInfo>
       ) : (
-        <>Select a planet to view more about its stats.</>
-      )}
+          <>Select a planet to view more about its stats.</>
+        )}
     </div>
   );
 }
@@ -345,6 +345,10 @@ export function ModalLeaderboardTooltipPane() {
 }
 
 export function ModalPlanetDexTooltipPane() {
+  return <div>View a list of your planets</div>;
+}
+
+export function ModalEnergyDexTooltipPane() {
   return <div>View a list of your planets</div>;
 }
 
@@ -481,6 +485,7 @@ export function TooltipContent({ name }: { name: TooltipName }) {
   if (name === TooltipName.ModalLeaderboard)
     return <ModalLeaderboardTooltipPane />;
   if (name === TooltipName.ModalPlanetDex) return <ModalPlanetDexTooltipPane />;
+  if (name === TooltipName.ModalEnergyDex) return <ModalEnergyDexTooltipPane />;
   if (name === TooltipName.ModalUpgradeDetails)
     return <ModalUpgradeDetailsTooltipPane />;
   if (name === TooltipName.ModalTwitterVerification)

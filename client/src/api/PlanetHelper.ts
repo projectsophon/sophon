@@ -230,6 +230,10 @@ export class PlanetHelper {
     return ownedPlanets;
   }
 
+  public getAllPlanets(): PlanetMap {
+    return this.planets;
+  }
+
   public getAllVoyages(): QueuedArrival[] {
     // there are not many voyages
     return Object.values(this.arrivals).map((awt) => awt.arrivalData);

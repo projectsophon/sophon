@@ -128,7 +128,7 @@ export function ModalPlanetDexIcon({ hook }: { hook: ModalHook }) {
 }
 
 export function ModalEnergyDexIcon({ hook }: { hook: ModalHook }) {
-  return <ModalIcon hook={hook} modal={ModalName.PlanetDex} />;
+  return <ModalIcon hook={hook} modal={ModalName.EnergyDex} />;
 }
 
 export function ModalUpgradeDetailsIcon({ hook }: { hook: ModalHook }) {

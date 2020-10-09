@@ -395,9 +395,9 @@ export function PlanetDexPane({
 
   return (
     <ModalPane hook={hook} title='Planet Dex' name={ModalName.PlanetDex}>
-      <PlayerInfoWrapper>
+      {visible ? <PlayerInfoWrapper>
         <PlayerInfoRow />
-      </PlayerInfoWrapper>
+      </PlayerInfoWrapper> : null}
       <DexWrapper>
         <DexRow className='title-row'>
           <span>#</span>

@@ -1,11 +1,13 @@
 # sophon
-Custom dark-forest tools
+
+The Dark Forest Toolbox
 
 ## Structure
 
+* `/client` contains the modified game client (based on [darkforest-eth/client](https://github.com/darkforest-eth/client))
 * `/native` contains all the Rust code that we generate native bindings from.
 * `/lib` contains the JS code that manages the SpiralPattern, Perlin, etc.
-* `/index.mjs` is the primary file that creates a leveldb instance (to stores all explored chunks) and a websocket server for communicating to a client.
+* `/index.mjs` is the primary file that creates a leveldb instance (to stores all explored chunks), a websocket server for communicating to a client, and a file server for the game client.
 
 ## Install
 

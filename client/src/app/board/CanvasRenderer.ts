@@ -531,15 +531,26 @@ class CanvasRenderer {
     const fromLoc = this.gameUIManager.getLocationOfPlanet(from);
     const fromPlanet = this.gameUIManager.getPlanetWithId(from);
     const toLoc = this.gameUIManager.getLocationOfPlanet(to);
-    if (!fromPlanet || !fromLoc || !toLoc) {
+    const toPlanet = this.gameUIManager.getPlanetWithId(to);
+    if (!fromPlanet || !fromLoc || !toLoc || !toPlanet) {
       return;
+    }
+
+    const isAttack = fromPlanet.owner !== toPlanet.owner && toPlanet.owner !== emptyAddress;
+    let lineColor;
+    if (isMyVoyage) {
+      lineColor = 'blue';
+    } else if (isAttack) {
+      lineColor = 'red';
+    } else {
+      lineColor = getOwnerColor(fromPlanet);
     }
 
     this.drawLine(
       fromLoc.coords,
       toLoc.coords,
       confirmed ? 2 : 1,
-      isMyVoyage ? 'blue' : 'red',
+      lineColor,
       confirmed ? false : true
     );
   }

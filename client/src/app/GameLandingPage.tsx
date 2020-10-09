@@ -32,7 +32,6 @@ import { utils, Wallet } from 'ethers';
 import EthereumAccountManager from '../api/EthereumAccountManager';
 import { address } from '../utils/CheckedTypeUtils';
 import { UIDataKey, useStoredUIState } from '../api/UIStateStorageManager';
-import TutorialManager, { TutorialState } from '../utils/TutorialManager';
 import { TerminalPromptType } from '../_types/darkforest/app/board/utils/TerminalTypes';
 import { BLOCK_EXPLORER_URL } from '../utils/constants';
 
@@ -82,14 +81,6 @@ export function GameLandingPage(_props: { replayMode: boolean }) {
     UIDataKey.terminalEnabled,
     gameUIManagerRef.current
   );
-
-  // emit event on terminal toggle
-  useEffect(() => {
-    if (!terminalEnabled) {
-      const tutorialManager = TutorialManager.getInstance();
-      tutorialManager.acceptInput(TutorialState.Terminal);
-    }
-  }, [terminalEnabled]);
 
   // TODO make these nullable
   const emailFormRef = useRef<HTMLFormElement>(document.createElement('form'));

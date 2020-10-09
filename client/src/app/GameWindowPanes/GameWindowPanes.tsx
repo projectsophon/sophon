@@ -1,6 +1,5 @@
 export * from './CoordsPane';
 export * from './PlanetDetailsPane';
-export * from './HelpPane';
 export * from './LeaderboardPane';
 export * from './PlanetDexPane';
 export * from './EnergyDexPane';

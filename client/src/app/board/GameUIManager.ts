@@ -27,7 +27,6 @@ import {
 } from '../../_types/darkforest/api/ContractsAPITypes';
 import { MiningPattern } from '../../utils/MiningPatterns';
 import { GameManagerEvent } from '../../api/GameManager';
-import TutorialManager, { TutorialState } from '../../utils/TutorialManager';
 import UIStateStorageManager, {
   UIDataKey,
   UIDataValue,
@@ -277,8 +276,6 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
             `df.move('${from.locationId}', '${to.locationId}', ${forces}, ${silver})`
           );
           this.gameManager.move(from.locationId, to.locationId, forces, silver);
-          const tutorialManager = TutorialManager.getInstance();
-          tutorialManager.acceptInput(TutorialState.SendFleet);
         }
       }
     }
@@ -373,11 +370,6 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   }
 
   setSelectedPlanet(planet: Planet | null): void {
-    if (!planet) {
-      const tutorialManager = TutorialManager.getInstance();
-      tutorialManager.acceptInput(TutorialState.Deselect);
-    }
-
     const uiEmitter = UIEmitter.getInstance();
     this.selectedPlanet = planet;
     console.log(planet);
@@ -385,16 +377,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
       this.selectedCoords = null;
     } else {
       const loc = this.getLocationOfPlanet(planet.locationId);
-      if (!loc) this.selectedCoords = null;
-      else {
-        // loc is not null
-        this.selectedCoords = loc.coords;
-
-        if (compareWorldCoords(loc.coords, this.getHomeCoords())) {
-          const tutorialManager = TutorialManager.getInstance();
-          tutorialManager.acceptInput(TutorialState.HomePlanet);
-        }
-      }
+      this.selectedCoords = loc ? loc.coords : null;
     }
     uiEmitter.emit(UIEmitterEvent.GamePlanetSelected);
   }
@@ -439,60 +422,6 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
       };
     } else {
       this.minerLocation = null;
-    }
-
-    // TODO: skip this if everything has already been found
-    const notifManager = NotificationManager.getInstance();
-    for (const loc of chunk.planetLocations) {
-      const planet = this.getPlanetWithId(loc.hash);
-      if (!planet) break;
-
-      if (planet.owner === emptyAddress && planet.energy > 0) {
-        if (
-          !this.getUIDataItem(UIDataKey.foundPirates) &&
-          this.getUIDataItem(UIDataKey.tutorialCompleted)
-        ) {
-          notifManager.foundPirates(planet);
-          this.setUIDataItem(UIDataKey.foundPirates, true);
-        }
-      }
-
-      if (planet.planetResource === PlanetResource.SILVER) {
-        if (
-          !this.getUIDataItem(UIDataKey.foundSilver) &&
-          this.getUIDataItem(UIDataKey.tutorialCompleted)
-        ) {
-          notifManager.foundSilver(planet);
-          this.setUIDataItem(UIDataKey.foundSilver, true);
-        }
-      }
-      if (planetHasBonus(planet)) {
-        if (
-          !this.getUIDataItem(UIDataKey.foundComet) &&
-          this.getUIDataItem(UIDataKey.tutorialCompleted)
-        ) {
-          notifManager.foundComet(planet);
-          this.setUIDataItem(UIDataKey.foundComet, true);
-        }
-      }
-    }
-
-    if (this.spaceTypeFromPerlin(chunk.perlin) === SpaceType.DEEP_SPACE) {
-      if (
-        !this.getUIDataItem(UIDataKey.foundDeepSpace) &&
-        this.getUIDataItem(UIDataKey.tutorialCompleted)
-      ) {
-        notifManager.foundDeepSpace(chunk);
-        this.setUIDataItem(UIDataKey.foundDeepSpace, true);
-      }
-    } else if (this.spaceTypeFromPerlin(chunk.perlin) === SpaceType.SPACE) {
-      if (
-        !this.getUIDataItem(UIDataKey.foundSpace) &&
-        this.getUIDataItem(UIDataKey.tutorialCompleted)
-      ) {
-        notifManager.foundSpace(chunk);
-        this.setUIDataItem(UIDataKey.foundSpace, true);
-      }
     }
   }
 

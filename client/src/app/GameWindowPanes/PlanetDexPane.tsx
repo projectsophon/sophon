@@ -10,7 +10,6 @@ import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
 import { Planet, PlanetResource } from '../../_types/global/GlobalTypes';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
-import { SidebarPane } from '../GameWindowComponents/GameWindowComponents';
 import { Sub, Space } from '../../components/Text';
 import {
   getPlanetShortHash,

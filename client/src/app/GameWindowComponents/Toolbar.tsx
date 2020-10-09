@@ -24,8 +24,6 @@ export function Toolbar({ children }: { children: React.ReactNode }) {
   return <StyledToolbar>{children}</StyledToolbar>;
 }
 
-// TODO roll this in under Toolbar? also maybe share styles with sidebarpanes
-
 export function ToolbarPane({
   children,
   title,

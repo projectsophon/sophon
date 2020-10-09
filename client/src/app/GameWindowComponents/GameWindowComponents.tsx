@@ -173,6 +173,5 @@ export const LHSWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-export * from './Sidebar';
 export * from './Toolbar';
 export * from './Btn';

@@ -145,8 +145,6 @@ class TxExecutor extends EventEmitter {
     const enableUntilStr = localStorage.getItem(`wallet-enabled-${userAddr}`);
     console.log(`wallet-enabled-${userAddr}`);
 
-    console.log(txRequest.args);
-
     if (
       !enableUntilStr ||
       Number.isNaN(+enableUntilStr) ||
@@ -194,6 +192,17 @@ class TxExecutor extends EventEmitter {
     this.pendingExec = true;
     try {
       console.log('executing tx');
+      // check if balance too low
+      const ethConnection = EthereumAccountManager.getInstance();
+      const balance = await ethConnection.getBalance(
+        ethConnection.getAddress()
+      );
+      if (balance < 0.002) {
+        const notifsManager = NotificationManager.getInstance();
+        notifsManager.balanceEmpty();
+        throw new Error('xDAI balance too low!');
+      }
+
       if (Date.now() - this.nonceLastUpdated > 30000) {
         this.nonce = await EthereumAccountManager.getInstance().getNonce();
       }
@@ -227,6 +236,7 @@ class TxExecutor extends EventEmitter {
 
 class ContractsAPI extends EventEmitter {
   readonly account: EthAddress;
+  private coreContract: Contract;
   private readonly coreContract: Contract;
   private readonly txRequestExecutor: TxExecutor;
 
@@ -302,6 +312,12 @@ class ContractsAPI extends EventEmitter {
         const planet = await this.getPlanet(location);
         this.emit(ContractsAPIEvent.PlanetUpdate, planet);
       });
+
+    const ethConnection = EthereumAccountManager.getInstance();
+
+    ethConnection.on('ChangedRPCEndpoint', async () => {
+      this.coreContract = await ethConnection.loadCoreContract();
+    });
   }
 
   removeEventListeners(): void {

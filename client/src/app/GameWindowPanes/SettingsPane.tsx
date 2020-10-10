@@ -1,10 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
+import EthereumAccountManager from '../../api/EthereumAccountManager';
 import { useStoredUIState, UIDataKey } from '../../api/UIStateStorageManager';
 import { Sub, Red, White } from '../../components/Text';
 import dfstyles from '../../styles/dfstyles.bs.js';
 import { ONE_DAY } from '../../utils/Utils';
+import { EthAddress } from '../../_types/global/GlobalTypes';
 import { EthAddress } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
@@ -14,7 +16,8 @@ import { ModalHook, ModalName, ModalPane } from './ModalPane';
 
 const StyledSettingsPane = styled.div`
   width: 32em;
-  height: fit-content;
+  height: 30em;
+  overflow-y: scroll;
 
   display: flex;
   flex-direction: column;
@@ -41,6 +44,23 @@ const StyledSettingsPane = styled.div`
 
     & > span:first-child {
       flex-grow: 1;
+    }
+
+    & .input-rpc {
+      transition: background 0.2s, color 0.2s, width: 0.2s !important;
+      outline: none;
+      background: ${dfstyles.colors.background};
+      color: ${dfstyles.colors.subtext};
+      border-radius: 4px;
+      border: 1px solid ${dfstyles.colors.text};
+      margin-left: 0.75em;
+      width: 20em;
+      padding: 2px 6px;
+      &:focus {
+        background: ${dfstyles.colors.backgroundlight};
+        color: ${dfstyles.colors.text};
+        width: 20em;
+      }
     }
   }
 
@@ -109,6 +129,22 @@ export function SettingsPane({
       clearInterval(intervalId);
     };
   }, [account]);
+
+  // RPC URL
+  const ethManager = EthereumAccountManager.getInstance();
+  const [rpcURLText, setRpcURLText] = useState<string>(
+    ethManager.getRpcEndpoint()
+  );
+
+  const [rpcURL, setRpcURL] = useState<string>(ethManager.getRpcEndpoint());
+
+  const onChangeRpc = () => {
+    ethManager.setRpcEndpoint(rpcURLText).then(() => {
+      const newEndpoint = ethManager.getRpcEndpoint();
+      setRpcURLText(newEndpoint);
+      setRpcURL(newEndpoint);
+    });
+  };
 
   // balance stuff
 
@@ -300,6 +336,25 @@ export function SettingsPane({
             {success}
             {failure}
           </p>
+        </div>
+
+        <div className='section'>
+          <p>{`Current RPC Endpoint: ${rpcURL}`}</p>
+          <div className='row'>
+            <span>
+              <input
+                className='input-rpc'
+                style={{
+                  borderRadius: '3px',
+                }}
+                value={rpcURLText}
+                onChange={(e) => setRpcURLText(e.target.value)}
+              />
+            </span>
+            <span>
+              <Btn onClick={onChangeRpc}>Change RPC URL</Btn>
+            </span>
+          </div>
         </div>
 
         <div className='section'>

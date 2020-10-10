@@ -35,6 +35,7 @@ export default interface AbstractGameManager extends EventEmitter {
   getAllPlayers(): Player[];
   getAllPlanets(): PlanetMap;
   getExploredChunks(): Iterable<ExploredChunkData>;
+  spaceTypeFromPerlin(perlin: number): SpaceType;
   getWorldRadius(): number;
   getWorldSilver(): number;
   getUniverseTotalEnergy(): number;
@@ -56,17 +57,19 @@ export default interface AbstractGameManager extends EventEmitter {
   getSignedTwitter(twitter: string): Promise<string>;
   getPrivateKey(): string;
   getMyBalance(): number;
-  notifyIfBalanceEmpty(): Promise<void>;
   getPerlinThresholds(): [number, number]; // PERLIN_THRESHOLD_1, PERLIN_THRESHOLD_2
   hasMinedChunk(chunkLocation: ChunkFootprint): boolean;
 
+  // miner
   setMiningPattern(pattern: MiningPattern): void;
   getMiningPattern(): MiningPattern | null;
+  setMinerCores(nCores: number): void;
   getCurrentlyExploringChunk(): ChunkFootprint | null;
   startExplore(): void;
   stopExplore(): void;
   addNewChunk(chunk: ExploredChunkData): AbstractGameManager;
 
+  // account management + chain operations
   verifyTwitter(twitter: string): Promise<boolean>;
   joinGame(): AbstractGameManager;
   addAccount(coords: WorldCoords): Promise<boolean>;
@@ -78,5 +81,22 @@ export default interface AbstractGameManager extends EventEmitter {
   ): AbstractGameManager;
   upgrade(planetId: LocationId, branch: number): AbstractGameManager;
   buyHat(planetId: LocationId): AbstractGameManager;
-  spaceTypeFromPerlin(perlin: number): SpaceType;
+
+  // estimation utils. used for scripting only (not in core client functions)
+  getMyPlanets(): Planet[];
+  getDist(fromId: LocationId, toId: LocationId): number;
+  getMaxMoveDist(planetId: LocationId, sendingPercent: number): number;
+  getPlanetsInRange(planetId: LocationId, sendingPercent: number): Planet[];
+  getEnergyNeededForMove(
+    fromId: LocationId,
+    toId: LocationId,
+    arrivingEnergy: number
+  ): number;
+  getEnergyArrivingForMove(
+    fromId: LocationId,
+    toId: LocationId,
+    sentEnergy: number
+  ): number;
+  getTimeForMove(fromId: LocationId, toId: LocationId): number;
+  getTemperature(coords: WorldCoords): number;
 }

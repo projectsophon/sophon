@@ -136,11 +136,11 @@ class Viewport {
   }
 
   zoomIn(): void {
-    this.onScroll(-300, true);
+    this.onScroll(-600, true);
   }
 
   zoomOut(): void {
-    this.onScroll(300, true);
+    this.onScroll(600, true);
   }
 
   // Event handlers

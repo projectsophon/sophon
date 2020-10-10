@@ -19,7 +19,7 @@ import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
 import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
 import { SpiralPattern } from './lib/SpiralPattern.mjs';
 import LocalStorageManager from './lib/LocalStorageManager.mjs';
-import { toBoolean, toNumber, toObject } from './lib/parse-utils.mjs';
+import { toBoolean, toNumber, toObject, toFullPath } from './lib/parse-utils.mjs';
 
 let env = dotenv.config();
 
@@ -60,8 +60,8 @@ const answers = await inquirer.prompt([
     message: `What's the path of your map?`,
     default: PRELOAD_MAP ? path.resolve(process.cwd(), PRELOAD_MAP) : null,
     // Blah, string compare here
-    when: (answers) => answers.shouldPreload || SHOULD_PRELOAD === 'true' || PRELOAD_MAP,
-    filter: (mapPath) => path.resolve(process.cwd(), mapPath),
+    when: (answers) => (answers.shouldPreload || SHOULD_PRELOAD === 'true') && PRELOAD_MAP == null,
+    filter: (mapPath) => toFullPath(mapPath),
   },
   {
     type: 'confirm',
@@ -133,7 +133,7 @@ const answers = await inquirer.prompt([
 
 const {
   shouldPreload = toBoolean(SHOULD_PRELOAD),
-  preloadMap,
+  preloadMap = toFullPath(PRELOAD_MAP),
   shouldDump = toBoolean(SHOULD_DUMP),
   worldRadius = toNumber(WORLD_RADIUS),
   initCoords = toObject(INIT_COORDS),
@@ -145,6 +145,7 @@ const {
 
 await updateDotenv({
   SHOULD_PRELOAD: `${shouldPreload}`,
+  PRELOAD_MAP: `${preloadMap}`,
   SHOULD_DUMP: `${shouldDump}`,
   WORLD_RADIUS: `${worldRadius}`,
   INIT_COORDS: `${JSON.stringify(initCoords)}`,
@@ -168,8 +169,9 @@ if (shouldPreload && preloadMap) {
     const chunks = JSON.parse(fs.readFileSync(preloadMap, 'utf8'));
 
     chunks.forEach((chunk) => localStorageManager.updateChunk(chunk, false));
+    console.log(`Successfully loaded map from ${preloadMap}`);
   } catch (err) {
-    console.error(`Error importing map: ${preloadMap}`);
+    console.error(`Error importing map from ${preloadMap}`);
     process.exit(1);
   }
 }

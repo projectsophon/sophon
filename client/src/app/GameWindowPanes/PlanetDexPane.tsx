@@ -261,7 +261,7 @@ async function distribute_funds(locationid, energystaysabovepercent) {
     //check if has incoming moves from a previous asteroid to be safe
     const arrivals = await df.contractsAPI.getArrivalsForPlanet(candidate);
     let needed_silver = candidate.silverCap - candidate.silver;
-    let effective = Math.floor(df.getEnergyNeededForMove(asteroid.locationId, candidate.locationId, 1));
+    let effective = Math.ceil(df.getEnergyNeededForMove(asteroid.locationId, candidate.locationId, 1));
     if (arrivals === 0 && needed_silver > 0 && budget - effective > 0) {
       // let from = df.planetHelper.getLocationOfPlanet(asteroid.locationId);
       // let to = df.planetHelper.getLocationOfPlanet(candidate.locationId);

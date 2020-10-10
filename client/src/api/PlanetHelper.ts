@@ -387,18 +387,25 @@ export class PlanetHelper {
     const nowInSeconds = Date.now() / 1000;
     for (const arrival of arrivals) {
       try {
+        const fromPlanet = this.planets.get(arrival.fromPlanet);
+        const toPlanet = this.planets.get(arrival.toPlanet);
         if (
           nowInSeconds - arrival.arrivalTime > 0 &&
-          this.planets.has(arrival.fromPlanet) &&
-          this.planets.has(arrival.toPlanet)
+          fromPlanet &&
+          toPlanet
         ) {
           // if arrival happened in the past, run this arrival
           this.arrive(
-            this.planets.get(arrival.fromPlanet),
-            this.planets.get(arrival.toPlanet),
+            fromPlanet,
+            toPlanet,
             arrival
           );
         } else {
+          if (toPlanet.owner === this.address && fromPlanet.owner !== this.address) {
+            const notifManager = NotificationManager.getInstance();
+            notifManager.beingAttacked(toPlanet, fromPlanet);
+          }
+
           // otherwise, set a timer to do this arrival in the future
           // and append it to arrivalsWithTimers
           const applyFutureArrival = setTimeout(() => {

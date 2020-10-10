@@ -1,12 +1,13 @@
 import React from 'react';
 import EventEmitter from 'events';
-import { getRandomActionId, planetCanUpgrade } from './Utils';
+import { getRandomActionId, planetCanUpgrade, getOwnerColor } from './Utils';
 import {
   EthTxStatus,
   SubmittedTx,
   UnconfirmedTx,
+  PlanetEventType,
 } from '../_types/darkforest/api/ContractsAPITypes';
-import { EthIcon } from '../app/Icons';
+import { EthIcon, TargetIcon } from '../app/Icons';
 import {
   CenterChunkLink,
   FAQ04Link,
@@ -20,14 +21,7 @@ export enum NotificationType {
   Tx,
   CanUpgrade,
   BalanceEmpty,
-
-  // should only ever happen once
-  WelcomePlayer,
-  FoundSpace,
-  FoundDeepSpace,
-  FoundPirates,
-  FoundSilver,
-  FoundComet,
+  BeingAttacked,
 }
 
 export type NotificationInfo = {
@@ -159,70 +153,6 @@ class NotificationManager extends EventEmitter {
     );
   }
 
-  welcomePlayer(): void {
-    this.notify(
-      NotificationType.WelcomePlayer,
-      <span>
-        Welcome to the world to Dark Forest! These are your notifications.
-        <br />
-        Click a notification to dismiss it.
-      </span>
-    );
-  }
-
-  foundSpace(chunk: ExploredChunkData): void {
-    this.notify(
-      NotificationType.FoundSpace,
-      <span>
-        Congrats! You found space! Space has more valuable resources than <br />
-        the nebula where your home planet is located.{' '}
-        <CenterChunkLink chunk={chunk}>Click to view</CenterChunkLink>.
-      </span>
-    );
-  }
-
-  foundDeepSpace(chunk: ExploredChunkData): void {
-    this.notify(
-      NotificationType.FoundDeepSpace,
-      <span>
-        Congrats! You found deep space! Deep space has the rarest <br />
-        planets, but planets all have lowered defense!{' '}
-        <CenterChunkLink chunk={chunk}>Click to view</CenterChunkLink>.
-      </span>
-    );
-  }
-
-  foundSilver(planet: Planet): void {
-    this.notify(
-      NotificationType.FoundSilver,
-      <span>
-        You found a silver mine! Silver can be used to upgrade planets. <br />
-        Click to view <PlanetNameLink planet={planet} />.
-      </span>
-    );
-  }
-
-  foundPirates(planet: Planet): void {
-    this.notify(
-      NotificationType.FoundPirates,
-      <span>
-        You found space pirates! Unconquered planets must be defeated first.
-        <br />
-        Click to view <PlanetNameLink planet={planet} />.
-      </span>
-    );
-  }
-
-  foundComet(planet: Planet): void {
-    this.notify(
-      NotificationType.FoundComet,
-      <span>
-        You found a comet! Planets with comets have a stat doubled! <br />
-        Click to view <PlanetNameLink planet={planet} />
-      </span>
-    );
-  }
-
   planetCanUpgrade(planet: Planet): void {
     if (planetCanUpgrade(planet)) {
       this.notify(
@@ -232,6 +162,22 @@ class NotificationManager extends EventEmitter {
         </span>
       );
     }
+  }
+
+  beingAttacked(yourPlanet: Planet, attackingPlanet: Planet): void {
+    const message = (
+      <span>
+        Your planet <PlanetNameLink planet={yourPlanet} /> is being attacked by <PlanetNameLink planet={attackingPlanet} />! <br />
+      </span>
+    );
+
+    this.emit(NotificationManagerEvent.Notify, {
+      type: NotificationType.BeingAttacked,
+      message,
+      id: getRandomActionId(),
+      icon: <TargetIcon />,
+      color: getOwnerColor(attackingPlanet),
+    });
   }
 
   balanceEmpty(): void {

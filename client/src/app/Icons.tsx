@@ -79,13 +79,13 @@ const SilverSVG = () => (
   </svg>
 );
 
-export const SilverIcon = () => (
+export const SilverIcon = (): JSX.Element => (
   <SVGWrapper>
     <SilverSVG />
   </SVGWrapper>
 );
 
-export const SilverGrowthIcon = () => (
+export const SilverGrowthIcon = (): JSX.Element => (
   <SVGWrapper>
     <SilverGrowthSVG />
   </SVGWrapper>
@@ -98,7 +98,7 @@ const EnergyGrowthSVG = () => (
   </DefaultSVG>
 );
 
-export const EnergyGrowthIcon = () => (
+export const EnergyGrowthIcon = (): JSX.Element => (
   <SVGWrapper>
     <EnergyGrowthSVG />
   </SVGWrapper>
@@ -110,7 +110,7 @@ const EnergySVG = () => (
   </DefaultSVG>
 );
 
-export const EnergyIcon = () => (
+export const EnergyIcon = (): JSX.Element => (
   <SVGWrapper>
     <EnergySVG />
   </SVGWrapper>
@@ -122,7 +122,7 @@ const RangeSVG = () => (
   </DefaultSVG>
 );
 
-export const RangeIcon = () => (
+export const RangeIcon = (): JSX.Element => (
   <SVGWrapper>
     <RangeSVG />
   </SVGWrapper>
@@ -134,7 +134,7 @@ const TargetSVG = () => (
   </DefaultSVG>
 );
 
-export const TargetIcon = () => (
+export const TargetIcon = (): JSX.Element => (
   <SVGWrapper>
     <TargetSVG />
   </SVGWrapper>
@@ -146,7 +146,7 @@ const PlaySVG = () => (
   </DefaultSVG>
 );
 
-export const PlayIcon = () => (
+export const PlayIcon = (): JSX.Element => (
   <SVGWrapper>
     <PlaySVG />
   </SVGWrapper>
@@ -158,7 +158,7 @@ const PauseSVG = () => (
   </DefaultSVG>
 );
 
-export const PauseIcon = () => (
+export const PauseIcon = (): JSX.Element => (
   <SVGWrapper>
     <PauseSVG />
   </SVGWrapper>
@@ -170,7 +170,7 @@ const UpgradeSVG = () => (
   </DefaultSVG>
 );
 
-export const UpgradeIcon = () => (
+export const UpgradeIcon = (): JSX.Element => (
   <SVGWrapper>
     <UpgradeSVG />
   </SVGWrapper>
@@ -185,7 +185,7 @@ const HelpSVG = () => (
   </DefaultSVG>
 );
 
-export const HelpIcon = () => (
+export const HelpIcon = (): JSX.Element => (
   <SVGWrapper>
     <HelpSVG />
   </SVGWrapper>
@@ -200,7 +200,7 @@ const PlanetSVG = () => (
   </DefaultSVG>
 );
 
-export const PlanetIcon = () => (
+export const PlanetIcon = (): JSX.Element => (
   <SVGWrapper>
     <PlanetSVG />
   </SVGWrapper>
@@ -212,7 +212,7 @@ const LeaderboardSVG = () => (
   </DefaultSVG>
 );
 
-export const LeaderboardIcon = () => (
+export const LeaderboardIcon = (): JSX.Element => (
   <SVGWrapper>
     <LeaderboardSVG />
   </SVGWrapper>
@@ -231,13 +231,13 @@ const PlanetdexSVG = () => (
   </DefaultSVG>
 );
 
-export const PlanetdexIcon = () => (
+export const PlanetdexIcon = (): JSX.Element => (
   <SVGWrapper>
     <PlanetdexSVG />
   </SVGWrapper>
 );
 
-export const EnergydexIcon = () => (
+export const EnergydexIcon = (): JSX.Element => (
   <SVGWrapper>
     <EnergySVG />
   </SVGWrapper>
@@ -250,7 +250,7 @@ const RightarrowSVG = () => (
   </DefaultSVG>
 );
 
-export const RightarrowIcon = () => (
+export const RightarrowIcon = (): JSX.Element => (
   <SVGWrapper>
     <RightarrowSVG />
   </SVGWrapper>
@@ -262,7 +262,7 @@ const TwitterSVG = () => (
   </DefaultSVG>
 );
 
-export const TwitterIcon = () => (
+export const TwitterIcon = (): JSX.Element => (
   <SVGWrapper>
     <TwitterSVG />
   </SVGWrapper>
@@ -277,7 +277,7 @@ const BroadcastSVG = () => (
   </DefaultSVG>
 );
 
-export const BroadcastIcon = () => (
+export const BroadcastIcon = (): JSX.Element => (
   <SVGWrapper>
     <BroadcastSVG />
   </SVGWrapper>
@@ -292,7 +292,7 @@ const PiratesSVG = () => (
   </DefaultSVG>
 );
 
-export const PiratesIcon = () => (
+export const PiratesIcon = (): JSX.Element => (
   <SVGWrapper>
     <PiratesSVG />
   </SVGWrapper>
@@ -304,7 +304,7 @@ const Rank1SVG = () => (
   </DefaultSVG>
 );
 
-export const Rank1Icon = () => (
+export const Rank1Icon = (): JSX.Element => (
   <SVGWrapper>
     <Rank1SVG />
   </SVGWrapper>
@@ -319,7 +319,7 @@ const Rank2SVG = () => (
   </DefaultSVG>
 );
 
-export const Rank2Icon = () => (
+export const Rank2Icon = (): JSX.Element => (
   <SVGWrapper>
     <Rank2SVG />
   </SVGWrapper>
@@ -334,7 +334,7 @@ const Rank3SVG = () => (
   </DefaultSVG>
 );
 
-export const Rank3Icon = () => (
+export const Rank3Icon = (): JSX.Element => (
   <SVGWrapper>
     <Rank3SVG />
   </SVGWrapper>
@@ -349,7 +349,7 @@ const Rank4SVG = () => (
   </DefaultSVG>
 );
 
-export const Rank4Icon = () => (
+export const Rank4Icon = (): JSX.Element => (
   <SVGWrapper>
     <Rank4SVG />
   </SVGWrapper>
@@ -364,7 +364,7 @@ const FullRankSVG = () => (
   </DefaultSVG>
 );
 
-export const FullRankIcon = () => (
+export const FullRankIcon = (): JSX.Element => (
   <SVGWrapper>
     <FullRankSVG />
   </SVGWrapper>
@@ -379,7 +379,7 @@ const MaxLevelSVG = () => (
   </DefaultSVG>
 );
 
-export const MaxLevelIcon = () => (
+export const MaxLevelIcon = (): JSX.Element => (
   <SVGWrapper>
     <MaxLevelSVG />
   </SVGWrapper>
@@ -394,7 +394,7 @@ const SilverProdSVG = () => (
   </DefaultSVG>
 );
 
-export const SilverProdIcon = () => (
+export const SilverProdIcon = (): JSX.Element => (
   <SVGWrapper>
     <SilverProdSVG />
   </SVGWrapper>
@@ -406,7 +406,7 @@ const ShareSVG = () => (
   </DefaultSVG>
 );
 
-export const ShareIcon = () => (
+export const ShareIcon = (): JSX.Element => (
   <SVGWrapper>
     <ShareSVG />
   </SVGWrapper>
@@ -423,7 +423,7 @@ const LockSVG = () => {
   );
 };
 
-export const LockIcon = () => {
+export const LockIcon = (): JSX.Element => {
   return (
     <SVGWrapper>
       <LockSVG />
@@ -439,7 +439,7 @@ const SpeedSVG = () => {
   );
 };
 
-export const SpeedIcon = () => {
+export const SpeedIcon = (): JSX.Element => {
   return (
     <SVGWrapper>
       <SpeedSVG />
@@ -456,7 +456,7 @@ const DefenseSVG = () => {
   );
 };
 
-export const DefenseIcon = () => {
+export const DefenseIcon = (): JSX.Element => {
   return (
     <SVGWrapper>
       <DefenseSVG />
@@ -472,7 +472,7 @@ const HatSVG = () => {
   );
 };
 
-export const HatIcon = () => {
+export const HatIcon = (): JSX.Element => {
   return (
     <SVGWrapper>
       <HatSVG />
@@ -494,7 +494,7 @@ const EthSVG = () => {
   );
 };
 
-export const EthIcon = () => {
+export const EthIcon = (): JSX.Element => {
   return (
     <SVGWrapper>
       <EthSVG />
@@ -510,7 +510,7 @@ const SettingsSVG = () => {
   );
 };
 
-export const SettingsIcon = () => {
+export const SettingsIcon = (): JSX.Element => {
   return (
     <SVGWrapper>
       <SettingsSVG />
@@ -518,7 +518,7 @@ export const SettingsIcon = () => {
   );
 };
 
-export const RankIcon = ({ planet }: { planet: Planet | null }) => {
+export const RankIcon = ({ planet }: { planet: Planet | null }): JSX.Element => {
   const rank = getPlanetRank(planet);
   if (isFullRank(planet)) return <FullRankIcon />;
   if (rank === 0) return null;
@@ -528,7 +528,7 @@ export const RankIcon = ({ planet }: { planet: Planet | null }) => {
   return <Rank4Icon />;
 };
 
-export const BranchIcon = ({ branch }: { branch: number }) => {
+export const BranchIcon = ({ branch }: { branch: number }): JSX.Element => {
   if (branch === UpgradeBranchName.Range) return <EnergyIcon />;
   else if (branch === UpgradeBranchName.Defense) return <SilverIcon />;
   else return <RangeIcon />;

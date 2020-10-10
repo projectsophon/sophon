@@ -74,7 +74,7 @@ export function ModalIcon({
 }: {
   modal: ModalName;
   hook: ModalHook;
-} = {}) {
+} = {}): JSX.Element {
   const child = (): React.ReactNode => {
     if (modal === ModalName.Help) return <HelpIcon />;
     else if (modal === ModalName.PlanetDetails) return <PlanetIcon />;
@@ -111,51 +111,51 @@ export function ModalIcon({
   );
 }
 
-export function ModalHelpIcon({ hook }: { hook: ModalHook }) {
+export function ModalHelpIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.Help} />;
 }
 
-export function ModalPlanetDetailsIcon({ hook }: { hook: ModalHook }) {
+export function ModalPlanetDetailsIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.PlanetDetails} />;
 }
 
-export function ModalLeaderboardIcon({ hook }: { hook: ModalHook }) {
+export function ModalLeaderboardIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.Leaderboard} />;
 }
 
-export function ModalPlanetDexIcon({ hook }: { hook: ModalHook }) {
+export function ModalPlanetDexIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.PlanetDex} />;
 }
 
-export function ModalEnergyDexIcon({ hook }: { hook: ModalHook }) {
+export function ModalEnergyDexIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.EnergyDex} />;
 }
 
-export function ModalUpgradeDetailsIcon({ hook }: { hook: ModalHook }) {
+export function ModalUpgradeDetailsIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.UpgradeDetails} />;
 }
 
-export function ModalMapShareIcon({ hook }: { hook: ModalHook }) {
+export function ModalMapShareIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.MapShare} />;
 }
 
-export function ModalTwitterVerifyIcon({ hook }: { hook: ModalHook }) {
+export function ModalTwitterVerifyIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.TwitterVerify} />;
 }
 
-export function ModalTwitterBroadcastIcon({ hook }: { hook: ModalHook }) {
+export function ModalTwitterBroadcastIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.TwitterBroadcast} />;
 }
 
-export function ModalAccountIcon({ hook }: { hook: ModalHook }) {
+export function ModalAccountIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.ManageAccount} />;
 }
 
-export function ModalHatIcon({ hook }: { hook: ModalHook }) {
+export function ModalHatIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.Hats} />;
 }
 
-export function ModalSettingsIcon({ hook }: { hook: ModalHook }) {
+export function ModalSettingsIcon({ hook }: { hook: ModalHook }): JSX.Element {
   return <ModalIcon hook={hook} modal={ModalName.Settings} />;
 }
 
@@ -233,7 +233,7 @@ export function ModalPane({
     fixCorner?: boolean;
     hideClose?: boolean;
     style?: React.CSSProperties;
-  }) {
+  }): JSX.Element {
   const [coords, setCoords] = useState<Coords | null>(null);
   const [delCoords, setDelCoords] = useState<Coords | null>(null);
 

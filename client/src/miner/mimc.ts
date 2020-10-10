@@ -277,7 +277,7 @@ function mimcSponge(
   return outputs;
 }
 
-export const modPBigInt = (x: number) => {
+export const modPBigInt = (x: number): BigInteger => {
   let ret = bigInt(x).mod(p);
   if (ret.lesser(bigInt(0))) {
     ret = ret.add(p);
@@ -285,7 +285,7 @@ export const modPBigInt = (x: number) => {
   return ret;
 };
 
-export const modPBigIntNative = (x: BigInteger) => {
+export const modPBigIntNative = (x: BigInteger): BigInteger => {
   let ret = x.mod(p);
   if (ret.lesser(bigInt(0))) {
     ret = ret.add(p);
@@ -293,7 +293,7 @@ export const modPBigIntNative = (x: BigInteger) => {
   return ret;
 };
 
-export const mimcWithRounds = (rounds: number) => (...inputs: number[]) =>
+export const mimcWithRounds = (rounds: number) => (...inputs: number[]): BigInteger[] =>
   mimcSponge(
     inputs.map((n) => modPBigInt(n)),
     1,

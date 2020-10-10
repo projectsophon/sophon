@@ -14,7 +14,7 @@ const StyledPrivatePane = styled.div`
     justify-content: space-between;
   }
 `;
-export function PrivatePane({ hook }: { hook: ModalHook }) {
+export function PrivatePane({ hook }: { hook: ModalHook }): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
 
   const [sKey, setSKey] = useState<string | null>(null);

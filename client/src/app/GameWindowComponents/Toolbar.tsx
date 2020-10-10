@@ -20,7 +20,7 @@ const StyledToolbar = styled.div`
   flex-direction: row;
 `;
 
-export function Toolbar({ children }: { children: React.ReactNode }) {
+export function Toolbar({ children }: { children: React.ReactNode }): JSX.Element {
   return <StyledToolbar>{children}</StyledToolbar>;
 }
 
@@ -30,7 +30,7 @@ export function ToolbarPane({
   headerStyle = undefined,
   hook,
   modal,
-}: PaneProps & { hook: ModalHook; modal: ModalName }) {
+}: PaneProps & { hook: ModalHook; modal: ModalName }): JSX.Element {
   return (
     <StyledToolbarPane>
       <div className='pane-header'>

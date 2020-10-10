@@ -1,12 +1,8 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import styled, { keyframes, css } from 'styled-components';
-import dfstyles from '../../styles/dfstyles.bs.js';
-import WindowManager, {
+import React from 'react';
+import styled from 'styled-components';
+import {
   TooltipName,
-  WindowManagerEvent,
-  GameWindowZIndex,
 } from '../../utils/WindowManager';
-import { TooltipContent } from './TooltipPanes';
 
 // activate TooltipName on mouseenter, deactivate on mouse leave
 type DisplayType = 'inline' | 'block' | 'inline-block' | 'inline-flex' | 'flex';
@@ -29,12 +25,10 @@ const StyledTooltipTrigger = styled.span<{
 
 export function TooltipTrigger({
   children,
-  name,
-  needsShift,
   display,
   style,
   className,
-}: TooltipProps) {
+}: TooltipProps): JSX.Element {
   return (
     <StyledTooltipTrigger
       display={display}
@@ -46,21 +40,7 @@ export function TooltipTrigger({
   );
 }
 
-const StyledTooltip = styled.div`
-  position: absolute;
-  width: fit-content;
-  height: fit-content;
-  min-height: 1em;
-  min-width: 5em;
-  border: 1px solid ${dfstyles.colors.text};
-  background: ${dfstyles.colors.background};
-  padding: 0.5em;
-  border-radius: 3px;
-
-  z-index: ${GameWindowZIndex.Tooltip};
-`;
-
-export function Tooltip() {
+export function Tooltip(): JSX.Element {
   return (
     null
   );

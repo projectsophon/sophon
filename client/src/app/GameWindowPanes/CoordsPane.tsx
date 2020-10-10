@@ -6,9 +6,8 @@ import perlin from '../../miner/perlin';
 import { SpaceType } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
-import { MIN_CHUNK_SIZE } from '../../utils/constants';
 
-export function CoordsText() {
+export function CoordsText(): JSX.Element {
   const uiEmitter = UIEmitter.getInstance();
   const [coords, setCoords] = useState<WorldCoords | null>(null);
 
@@ -23,14 +22,6 @@ export function CoordsText() {
 
   const p = (vec: WorldCoords): string => {
     if (uiManager) {
-      const chunkLoc = {
-        bottomLeft: {
-          x: Math.floor(vec.x / MIN_CHUNK_SIZE) * MIN_CHUNK_SIZE,
-          y: Math.floor(vec.y / MIN_CHUNK_SIZE) * MIN_CHUNK_SIZE,
-        },
-        sideLength: MIN_CHUNK_SIZE,
-      };
-
       const per = perlin(vec, false);
       const spaceType = uiManager.spaceTypeFromPerlin(per);
 
@@ -70,7 +61,7 @@ const StyledCoordsPane = styled.div`
   width: 16em;
   height: 4em;
 `;
-export function CoordsPane() {
+export function CoordsPane(): JSX.Element {
   const [hovering, setHovering] = useState<boolean>(false);
   const [hidden, setHidden] = useState<boolean>(false);
 

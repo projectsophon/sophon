@@ -21,7 +21,7 @@ export function Corner({
   bottom = false,
   left = false,
   right = false,
-}: CornerProps) {
+}: CornerProps): JSX.Element {
   const posStyles: React.CSSProperties = {
     top: top ? 0 : undefined,
     bottom: bottom ? 0 : undefined,

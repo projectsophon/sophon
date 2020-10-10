@@ -112,7 +112,7 @@ const ConfirmIcon = styled.span`
   ${anim};
 `;
 
-export function TxConfirmPopup({ match }: RouteComponentProps) {
+export function TxConfirmPopup({ match }: RouteComponentProps): JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { addr, actionId, balance, method } = match.params as {
     addr: string;

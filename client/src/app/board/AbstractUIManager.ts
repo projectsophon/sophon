@@ -79,7 +79,6 @@ export default interface AbstractUIManager {
   verifyTwitter(twitter: string): Promise<boolean>;
 
   startExplore(): void;
-  stopExplore(): void;
   addNewChunk(chunk: ExploredChunkData): void;
   onMouseDown(coords: WorldCoords): void;
   onMouseMove(coords: WorldCoords): void;

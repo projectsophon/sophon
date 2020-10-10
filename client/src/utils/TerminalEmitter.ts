@@ -54,7 +54,7 @@ class TerminalEmitter extends EventEmitter {
     skipTyping = false,
     typistProps = defaultTypistProps,
     recordAsInput: string | null = null
-  ) {
+  ): void {
     this.emit(
       TerminalEvent.Print,
       str,
@@ -65,7 +65,7 @@ class TerminalEmitter extends EventEmitter {
     );
   }
 
-  newline() {
+  newline(): void {
     this.emit(TerminalEvent.Newline);
   }
 
@@ -75,7 +75,7 @@ class TerminalEmitter extends EventEmitter {
     skipTyping = false,
     typistProps = defaultTypistProps,
     recordAsInput: string | null = null
-  ) {
+  ): void {
     this.emit(
       TerminalEvent.Print,
       str,
@@ -93,7 +93,7 @@ class TerminalEmitter extends EventEmitter {
     style: TerminalTextStyle = TerminalTextStyle.Default,
     skipTyping = false,
     recordAsInput: string | null = null
-  ) {
+  ): void {
     this.emit(
       TerminalEvent.PrintLink,
       str,
@@ -104,11 +104,11 @@ class TerminalEmitter extends EventEmitter {
     );
   }
 
-  changePromptType(promptType: TerminalPromptType) {
+  changePromptType(promptType: TerminalPromptType): void {
     this.emit(TerminalEvent.ChangePromptType, promptType);
   }
 
-  bashShell(str: string) {
+  bashShell(str: string): void {
     this.emit(
       TerminalEvent.Print,
       '$ ',
@@ -126,7 +126,7 @@ class TerminalEmitter extends EventEmitter {
     this.emit(TerminalEvent.Newline);
   }
 
-  jsShell(str: string) {
+  jsShell(str: string): void {
     this.emit(
       TerminalEvent.Print,
       '> ',
@@ -145,15 +145,15 @@ class TerminalEmitter extends EventEmitter {
     this.emit(TerminalEvent.Newline);
   }
 
-  enableUserInput() {
+  enableUserInput(): void {
     this.emit(TerminalEvent.EnableUserInput);
   }
 
-  disableUserInput() {
+  disableUserInput(): void {
     this.emit(TerminalEvent.DisableUserInput);
   }
 
-  allowUnfocusInput() {
+  allowUnfocusInput(): void {
     this.emit(TerminalEvent.AllowUnfocusInput);
   }
 }

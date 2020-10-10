@@ -568,7 +568,7 @@ class ContractsAPI extends EventEmitter {
     planetIdDecStr: string,
     currentHatLevel: number,
     actionId: string
-  ) {
+  ): Promise<providers.TransactionReceipt> {
     const terminalEmitter = TerminalEmitter.getInstance();
     terminalEmitter.println(
       'BUY HAT: sending request to blockchain',

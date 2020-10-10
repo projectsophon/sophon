@@ -2,7 +2,6 @@ import {
   PlanetMap,
   VoyageMap,
   PlanetVoyageIdMap,
-  PlanetLocationMap,
   LocationId,
   Location,
   Planet,
@@ -22,7 +21,6 @@ import {
   UnconfirmedUpgrade,
 } from '../_types/darkforest/api/ContractsAPITypes';
 import bigInt from 'big-integer';
-import _ from 'lodash';
 import { WorldCoords } from '../utils/Coordinates';
 import { emptyAddress } from '../utils/CheckedTypeUtils';
 import { hasOwner, getBytesFromHex, bonusFromHex } from '../utils/Utils';
@@ -69,7 +67,7 @@ export class PlanetHelper {
     const planetArrivalIds: PlanetVoyageIdMap = {};
     const arrivals: VoyageMap = {};
     this.endTimeSeconds = endTimeSeconds;
-    for (let [planetId, planet] of planets.entries()) {
+    for (const [planetId, planet] of planets.entries()) {
       const arrivalsForPlanet = unprocessedPlanetArrivalIds[planetId]
         .map((arrivalId) => unprocessedArrivals[arrivalId] || null)
         .filter((x) => !!x);
@@ -102,7 +100,7 @@ export class PlanetHelper {
 
     // set interval to update all planets every 120s
     setInterval(() => {
-      for (let planet of this.planets.values()) {
+      for (const planet of this.planets.values()) {
         if (planet && hasOwner(planet)) {
           this.updatePlanetToTime(planet, Date.now());
         }
@@ -181,7 +179,7 @@ export class PlanetHelper {
   // returns null if this isn't a planet, according to hash and coords
   public getPlanetWithCoords(coords: WorldCoords): Planet | null {
     const { x, y } = coords;
-    let location = this.coordsToLocation.get(`${x}-${y}`);
+    const location = this.coordsToLocation.get(`${x}-${y}`);
     if (!location) {
       return null;
     }
@@ -191,7 +189,7 @@ export class PlanetHelper {
   // returns an empty planet if planet is not in contract
   // returns null if this isn't a planet, according to hash and coords
   public getPlanetWithLocation(location: Location): Planet | null {
-    if (!!this.planets.has(location.hash)) {
+    if (this.planets.has(location.hash)) {
       const planet = this.planets.get(location.hash);
       this.updatePlanetIfStale(planet);
       // return this.planets.get(location.hash);
@@ -221,8 +219,8 @@ export class PlanetHelper {
   }
 
   public getAllOwnedPlanets(): Planet[] {
-    let ownedPlanets = [];
-    for (let planet of this.planets.values()) {
+    const ownedPlanets = [];
+    for (const planet of this.planets.values()) {
       if (hasOwner(planet)) {
         ownedPlanets.push(planet);
       }
@@ -239,7 +237,7 @@ export class PlanetHelper {
     return Object.values(this.arrivals).map((awt) => awt.arrivalData);
   }
 
-  public onTxInit(initializedTx: UnconfirmedTx) {
+  public onTxInit(initializedTx: UnconfirmedTx): void {
     if (isUnconfirmedMove(initializedTx)) {
       this.unconfirmedMoves[initializedTx.actionId] = initializedTx;
       const planet = this.getPlanetWithId(initializedTx.from);
@@ -261,7 +259,7 @@ export class PlanetHelper {
     }
   }
 
-  public clearUnconfirmedTx(unconfirmedTx: UnconfirmedTx) {
+  public clearUnconfirmedTx(unconfirmedTx: UnconfirmedTx): void {
     if (isUnconfirmedMove(unconfirmedTx)) {
       const planet = this.getPlanetWithId(unconfirmedTx.from);
       if (planet) {

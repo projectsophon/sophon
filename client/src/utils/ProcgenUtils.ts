@@ -2,7 +2,6 @@ import { Planet, EthAddress, LocationId } from '../_types/global/GlobalTypes';
 import bigInt from 'big-integer';
 import { PlanetCosmeticInfo } from '../_types/darkforest/app/board/utils/UtilsTypes';
 import { getPlanetRank, seededRandom, titleCase } from './Utils';
-import _ from 'lodash';
 import Noise from './Noise';
 import {
   planetNameWords,
@@ -136,7 +135,7 @@ export const getPlanetCosmetic: (
   return colors;
 };
 
-export const getPlanetTitle = (planet: Planet | null) => {
+export const getPlanetTitle = (planet: Planet | null): string => {
   if (!planet) return 'Unknown';
 
   const myRank = getPlanetRank(planet);
@@ -195,10 +194,10 @@ export const getPlanetBlurb = (planet: Planet | null): string => {
     // geography, atmosphere, fauna, flora, fun fact
     story: [
       `#geography.capitalize# #populates#. ` +
-        `The #air# is #descair#. ` +
-        `#myflora.capitalize# #bloom# #colors#. ` +
-        `#many.capitalize# species of #species# #populate# the #habitat#. ` +
-        `#funfact.capitalize#\.`,
+      `The #air# is #descair#. ` +
+      `#myflora.capitalize# #bloom# #colors#. ` +
+      `#many.capitalize# species of #species# #populate# the #habitat#. ` +
+      `#funfact.capitalize#.`,
     ],
     origin: ['#[myflora:#flora#]story#'],
   };
@@ -216,7 +215,7 @@ export const getPlanetBlurb2 = (planet: Planet | null): string => {
   const tagline = getPlanetTagline(planet);
   const myGrammar = {
     story: [
-      `The people of ${name} have #learned# to #live# in a ${tagline}. ${name}'s #mysun# #sends# an #flock# of #bads# #sometimes#. Over the #years#, they've #removed# the #mysun# by #throwing# #warbears#. In doing so, they've learned that #lesson#\.`,
+      `The people of ${name} have #learned# to #live# in a ${tagline}. ${name}'s #mysun# #sends# an #flock# of #bads# #sometimes#. Over the #years#, they've #removed# the #mysun# by #throwing# #warbears#. In doing so, they've learned that #lesson#.`,
     ],
     origin: [`#[mysun:#sun#]story#`],
   };

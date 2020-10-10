@@ -5,7 +5,7 @@ import {
   SelectedStatContext,
 } from '../GameWindow';
 import { ContextPane } from '../GameWindowComponents/ContextMenu';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { Sub, Green, White } from '../../components/Text';
 
 import {
@@ -174,7 +174,7 @@ export function EnergyIconSelector({
 }: {
   icon: React.ReactNode;
   hook: NumberHook;
-}) {
+}): JSX.Element {
   const [percent, setPercent] = hook;
   return (
     <StyledIconSelector>
@@ -197,7 +197,7 @@ export function SilverIconSelector({
 }: {
   icon: React.ReactNode;
   hook: NumberHook;
-}) {
+}): JSX.Element {
   const [percent, setPercent] = hook;
   return (
     <StyledIconSelector>
@@ -213,8 +213,6 @@ export function SilverIconSelector({
     </StyledIconSelector>
   );
 }
-
-const defaultTransform = css`scale(2, 0.8)`;
 
 const StyledSpinner = styled.span`
   display: inline-flex;
@@ -246,7 +244,7 @@ const Percent = styled.p`
   text-align: center;
 `;
 
-export function Spinner({ hook, children }: { hook: NumberHook }) {
+export function Spinner({ hook, children }: { hook: NumberHook; children: JSX.Element }): JSX.Element {
   const [, setPercent] = hook;
 
   return (
@@ -377,7 +375,7 @@ const isPending = (selected): boolean => {
 const DEFAULT_ENERGY_PERCENT = 50;
 const DEFAULT_SILVER_PERCENT = 100;
 
-export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, upgradeDetHook: ModalHook }) {
+export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, upgradeDetHook: ModalHook }): JSX.Element {
   const [account, setAccount] = useState<EthAddress | null>(null);
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
@@ -388,9 +386,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
   const windowManager = WindowManager.getInstance();
 
-  const [bonus, setBonus] = useState<Bonus | null>(null);
+  const [bonus] = useState<Bonus | null>(null);
   const branchHook = useState<UpgradeBranchName | null>(null);
-  const [branch, _setBranch] = branchHook;
+  const [branch] = branchHook;
 
   useEffect(() => {
     if (!uiManager) return;
@@ -410,7 +408,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
     return () => {
       document.removeEventListener('keydown', onKeypress);
     };
-  }, [uiManager]);
+  }, [windowManager, uiManager]);
 
   const planetName = (): string => {
     if (!uiManager || !selected) return 'No planet selected.';
@@ -433,7 +431,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
       ? uiManager.getForcesSending(selected.locationId)
       : DEFAULT_ENERGY_PERCENT
   );
-  const [energyPercent, _setEnergyPercent] = energyHook;
+  const [energyPercent] = energyHook;
 
   const silverHook = useState<number>(
     selected && uiManager
@@ -475,7 +473,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         setInputValue(null);
       }
     }
-  }, [inputValue, selectedStats]);
+  }, [inputValue, setSilverPercent, selectedStats]);
 
   const getUpgradeSilver = () => {
     if (!selected || !uiManager) return 0;

@@ -23,7 +23,7 @@ export const ONE_DAY = 24 * 60 * 60 * 1000;
 type NestedBigIntArray = (BigInteger | string | NestedBigIntArray)[];
 type NestedStringArray = (string | NestedStringArray)[];
 
-export const hexifyBigIntNestedArray = (arr: NestedBigIntArray) => {
+export const hexifyBigIntNestedArray = (arr: NestedBigIntArray): NestedStringArray => {
   return arr.map((value) => {
     if (Array.isArray(value)) {
       return hexifyBigIntNestedArray(value);
@@ -111,7 +111,7 @@ export const formatNumber = (num: number): string => {
   /*rem < 1000*/ else return `${rem.toFixed(0)}${suffixes[log000]}`;
 };
 
-export const getRandomActionId = () => {
+export const getRandomActionId = (): string => {
   const hex = '0123456789abcdef';
 
   let ret = '';
@@ -121,7 +121,7 @@ export const getRandomActionId = () => {
   return ret;
 };
 
-export const seededRandom = (s: number) => {
+export const seededRandom = (s: number): number => {
   const x = Math.sin(s) * 10000;
   return x - Math.floor(x);
 };
@@ -158,7 +158,7 @@ export const isFullRank = (planet: Planet | null): boolean => {
   else return rank >= 5;
 };
 
-export const planetCanUpgrade = (planet: Planet | null) => {
+export const planetCanUpgrade = (planet: Planet | null): boolean => {
   return (
     planet &&
     !isFullRank(planet) &&
@@ -167,7 +167,7 @@ export const planetCanUpgrade = (planet: Planet | null) => {
   );
 };
 //https://stackoverflow.com/questions/32589197/how-can-i-capitalize-the-first-letter-of-each-word-in-a-string-using-javascript/45620677#45620677
-export const titleCase = (title) =>
+export const titleCase = (title: string): string =>
   title
     .split(/ /g)
     .map((word) => `${word.substring(0, 1).toUpperCase()}${word.substring(1)}`)
@@ -187,7 +187,7 @@ export const moveShipsDecay = (
   shipsMoved: number,
   fromPlanet: Planet,
   dist: number
-) => {
+): number => {
   const scale = (1 / 2) ** (dist / fromPlanet.range);
   let ret = scale * shipsMoved - 0.05 * fromPlanet.energyCap;
   if (ret < 0) ret = 0;
@@ -199,7 +199,7 @@ export const getBytesFromHex = (
   hexStr: string,
   startByte: number,
   endByte: number
-) => {
+): bigInt.BigInteger => {
   const byteString = hexStr.substring(2 * startByte, 2 * endByte);
   return bigInt(`0x${byteString}`);
 };
@@ -219,7 +219,7 @@ export const planetHasBonus = (planet: Planet | null): boolean => {
   return bonusFromHex(planet.locationId).reduce((a, b) => a || b);
 };
 
-export const hasOwner = (planet: Planet) => {
+export const hasOwner = (planet: Planet): boolean => {
   // planet.owner should never be null
   return planet.owner !== emptyAddress;
 };
@@ -229,7 +229,7 @@ export const aggregateBulkGetter = async <T>(
   querySize: number,
   getterFn: (startIdx: number, endIdx: number) => Promise<T[]>,
   printProgress = false
-) => {
+): Promise<any> => {
   const terminalEmitter = TerminalEmitter.getInstance();
   const promises: Promise<T[]>[] = [];
   let soFar = 0;
@@ -237,9 +237,10 @@ export const aggregateBulkGetter = async <T>(
     const start = i * querySize;
     const end = Math.min((i + 1) * querySize, total);
     promises.push(
+      // TODO: fix this
+      /* eslint-disable no-async-promise-executor */
       new Promise<T[]>(async (resolve) => {
         let res: T[] = [];
-        const tries = 0;
         while (res.length === 0) {
           // retry every 1 second until we get in
           await new Promise<void>((resolve) => {
@@ -280,9 +281,9 @@ export const aggregateBulkGetter = async <T>(
   return _.flatten(unflattenedResults);
 };
 
-export const isFirefox = () => navigator.userAgent.indexOf('Firefox') > 0;
+export const isFirefox = (): boolean => navigator.userAgent.indexOf('Firefox') > 0;
 
-export const isChrome = () => /Google Inc/.test(navigator.vendor);
+export const isChrome = (): boolean => /Google Inc/.test(navigator.vendor);
 
-export const isBrave = async () =>
+export const isBrave = async (): Promise<boolean> =>
   !!((navigator as any).brave && (await (navigator as any).brave.isBrave())); // eslint-disable-line @typescript-eslint/no-explicit-any

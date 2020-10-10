@@ -14,7 +14,7 @@ import GameUIManagerContext from '../board/GameUIManagerContext';
 import { MIN_CHUNK_SIZE } from '../../utils/constants';
 import { WorldCoords } from '../../utils/Coordinates';
 import { SpiralPattern } from '../../utils/MiningPatterns';
-import { TargetIcon, PauseIcon, PlayIcon } from '../Icons';
+import { TargetIcon } from '../Icons';
 import { IconButton } from './ModalPane';
 import { TooltipTrigger } from './Tooltip';
 import dfstyles from '../../styles/dfstyles.bs.js';
@@ -35,7 +35,7 @@ const StyledExploreContextPane = styled.div`
   }
 `;
 
-export function ExploreContextPane() {
+export function ExploreContextPane(): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const windowManager = WindowManager.getInstance();
   const uiEmitter = UIEmitter.getInstance();
@@ -109,7 +109,7 @@ export function ExploreContextPane() {
             <br />
             It will continue to explore as long as you leave this tab open.
           </p>
-          {explorers.map(([ip, explorer]) => {
+          {explorers.map(([ip]) => {
             // TODO: Refactor into component
             const hashRate = hashRates.filter(([key]) => key === ip)?.[0]?.[1];
             const moveHandler = () => {

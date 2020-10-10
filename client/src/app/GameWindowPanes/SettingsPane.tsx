@@ -81,7 +81,7 @@ export function SettingsPane({
 }: {
   hook: ModalHook;
   privateHook: ModalHook;
-}) {
+}): JSX.Element {
   const account = useContext<EthAddress | null>(AccountContext);
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
 
@@ -275,7 +275,7 @@ export function SettingsPane({
           <p>
             <Sub>
               Your <White>SKEY</White>, or secret key, together with your{' '}
-              <White>home planet's</White> coordinates, grant you access to your
+              <White>home planet</White> coordinates, grant you access to your
               Dark Forest account on different browsers (kind of like a
               password).
             </Sub>

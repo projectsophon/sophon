@@ -136,7 +136,7 @@ const ColorIcon = styled.span<{ color: string }>`
   }
 `;
 
-export function PlanetThumb({ planet }: { planet: Planet }) {
+export function PlanetThumb({ planet }: { planet: Planet }): JSX.Element {
   const radius = 5 + 3 * planet.planetLevel;
   // const radius = 5 + 3 * PlanetLevel.MAX;
   const { baseColor, backgroundColor } = getPlanetCosmetic(planet);
@@ -181,8 +181,8 @@ export function PlanetThumb({ planet }: { planet: Planet }) {
 }
 
 function DexEntry({ planet, className }: { planet: Planet; className: string; }) {
-  let energyStyle = planet.energy === planet.energyCap ? { color: 'red' } : {};
-  let silverStyle = planet.silver === planet.silverCap ? { color: 'red' } : {};
+  const energyStyle = planet.energy === planet.energyCap ? { color: 'red' } : {};
+  const silverStyle = planet.silver === planet.silverCap ? { color: 'red' } : {};
 
   return (
     <PlanetLink planet={planet}>
@@ -217,7 +217,7 @@ export function PlanetLink({
 }: {
   planet: Planet;
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const uiEmitter = UIEmitter.getInstance();
 
@@ -233,21 +233,13 @@ export function PlanetLink({
   );
 }
 
-enum Columns {
-  Name = 0,
-  Level = 1,
-  Energy = 2,
-  Silver = 3,
-  Points = 4,
-}
-
-export function EnergyDexPane({ hook }: { hook: ModalHook; }) {
-  const [visible, _setVisible] = hook;
+export function EnergyDexPane({ hook }: { hook: ModalHook; }): JSX.Element {
+  const [visible] = hook;
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
 
   const createTable = (planets: [Planet]) => {
-    var dexes = [];
+    const dexes = [];
 
     function levelSort(a, b) {
       return b.planetLevel - a.planetLevel;
@@ -276,15 +268,15 @@ export function EnergyDexPane({ hook }: { hook: ModalHook; }) {
     const myAddr = uiManager.getAccount();
     if (!myAddr) return;
 
-    let energy = [];
+    const energy = [];
 
-    for (const [i, planet] of uiManager.getAllPlanets().entries()) {
+    for (const planet of uiManager.getAllPlanets().values()) {
       const [
         energyCapBonus,
-        energyGroBonus,
-        rangeBonus,
-        speedBonus,
-        defBonus,
+        // energyGroBonus,
+        // rangeBonus,
+        // speedBonus,
+        // defBonus,
       ] = bonusFromHex(planet.locationId);
       if (energyCapBonus) {
         energy.push(planet);

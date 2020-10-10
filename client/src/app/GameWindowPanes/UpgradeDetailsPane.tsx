@@ -244,7 +244,7 @@ type BranchHook = [
   Dispatch<SetStateAction<UpgradeBranchName | null>>
 ];
 
-export function UpgradeDetailsPane({ hook }: { hook: ModalHook }) {
+export function UpgradeDetailsPane({ hook }: { hook: ModalHook }): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
   const selectedStats = useContext<PlanetStatsInfo | null>(SelectedStatContext);
@@ -252,7 +252,7 @@ export function UpgradeDetailsPane({ hook }: { hook: ModalHook }) {
   const account = useContext<EthAddress | null>(AccountContext);
 
   const branchHook = useState<UpgradeBranchName | null>(null);
-  const [branch, _setBranch] = branchHook;
+  const [branch] = branchHook;
 
   const [upgrade, setUpgrade] = useState<Upgrade | null>(null);
 

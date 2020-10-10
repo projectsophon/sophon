@@ -37,7 +37,7 @@ export function ContextPane({
   headerItems,
 }: PaneProps & {
   name: ContextMenuType;
-}) {
+}): JSX.Element {
   const currentMenu = useContext<ContextMenuType>(ContextMenuContext);
 
   return (

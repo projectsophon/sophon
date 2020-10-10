@@ -89,7 +89,7 @@ export type PaneProps = {
 };
 
 // no-op on header style
-export function SidebarPane({ children, title, headerItems }: PaneProps) {
+export function SidebarPane({ children, title, headerItems }: PaneProps): JSX.Element {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   return (
     <StyledSidebarPane>

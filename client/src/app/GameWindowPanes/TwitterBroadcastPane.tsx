@@ -39,7 +39,7 @@ const BroadcastWrapper = styled.div`
   }
 `;
 
-export function TwitterBroadcastPane({ hook }: { hook: ModalHook }) {
+export function TwitterBroadcastPane({ hook }: { hook: ModalHook }): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
 

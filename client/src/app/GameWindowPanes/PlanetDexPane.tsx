@@ -5,16 +5,18 @@ import {
   ModalHook,
   ModalName,
   ModalPlanetDexIcon,
+  IconButton,
 } from './ModalPane';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
-import { Planet, PlanetResource } from '../../_types/global/GlobalTypes';
+import { Planet, PlanetResource, UpgradeBranchName } from '../../_types/global/GlobalTypes';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
 import { Sub, Space } from '../../components/Text';
 import {
   getPlanetShortHash,
   formatNumber,
   getPlanetRank,
+  planetCanUpgrade,
 } from '../../utils/Utils';
 import dfstyles from '../../styles/dfstyles.bs.js';
 import { getPlanetName, getPlanetCosmetic } from '../../utils/ProcgenUtils';
@@ -22,6 +24,7 @@ import _ from 'lodash';
 import { SelectedContext, AccountContext } from '../GameWindow';
 import { SilverIcon, RankIcon } from '../Icons';
 import { calculateRankAndScore } from './LeaderboardPane';
+import { DefenseIcon, RangeIcon, SpeedIcon } from '../Icons';
 
 const DexWrapper = styled.div`
   height: 12.2em; // exact size so a row is cut off
@@ -203,6 +206,18 @@ const PlayerInfoWrapper = styled.div`
 
   & > div > span:last-of-type {
     margin-left: 0.5em;
+  }
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  height: 30px; // 5 + 3 * 7 + 4px
+
+  > div {
+    margin-right: 0.5em;
   }
 `;
 
@@ -392,11 +407,57 @@ export function PlanetDexPane({
     setPlanets(ownedPlanets);
   }, [visible, uiManager]);
 
+  const getUpgradeSilverNeeded = (planet) => {
+    if (!planet) return 0;
+    const totalLevel = planet.upgradeState.reduce((a, b) => a + b);
+    const totalNeeded = Math.floor((totalLevel + 1) * 0.2 * planet.silverCap);
+    return totalNeeded;
+  };
+
+  const [autoUpgradeBranch, setAutoUpgradeBranch] = useState(null);
+
+  useEffect(() => {
+    if (!uiManager || autoUpgradeBranch == null) return;
+
+    planets
+      .filter(planet => {
+        if (
+          planetCanUpgrade(planet) &&
+          planet.silver >= getUpgradeSilverNeeded(planet) &&
+          planet.unconfirmedUpgrades?.length > 0
+        ) {
+          // 3 (a.ka. 4) is the max level an upgrade can be
+          if (planet.upgradeState[autoUpgradeBranch] < 3) {
+            return true;
+          } else {
+            console.log(`AutoUpgrade: Can't upgrade past level 4, try a different stat`);
+            return false;
+          }
+        }
+        return false
+      })
+      .forEach(planet => uiManager.upgrade(planet, autoUpgradeBranch));
+
+    setAutoUpgradeBranch(null);
+  }, [autoUpgradeBranch, planets, uiManager])
+
   return (
     <ModalPane hook={hook} title='Planet Dex' name={ModalName.PlanetDex}>
       {visible ? <PlayerInfoWrapper>
         <PlayerInfoRow />
       </PlayerInfoWrapper> : null}
+      <ButtonRow>
+        <div>Upgrade All</div>
+        <IconButton onClick={() => setAutoUpgradeBranch(UpgradeBranchName.Defense)}>
+          <DefenseIcon />
+        </IconButton>
+        <IconButton onClick={() => setAutoUpgradeBranch(UpgradeBranchName.Range)}>
+          <RangeIcon />
+        </IconButton>
+        <IconButton onClick={() => setAutoUpgradeBranch(UpgradeBranchName.Speed)}>
+          <SpeedIcon />
+        </IconButton>
+      </ButtonRow>
       <DexWrapper>
         <DexRow className='title-row'>
           <span>#</span>

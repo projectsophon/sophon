@@ -224,10 +224,6 @@ function isasteroid(planet) {
   return planet.planetResource === PlanetResource.SILVER;
 }
 
-//or in browser  
-// function isasteroid(planet){
-//   return planet.planetResource === 1;
-// }
 
 
 //this is currently shorter distance ascending to larger
@@ -265,16 +261,13 @@ async function distribute_funds(locationid, energystaysabovepercent) {
     //check if has incoming moves from a previous asteroid to be safe
     const arrivals = await df.contractsAPI.getArrivalsForPlanet(candidate);
     let needed_silver = candidate.silverCap - candidate.silver;
-    let effective = df.getEnergyNeededForMove(asteroid.locationId, candidate.locationId, 1);
+    let effective = Math.floor(df.getEnergyNeededForMove(asteroid.locationId, candidate.locationId, 1));
     if (arrivals === 0 && needed_silver > 0 && budget - effective > 0) {
       // let from = df.planetHelper.getLocationOfPlanet(asteroid.locationId);
       // let to = df.planetHelper.getLocationOfPlanet(candidate.locationId);
       // console.log("transfering ", needed_silver, " from x: ", from.coords.x, ", y: ", from.coords.y, " to x: ", to.coords.x, ", y: ", to.coords.y, " at cost of ", effective);
       // console.log('df.move("' + asteroid.locationId + '","' + candidate.locationId + '",' + effective + ',' + needed_silver + ')');
-
-      //df.move('0000a55400f620e5378bfd33d312b1e396b82bf75a331549dd6fe3244937a0e9', '000060e40034c34995e1bdbc9d658d1697c482935da1e836f7cf0c4b0d8a4888', 1199, 1000)
-
-      //df.move(asteroid.locationId, candidate.locationId, effective, needed_silver);
+      df.move(asteroid.locationId, candidate.locationId, effective, needed_silver);
       budget -= effective;
     }
   }

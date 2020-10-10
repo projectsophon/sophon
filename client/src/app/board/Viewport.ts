@@ -3,6 +3,7 @@ import { WorldCoords, CanvasCoords, distL2 } from '../../utils/Coordinates';
 import autoBind from 'auto-bind';
 import AbstractUIManager from './AbstractUIManager';
 import { ExploredChunkData, Planet } from '../../_types/global/GlobalTypes';
+import _ from 'lodash';
 
 class Viewport {
   // The sole listener for events from Canvas
@@ -54,6 +55,7 @@ class Viewport {
 
     this.isPanning = false;
     autoBind(this);
+    this.onMouseMove = _.throttle(this.onMouseMove, 33);
   }
 
   static getInstance(): Viewport {

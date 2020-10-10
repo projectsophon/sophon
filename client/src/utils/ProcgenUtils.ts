@@ -105,10 +105,15 @@ const grayColors: PlanetCosmeticInfo = {
   hatType: HatType.GraduationCap,
 };
 
-export const getPlanetColors: (planet: Planet | null) => PlanetCosmeticInfo = (
-  planet
-) => {
+const cosmeticByLocId = new Map<LocationId, PlanetCosmeticInfo>();
+export const getPlanetCosmetic: (
+  planet: Planet | null
+) => PlanetCosmeticInfo = (planet) => {
   if (!planet) return grayColors;
+  if (cosmeticByLocId.has(planet.locationId)) {
+    return cosmeticByLocId.get(planet.locationId) || grayColors;
+  }
+
   const baseHue = hashToHue(planet.locationId);
   const baseColor = hslStr(baseHue % 360, 70, 60);
 

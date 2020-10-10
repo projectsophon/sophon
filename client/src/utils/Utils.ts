@@ -239,9 +239,9 @@ export const aggregateBulkGetter = async <T>(
         let res: T[] = [];
         const tries = 0;
         while (res.length === 0) {
-          // retry with exponential backoff if request fails
+          // retry every 1 second until we get in
           await new Promise<void>((resolve) => {
-            setTimeout(resolve, Math.max(15, 2 ** tries - 1) * 1000);
+            setTimeout(resolve, 1000);
           });
           res = await getterFn(start, end)
             .then((res) => {

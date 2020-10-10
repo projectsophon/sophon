@@ -9,6 +9,7 @@ import {
   Planet,
   ExploredChunkData,
   PlanetResource,
+  PlanetLevel,
 } from '../../_types/global/GlobalTypes';
 import {
   hasOwner,
@@ -21,7 +22,7 @@ import autoBind from 'auto-bind';
 import { PlanetCosmeticInfo } from '../../_types/darkforest/app/board/utils/UtilsTypes';
 import { addToChunkMap } from '../../utils/ChunkUtils';
 import dfstyles from '../../styles/dfstyles.bs.js';
-import { getPlanetColors, getOwnerColor } from '../../utils/ProcgenUtils';
+import { getPlanetCosmetic, getOwnerColor } from '../../utils/ProcgenUtils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
 import { hatFromType, HatType } from '../../utils/Hats';
 
@@ -49,6 +50,10 @@ class CanvasRenderer {
 
   imgPattern: CanvasPattern | null;
 
+  frameCount: number;
+  now: number;
+  selected: Planet | null;
+
   private constructor(
     canvas: HTMLCanvasElement,
     gameUIManager: GameUIManager,
@@ -69,12 +74,15 @@ class CanvasRenderer {
     this.gameUIManager = gameUIManager;
     this.perlinThreshold1 = gameUIManager.getPerlinThresholds()[0];
     this.perlinThreshold2 = gameUIManager.getPerlinThresholds()[1];
-    this.planetToCosmetic = {};
     this.zone0ChunkMap = new Map<string, ExploredChunkData>();
     this.zone1ChunkMap = new Map<string, ExploredChunkData>();
     this.zone2ChunkMap = new Map<string, ExploredChunkData>();
 
     this.imgPattern = ctx.createPattern(image, 'repeat');
+
+    this.frameCount = 0;
+    this.now = Date.now();
+    this.selected = null;
 
     this.frame();
     autoBind(this);
@@ -108,7 +116,7 @@ class CanvasRenderer {
     return canvasRenderer;
   }
 
-  private frame() {
+  private draw() {
     const viewport = Viewport.getInstance();
 
     const exploredChunks = this.gameUIManager.getExploredChunks();
@@ -150,7 +158,19 @@ class CanvasRenderer {
     this.drawBorders();
 
     this.drawMiner();
+  }
 
+  private frame() {
+    this.frameCount++;
+
+    // make the tick depend on detail level?
+    const tick = 3;
+
+    if (this.frameCount % tick === 0) {
+      this.selected = this.gameUIManager.getSelectedPlanet();
+      this.now = Date.now();
+      this.draw();
+    }
     this.frameRequestId = window.requestAnimationFrame(this.frame.bind(this));
   }
 
@@ -224,20 +244,30 @@ class CanvasRenderer {
   }
 
   private drawPlanets(planetLocations: Location[]) {
-    for (const location of planetLocations) {
-      this.drawPlanetAtLocation(location);
+    for (let planetLocation of planetLocations) {
+      this.drawPlanetAtLocation(planetLocation);
     }
   }
 
   private drawPlanetAtLocation(location: Location) {
     const uiManager = this.gameUIManager;
     const planetLevel = uiManager.getPlanetDetailLevel(location.hash);
-    if (planetLevel === null || planetLevel < uiManager.getDetailLevel()) {
-      return; // so we don't call getPlanetWithLocation, which triggers updates every second
-    }
+    const isSelected = location.hash === this.selected?.locationId;
     const planet = uiManager.getPlanetWithId(location.hash);
-    if (!planet) {
-      return null;
+    if (!planet) return; // if we messed up somehow
+
+    const isVeryBig = planetLevel >= 6;
+
+    const radius = uiManager.getRadiusOfPlanetLevel(planet.planetLevel);
+    const viewport = Viewport.getInstance();
+    const radiusReal = viewport.worldToCanvasDist(radius);
+
+    const MIN_RADIUS = 2;
+    if (!isSelected) {
+      if (radiusReal < MIN_RADIUS && !isVeryBig) return; // detail level fallback
+      if (planetLevel === null || planetLevel < uiManager.getDetailLevel()) {
+        return; // so we don't call getPlanetWithLocation, which triggers updates every second
+      }
     }
 
     const energy = planet ? Math.ceil(planet.energy) : 0;
@@ -245,17 +275,14 @@ class CanvasRenderer {
     const silver = planet ? Math.floor(planet.silver) : 0;
     const center = { x: location.coords.x, y: location.coords.y };
 
-    const radius = uiManager.getRadiusOfPlanetLevel(planet.planetLevel);
-
-    if (!this.planetToCosmetic[planet.locationId]) {
-      this.planetToCosmetic[planet.locationId] = getPlanetColors(planet);
-    }
-    const colors = this.planetToCosmetic[planet.locationId];
+    const colors = getPlanetCosmetic(planet);
 
     const myRotation = (-40 + (colors.baseHue % 80)) * (Math.PI / 180);
 
     /* draw ring back */
-    const numRings = getPlanetRank(planet);
+    const rank = getPlanetRank(planet);
+    // const numRings = this.highPerf ? (rank > 0 ? 1 : 0) : rank;
+    const numRings = rank;
     // const numRings = 2;
 
     for (let i = 0; i < numRings; i++)
@@ -275,9 +302,19 @@ class CanvasRenderer {
     this.ctx.globalAlpha = 0.7;
     if (hasOwner(planet)) {
       if (uiManager.isOwnedByMe(planet)) {
-        this.drawLoopWithCenter(center, radius * 1.2, 1, 'white');
+        this.drawLoopWithCenter(
+          center,
+          radius * 1.2,
+          1,
+          'white'
+        );
       } else {
-        this.drawLoopWithCenter(center, radius * 1.2, 1, getOwnerColor(planet));
+        this.drawLoopWithCenter(
+          center,
+          radius * 1.2,
+          1,
+          getOwnerColor(planet)
+        );
       }
     }
     this.ctx.globalAlpha = 1.0;
@@ -323,7 +360,7 @@ class CanvasRenderer {
     const current = uiManager.getDetailLevel();
     const det = uiManager.getPlanetDetailLevel(planet.locationId);
     if (det === null) return;
-    if (det > current + 1) {
+    if (det > current + 1 || isSelected) {
       const fromPlanet = uiManager.getMouseDownPlanet();
       const fromCoords = uiManager.getMouseDownCoords();
       const toPlanet = uiManager.getHoveringOverPlanet();
@@ -446,7 +483,7 @@ class CanvasRenderer {
   private drawVoyages() {
     const voyages = this.gameUIManager.getAllVoyages();
     for (const voyage of voyages) {
-      const now = Date.now() / 1000;
+      const now = this.now / 1000;
       if (now < voyage.arrivalTime) {
         const isMyVoyage = voyage.player === this.gameUIManager.getAccount();
         this.drawVoyagePath(
@@ -480,7 +517,7 @@ class CanvasRenderer {
     } else if (!fromLoc && fromPlanet && toLoc) {
       // can draw a red ring around dest, but don't know source location
       const myMove = voyage.player === this.gameUIManager.getAccount();
-      const now = Date.now() / 1000;
+      const now = this.now / 1000;
       const timeLeft = voyage.arrivalTime - now;
       const radius = (timeLeft * fromPlanet.speed) / 100;
       this.drawLoopWithCenter(
@@ -498,7 +535,7 @@ class CanvasRenderer {
       // know source and destination locations
 
       const myMove = voyage.player === this.gameUIManager.getAccount();
-      const now = Date.now() / 1000;
+      const now = this.now / 1000;
       let proportion =
         (now - voyage.departureTime) /
         (voyage.arrivalTime - voyage.departureTime);
@@ -579,11 +616,10 @@ class CanvasRenderer {
   }
 
   private drawSelectedRangeRing() {
-    const uiManager = this.gameUIManager;
-    const selected = uiManager.getSelectedPlanet();
+    const selected = this.selected;
 
     if (!selected) return;
-    const loc = uiManager.getLocationOfPlanet(selected.locationId);
+    const loc = this.gameUIManager.getLocationOfPlanet(selected.locationId);
     if (!loc) return;
     const { x, y } = loc?.coords;
 
@@ -631,7 +667,9 @@ class CanvasRenderer {
 
     if (selected.owner === emptyAddress) return;
 
-    const forcesSending = uiManager.getForcesSending(selected.locationId); // [0, 100]
+    const forcesSending = this.gameUIManager.getForcesSending(
+      selected.locationId
+    ); // [0, 100]
     const totalForces = (forcesSending / 100) * selected.energy;
 
     const scaled = (forcesSending * selected.energy) / selected.energyCap;
@@ -848,31 +886,12 @@ class CanvasRenderer {
     ctx.save();
     ctx.translate(centerCanvasCoords.x, centerCanvasCoords.y);
 
-    const angle = Date.now() * 0.001;
+    const angle = this.now * 0.001;
 
     const drawAsteroid = (t: number, color: string) => {
       const theta = t + angle;
       const x = Math.cos(theta);
       const y = Math.sin(theta);
-
-      const clip = (tt) => tt % (Math.PI * 2);
-
-      ctx.lineWidth = r;
-
-      for (let i = 1; i <= 8; i++) {
-        ctx.globalAlpha = 0.04;
-
-        ctx.beginPath();
-        ctx.arc(0, 0, orbit, clip(theta - 0.1 * i), clip(theta));
-
-        ctx.strokeStyle = color;
-        ctx.stroke();
-        ctx.strokeStyle = 'white';
-        ctx.stroke();
-        ctx.stroke();
-      }
-
-      ctx.globalAlpha = 1;
 
       ctx.beginPath();
       ctx.fillStyle = color;
@@ -959,7 +978,7 @@ class CanvasRenderer {
     ctx.save();
     ctx.translate(center.x, center.y);
 
-    const colors = this.planetToCosmetic[planet.locationId];
+    const colors = getPlanetCosmetic(planet);
     if (planet.planetResource === PlanetResource.NONE) {
       ctx.fillStyle = colors.previewColor;
 
@@ -970,7 +989,7 @@ class CanvasRenderer {
       // silver-producing
 
       for (let i = 0; i < 5; i++) {
-        const t = (i * (Math.PI * 2)) / 5 + Date.now() * 0.0003;
+        const t = (i * (Math.PI * 2)) / 5 + this.now * 0.0003;
 
         ctx.fillStyle = colors.asteroidColor;
         ctx.beginPath();

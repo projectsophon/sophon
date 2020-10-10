@@ -219,6 +219,71 @@ const ButtonRow = styled.div`
   }
 `;
 
+
+// DF version needs to be converted
+// might have to make the df functions as I dont know if he actually exposed them on uimanager
+// and those functions take planet.locationid instead of planet
+// df.account has to be something like this.player in most places
+// ive tested this up until the await call for arrivals, no guarantee that works as I cant get console log out of the result
+function isasteroid(planet) {
+  return planet.planetResource === PlanetResource.SILVER;
+}
+
+//or in browser  
+// function isasteroid(planet){
+//   return planet.planetResource === 1;
+// }
+
+function distance(from, to) {
+  let fromloc = df.planetHelper.getLocationOfPlanet(from.locationId);
+  let toloc = df.planetHelper.getLocationOfPlanet(to.locationId);
+  return Math.sqrt((fromloc.coords.x - toloc.coords.x) ** 2 + (fromloc.coords.y - toloc.coords.y) ** 2);
+}
+
+//tuples of [planet,distance]
+function distance_sort(a, b) {
+  return b[1] - a[1];
+}
+
+//im assuming taking input as floats disribute_funds(.2,.2);
+async function distribute_funds(silverstaysabovepercent, energystaysabovepercent) {
+  let asteroids = df.getMyPlanets().filter(isasteroid).filter(a => (a.energy > energystaysabovepercent * a.energyCap) && (a.silver > silverstaysabovepercent * a.silverCap));
+  // console.log(asteroids);
+  for (const a of asteroids) {
+    // console.log(a)
+    // let location = df.planetHelper.getLocationOfPlanet(a.locationId);
+    // console.log("asteroid x: ", location.coords.x, ", y: ", location.coords.y);
+
+    let candidates_ = df.getPlanetsInRange(a.locationId, energystaysabovepercent * 100).filter(p => p.owner === df.account).filter(p => !isasteroid(p)).map(p => [p, distance(a, p)]).sort(distance_sort);
+
+    let i = 0;
+    let budget = energystaysabovepercent * a.energyCap;
+    while (budget > 0 && i < candidates_.length) {
+      //remember its a tuple of candidates and their distance
+      let candidate = candidates_[i++][0];
+
+      // console.log(candidate);
+      // let location = df.planetHelper.getLocationOfPlanet(candidate.locationId);
+      // console.log("candidate x: ", location.coords.x, ", y: ", location.coords.y);
+
+      //check if has incoming moves from a previous asteroid to be safe
+      const arrivals = await df.contractsAPI.getArrivalsForPlanet(candidate);
+      let needed_silver = candidate.silverCap - candidate.silver;
+      let effective = df.getEnergyNeededForMove(a.locationId, candidate.locationId, 1);
+      if (arrivals === 0 && needed_silver > 0 && budget - effective > 0) {
+        let from = df.planetHelper.getLocationOfPlanet(a.locationId);
+        let to = df.planetHelper.getLocationOfPlanet(candidate.locationId);
+        console.log("transfering ", needed_silver, " from x: ", from.coords.x, ", y: ", from.coords.y, " to x: ", to.coords.x, ", y: ", to.coords.y, " at cost of ", effective);
+        // move(from, to, effective, silver)
+        budget -= effective;
+      }
+    }
+  }
+}
+
+
+
+
 const PlayerInfoRow = () => {
   const account = useContext<EthAddress | null>(AccountContext);
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);

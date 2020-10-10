@@ -131,6 +131,8 @@ export const getPlanetCosmetic: (
     hatType: hatTypeFromHash(planet.locationId),
   };
 
+  cosmeticByLocId.set(planet.locationId, colors);
+
   return colors;
 };
 

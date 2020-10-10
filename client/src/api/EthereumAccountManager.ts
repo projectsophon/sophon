@@ -1,20 +1,24 @@
 import * as stringify from 'json-stable-stringify';
 import { Provider, TransactionReceipt } from '@ethersproject/providers';
-import { providers, Contract, Wallet, utils } from 'ethers';
+import { providers, Contract, Wallet, utils, ContractInterface } from 'ethers';
 import { EthAddress } from '../_types/global/GlobalTypes';
 import { address } from '../utils/CheckedTypeUtils';
+import EventEmitter from 'events';
+import { XDAI_CHAIN_ID } from '../utils/constants';
 
-class EthereumAccountManager {
+class EthereumAccountManager extends EventEmitter {
   static instance: EthereumAccountManager | null = null;
 
-  private readonly provider: Provider;
+  private provider: JsonRpcProvider;
   private signer: Wallet | null;
+  private rpcURL: string;
   private readonly knownAddresses: EthAddress[];
 
   private constructor() {
-    const url = 'https://rpc.xdaichain.com/';
-    this.provider = new providers.JsonRpcProvider(url);
-    this.signer = null;
+    super();
+
+    const url = localStorage.getItem('XDAI_RPC_ENDPOINT') || 'https://rpc.xdaichain.com/';
+    this.setRpcEndpoint(url);
     this.knownAddresses = [];
     const knownAddressesStr = localStorage.getItem('KNOWN_ADDRESSES');
     if (knownAddressesStr) {
@@ -32,7 +36,34 @@ class EthereumAccountManager {
     return EthereumAccountManager.instance;
   }
 
-  public async loadContract(contractAddress, contractABI): Promise<Contract> {
+  public getRpcEndpoint(): string {
+    return this.rpcURL;
+  }
+
+  public async setRpcEndpoint(url: string): Promise<void> {
+    try {
+      this.rpcURL = url;
+      const newProvider = new providers.JsonRpcProvider(this.rpcURL);
+      // TODO: the chainID check
+      this.provider = newProvider;
+      if (this.signer) {
+        this.signer = new Wallet(this.signer.privateKey, this.provider);
+      } else {
+        this.signer = null;
+      }
+      localStorage.setItem('XDAI_RPC_ENDPOINT', this.rpcURL);
+      this.emit('ChangedRPCEndpoint');
+    } catch (e) {
+      console.error(`error setting rpc endpoint: ${e}`);
+      this.setRpcEndpoint('https://rpc.xdaichain.com/');
+      return;
+    }
+  }
+
+  public async loadContract(
+    contractAddress: string,
+    contractABI: ContractInterface
+  ): Promise<Contract> {
     if (this.signer) {
       return new Contract(contractAddress, contractABI, this.signer);
     } else {

@@ -21,6 +21,7 @@ import {
 export const ONE_DAY = 24 * 60 * 60 * 1000;
 
 type NestedBigIntArray = (BigInteger | string | NestedBigIntArray)[];
+type NestedStringArray = (string | NestedStringArray)[];
 
 export const hexifyBigIntNestedArray = (arr: NestedBigIntArray) => {
   return arr.map((value) => {
@@ -130,8 +131,9 @@ export const getFormatProp = (
   prop: string
 ): string => {
   if (!planet) return '0';
-  if (prop === 'silverGrowth') return formatNumber(planet[prop] * 60);
-  else return formatNumber(planet[prop]);
+  const myPlanet = planet as any;
+  if (prop === 'silverGrowth') return formatNumber(myPlanet[prop] * 60);
+  else return formatNumber(myPlanet[prop]);
 };
 
 export const getPlanetRank = (planet: Planet | null): number => {

@@ -518,11 +518,26 @@ export class PlanetHelper {
   }
 
   private planetCanUpgrade(planet: Planet): boolean {
-    return (
-      planet.planetLevel !== 0 &&
-      planet.planetResource !== PlanetResource.SILVER &&
-      planet.silver >= this.getSilverNeeded(planet)
-    );
+    if (
+      planet.planetLevel === 0 &&
+      planet.planetResource === PlanetResource.SILVER &&
+      planet.silver < this.getSilverNeeded(planet)
+    ) {
+      return false;
+    }
+
+    const totalRank = planet.upgradeState.reduce((a, b) => a + b);
+    if (planet.spaceType === SpaceType.NEBULA && totalRank >= 3) {
+      return false;
+    }
+    if (planet.spaceType === SpaceType.SPACE && totalRank >= 4) {
+      return false;
+    }
+    if (planet.spaceType === SpaceType.DEEP_SPACE && totalRank >= 5) {
+      return false;
+    }
+
+    return true;
   }
 
   private planetResourceFromHexPerlin(

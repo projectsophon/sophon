@@ -45,7 +45,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
 
   private replayMode: boolean;
   private detailLevel: number; // 0 is show everything; higher means show less
-  private readonly radiusMap = {};
+  private readonly radiusMap: any = {};
 
   private selectedPlanet: Planet | null = null;
   private selectedCoords: WorldCoords | null = null;
@@ -223,18 +223,10 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
         this.mouseDownOverPlanet &&
         mouseUpOverPlanet.locationId === this.mouseDownOverPlanet.locationId
       ) {
-        // toggle select
-        if (
-          this.selectedPlanet &&
-          this.selectedPlanet.locationId === mouseUpOverPlanet.locationId
-        ) {
-          this.setSelectedPlanet(null);
-          this.selectedCoords = null;
-        } else {
-          this.setSelectedPlanet(mouseUpOverPlanet);
-          this.selectedCoords = mouseUpOverCoords;
-          console.log(`Selected: ${mouseUpOverPlanet.locationId}`);
-        }
+        // select planet
+        this.setSelectedPlanet(mouseUpOverPlanet);
+        this.selectedCoords = mouseUpOverCoords;
+        console.log(`Selected: ${mouseUpOverPlanet.locationId}`);
       } else if (
         mouseDownPlanet &&
         mouseDownPlanet.owner === this.gameManager.getAccount()
@@ -263,9 +255,16 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
           (mouseDownCoords.y - mouseUpOverCoords.y) ** 2
         );
         const myAtk: number = moveShipsDecay(forces, mouseDownPlanet, dist);
-        const effPercentSilver = from.resource === PlanetResource.NONE
-          ? this.getSilverSending(from.locationId)
-          : Math.min(this.getSilverSending(from.locationId), 98);
+        let effPercentSilver = this.getSilverSending(from.locationId);
+        if (
+          effPercentSilver > 98 &&
+          from.planetResource === PlanetResource.SILVER &&
+          from.silver < from.silverCap
+        ) {
+          // player is trying to send 100% silver from a silver mine that is not at cap
+          // Date.now() and block.timestamp are occasionally a bit out of sync, so clip
+          effPercentSilver = 98;
+        }
         if (myAtk > 0) {
           const silver = Math.floor((from.silver * effPercentSilver) / 100);
           console.log(

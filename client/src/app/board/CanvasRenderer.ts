@@ -164,7 +164,7 @@ class CanvasRenderer {
     this.frameCount++;
 
     // make the tick depend on detail level?
-    const tick = 3;
+    const tick = 2;
 
     if (this.frameCount % tick === 0) {
       this.selected = this.gameUIManager.getSelectedPlanet();

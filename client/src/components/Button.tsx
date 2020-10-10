@@ -9,11 +9,11 @@ interface ButtonProps {
 
 export default function Button({
   children,
-  onClick: _onClick = () => {},
+  onClick: _onClick = () => null,
   style = {},
   hoverStyle = {},
   ...rest
-}: ButtonProps) {
+}: ButtonProps): JSX.Element {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
 

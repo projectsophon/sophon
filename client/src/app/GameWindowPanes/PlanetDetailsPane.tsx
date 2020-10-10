@@ -29,9 +29,7 @@ import {
   ModalHatIcon,
 } from './ModalPane';
 import {
-  getPlanetBlurb,
   getPlanetName,
-  getPlanetTagline,
   getPlanetTitle,
 } from '../../utils/ProcgenUtils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
@@ -53,7 +51,6 @@ import {
   SilverIcon,
   SpeedIcon,
 } from '../Icons';
-import dfstyles from '../../styles/dfstyles.bs.js';
 import { HAT_SIZES, BLOCK_EXPLORER_URL } from '../../utils/constants';
 
 const PlanetscapeWrapper = styled.div`
@@ -186,23 +183,6 @@ function LocationViewer({ planet }: { planet: Planet | null }) {
   );
 }
 
-const StyledPlanetLore = styled.div`
-  margin-top: 1.5em;
-
-  & > p:first-child {
-    text-decoration: underline;
-  }
-
-  & > div {
-    height: 7.2em;
-    overflow-y: auto;
-    p {
-      margin-top: 0.5em;
-      color: ${dfstyles.colors.subtext};
-    }
-  }
-`;
-
 export function PlanetDetailsPane({
   hook,
   broadcastHook,
@@ -213,7 +193,7 @@ export function PlanetDetailsPane({
   broadcastHook: ModalHook;
   upgradeDetHook: ModalHook;
   hatHook: ModalHook;
-}) {
+}): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
   const selectedStats = useContext<PlanetStatsInfo | null>(SelectedStatContext);
@@ -548,14 +528,6 @@ export function PlanetDetailsPane({
               </DetailsRowSingle>
             )}
           </StyledPlanetDetails>
-          <StyledPlanetLore>
-            <p className='margin-top'>Captain's Log</p>
-
-            <div>
-              <p>{getPlanetTagline(selected)}.</p>
-              <p>{getPlanetBlurb(selected)}</p>
-            </div>
-          </StyledPlanetLore>
 
           <ButtonRow className='margin-top' style={{ marginTop: '1em' }}>
             <span>

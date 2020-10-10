@@ -1,0 +1,18 @@
+{
+  "extends": "plugin:@typescript-eslint/recommended",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "env": {
+    "browser": true,
+    "node": false
+  },
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_.*"
+      }
+    ]
+  }
+}

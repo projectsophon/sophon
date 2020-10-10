@@ -71,7 +71,7 @@ const cycInv = (m: number, n: number) => (r: number, s: number) => {
 
 // 4/65536 in a 256x256 square are valid planets
 // then generate the rest of the string pseudorandomly
-export const fakeHash = (x: number, y: number) => {
+export const fakeHash = (x: number, y: number): bigInt.BigInteger => {
   const m = Math.floor(x / 256);
   const r = x - m * 256;
   const n = Math.floor(y / 256);
@@ -98,7 +98,7 @@ export const fakeHash = (x: number, y: number) => {
 export const getPlanetLocations = (
   chunkFootprint: ChunkFootprint,
   planetRarity: number
-) => {
+): Location[] => {
   // assume that the chunkFootprint is entirely contained within a 256x256 grid square
   const { bottomLeft, sideLength } = chunkFootprint;
   const { x, y } = bottomLeft;

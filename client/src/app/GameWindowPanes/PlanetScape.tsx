@@ -15,7 +15,6 @@ import {
   getPlanetName,
 } from '../../utils/ProcgenUtils';
 import { PlanetCosmeticInfo } from '../../_types/darkforest/app/board/utils/UtilsTypes';
-import _ from 'lodash';
 import { bonusFromHex, getPlanetRank } from '../../utils/Utils';
 import { TooltipTrigger } from './Tooltip';
 import { TooltipName } from '../../utils/WindowManager';
@@ -78,7 +77,7 @@ const ClownIcon = styled.span`
   border-radius: 6px;
 `;
 
-export function PlanetIcons({ planet }: { planet: Planet | null }) {
+export function PlanetIcons({ planet }: { planet: Planet | null }): JSX.Element {
   if (!planet) return <_PlanetIcons />;
   const bonuses = bonusFromHex(planet.locationId);
   const rank = getPlanetRank(planet);
@@ -419,7 +418,7 @@ export function PlanetScape({
 }: {
   planet: Planet | null;
   keepDrawing?: boolean;
-}) {
+}): JSX.Element {
   const [color, setColor] = useState<string>('none');
 
   const scapeRef = useRef<HTMLCanvasElement | null>(null);

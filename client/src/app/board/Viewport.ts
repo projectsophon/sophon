@@ -144,7 +144,7 @@ class Viewport {
   }
 
   // Event handlers
-  onMouseDown(canvasCoords: CanvasCoords) {
+  onMouseDown(canvasCoords: CanvasCoords): void {
     this.mousedownCoords = canvasCoords;
 
     const uiManager = this.gameUIManager;
@@ -158,7 +158,7 @@ class Viewport {
     this.mouseLastCoords = canvasCoords;
   }
 
-  onMouseMove(canvasCoords: CanvasCoords) {
+  onMouseMove(canvasCoords: CanvasCoords): void {
     const uiEmitter = UIEmitter.getInstance();
 
     if (this.isPanning && this.mouseLastCoords) {
@@ -174,7 +174,7 @@ class Viewport {
     this.mouseLastCoords = canvasCoords;
   }
 
-  onMouseUp(canvasCoords: CanvasCoords) {
+  onMouseUp(canvasCoords: CanvasCoords): void {
     const uiEmitter = UIEmitter.getInstance();
 
     const worldCoords = this.canvasToWorldCoords(canvasCoords);
@@ -191,7 +191,7 @@ class Viewport {
     this.mouseLastCoords = canvasCoords;
   }
 
-  onMouseOut() {
+  onMouseOut(): void {
     const uiEmitter = UIEmitter.getInstance();
 
     uiEmitter.emit(UIEmitterEvent.WorldMouseOut);
@@ -199,7 +199,7 @@ class Viewport {
     this.mouseLastCoords = null;
   }
 
-  onScroll(deltaY: number, forceZoom = false) {
+  onScroll(deltaY: number, forceZoom = false): void {
     if (this.mouseLastCoords !== null || forceZoom) {
       let mouseWorldCoords = this.centerWorldCoords;
       if (this.mouseLastCoords) {
@@ -227,7 +227,7 @@ class Viewport {
     }
   }
 
-  onWindowResize() {
+  onWindowResize(): void {
     this.viewportHeight = this.canvas.height;
     this.viewportWidth = this.canvas.width;
   }

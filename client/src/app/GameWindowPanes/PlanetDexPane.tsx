@@ -4,7 +4,6 @@ import {
   ModalPane,
   ModalHook,
   ModalName,
-  ModalPlanetDexIcon,
   IconButton,
 } from './ModalPane';
 import GameUIManager from '../board/GameUIManager';
@@ -20,7 +19,6 @@ import {
 } from '../../utils/Utils';
 import dfstyles from '../../styles/dfstyles.bs.js';
 import { getPlanetName, getPlanetCosmetic } from '../../utils/ProcgenUtils';
-import _ from 'lodash';
 import { SelectedContext, AccountContext } from '../GameWindow';
 import { SilverIcon, RankIcon } from '../Icons';
 import { calculateRankAndScore } from './LeaderboardPane';
@@ -146,7 +144,7 @@ const ColorIcon = styled.span<{ color: string }>`
   }
 `;
 
-export function PlanetThumb({ planet }: { planet: Planet }) {
+export function PlanetThumb({ planet }: { planet: Planet }): JSX.Element {
   const radius = 5 + 3 * planet.planetLevel;
   // const radius = 5 + 3 * PlanetLevel.MAX;
   const { baseColor, backgroundColor } = getPlanetCosmetic(planet);
@@ -269,15 +267,16 @@ const PlayerInfoRow = () => {
 function DexEntry({
   planet,
   className,
-  score,
+  score: _score,
   rank,
 }: {
   planet: Planet;
   className: string;
   score: number;
+  rank: number,
 }) {
-  let energyStyle = planet.energy === planet.energyCap ? { color: 'red' } : {};
-  let silverStyle = planet.silver === planet.silverCap ? { color: 'red' } : {};
+  const energyStyle = planet.energy === planet.energyCap ? { color: 'red' } : {};
+  const silverStyle = planet.silver === planet.silverCap ? { color: 'red' } : {};
   return (
     <PlanetLink planet={planet}>
       <DexRow className={className}>
@@ -318,7 +317,7 @@ export function PlanetLink({
 }: {
   planet: Planet;
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const uiEmitter = UIEmitter.getInstance();
 
@@ -342,14 +341,8 @@ enum Columns {
   Points = 4,
 }
 
-export function PlanetDexPane({
-  hook,
-  small,
-}: {
-  small?: boolean;
-  hook: ModalHook;
-}) {
-  const [visible, _setVisible] = hook;
+export function PlanetDexPane({ hook }: { hook: ModalHook; }): JSX.Element {
+  const [visible] = hook;
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const selected = useContext<Planet | null>(SelectedContext);
 

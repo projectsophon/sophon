@@ -161,7 +161,7 @@ class WindowManager extends EventEmitter {
     this.emit(WindowManagerEvent.StateChanged, newstate);
   }
 
-  acceptInputForTarget(input: WorldCoords) {
+  acceptInputForTarget(input: WorldCoords): void {
     if (this.cursorState !== CursorState.TargetingExplorer) return;
     this.emit(WindowManagerEvent.MiningCoordsUpdate, input);
     this.setCursorState(CursorState.Normal);

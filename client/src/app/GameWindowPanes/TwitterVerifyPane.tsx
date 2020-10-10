@@ -49,7 +49,7 @@ const TwitterWrapper = styled.div`
     }
   }
 `;
-export function TwitterVerifyPane({ hook }: { hook: ModalHook }) {
+export function TwitterVerifyPane({ hook }: { hook: ModalHook }): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const [twitter, setTwitter] = useState<string | null>(null);
   const [twitterInput, setTwitterInput] = useState<string>('');
@@ -128,15 +128,15 @@ export function TwitterVerifyPane({ hook }: { hook: ModalHook }) {
             </div>
             <div className='row'>
               <Sub onClick={alreadyTweetedClick} className='clickable'>
-                (I've already tweeted)
+                (I have already tweeted)
               </Sub>
               <Btn onClick={onTweetClick}>Tweet</Btn>
             </div>
-            <p>Once you've tweeted, you can verify your account.</p>
+            <p>Once you have tweeted, you can verify your account.</p>
             <div className='row'>
               <span> </span>
               <Btn
-                onClick={tweeted ? onVerifyClick : () => { }}
+                onClick={tweeted ? onVerifyClick : () => null}
                 className={tweeted ? '' : 'btn-disabled'}
               >
                 Verify

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { mimcWithRounds } from './mimc';
 import Fraction from '../utils/fractions/bigFraction.js';
 import BigInt from 'big-integer';

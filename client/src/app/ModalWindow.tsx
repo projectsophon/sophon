@@ -46,7 +46,7 @@ export default function ModalWindow({
 }: {
   children: React.ReactNode;
   close: () => void;
-}) {
+}): JSX.Element {
   return (
     <ModalWrapper>
       <ModalBackground>

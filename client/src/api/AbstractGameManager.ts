@@ -65,8 +65,6 @@ export default interface AbstractGameManager extends EventEmitter {
   getMiningPattern(): MiningPattern | null;
   setMinerCores(nCores: number): void;
   getCurrentlyExploringChunk(): ChunkFootprint | null;
-  startExplore(): void;
-  stopExplore(): void;
   addNewChunk(chunk: ExploredChunkData): AbstractGameManager;
 
   // account management + chain operations

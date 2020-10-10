@@ -10,9 +10,7 @@ import {
   submitInterestedEmail,
   submitPlayerEmail,
   EmailResponse,
-  requestDevFaucet,
 } from '../api/UtilityServerAPI';
-import _ from 'lodash';
 import TerminalEmitter, {
   TerminalTextStyle,
   TerminalEvent,
@@ -62,7 +60,7 @@ export enum InitRenderState {
   COMPLETE,
 }
 
-export function GameLandingPage(_props: { replayMode: boolean }) {
+export function GameLandingPage(_props: { replayMode: boolean }): JSX.Element {
   const history = useHistory();
   /* terminal stuff */
 

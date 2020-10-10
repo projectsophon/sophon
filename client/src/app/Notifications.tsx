@@ -107,7 +107,7 @@ const StyledNotificationsPane = styled.div`
   z-index: 100;
 `;
 
-export function NotificationsPane() {
+export function NotificationsPane(): JSX.Element {
   const [notifs, setNotifs] = useState<Array<NotificationInfo>>([]);
 
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);

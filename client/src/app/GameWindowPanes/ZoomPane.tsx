@@ -32,7 +32,7 @@ const _ZoomPane = styled.div`
   }
 `;
 
-export function ZoomPane() {
+export function ZoomPane(): JSX.Element {
   const uiEmitter = UIEmitter.getInstance();
   return (
     <_ZoomPane>

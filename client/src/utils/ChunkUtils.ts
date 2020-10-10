@@ -20,7 +20,7 @@ export const getBucket: (chunk: ChunkFootprint) => LSMBucket = (chunk) => {
   return alphanumeric[sum];
 };
 
-export const getChunkKey = (chunkLoc: ChunkFootprint) => {
+export const getChunkKey = (chunkLoc: ChunkFootprint): string => {
   const ret =
     `${getBucket(chunkLoc)},` +
     `${chunkLoc.sideLength},` +
@@ -29,7 +29,7 @@ export const getChunkKey = (chunkLoc: ChunkFootprint) => {
   return ret;
 };
 
-export const toLSMChunk = (chunk: ExploredChunkData) => {
+export const toLSMChunk = (chunk: ExploredChunkData): LSMChunkData => {
   const lsmLocs: LSMLoc[] = [];
   const { chunkFootprint: chunkLocation } = chunk;
   for (const location of chunk.planetLocations) {
@@ -50,7 +50,7 @@ export const toLSMChunk = (chunk: ExploredChunkData) => {
   return ret;
 };
 
-export const toExploredChunk = (chunk: LSMChunkData) => {
+export const toExploredChunk = (chunk: LSMChunkData): ExploredChunkData => {
   const planetLocs: Location[] = [];
   for (const lsmLoc of chunk.l) {
     planetLocs.push({
@@ -70,7 +70,7 @@ export const toExploredChunk = (chunk: LSMChunkData) => {
   return ret;
 };
 
-export const getSiblingLocations = (chunkLoc: ChunkFootprint) => {
+export const getSiblingLocations = (chunkLoc: ChunkFootprint): [ChunkFootprint, ChunkFootprint, ChunkFootprint] => {
   const doubleSideLen = 2 * chunkLoc.sideLength;
   const newBottomLeftX =
     Math.floor(chunkLoc.bottomLeft.x / doubleSideLen) * doubleSideLen;
@@ -102,7 +102,7 @@ export const getSiblingLocations = (chunkLoc: ChunkFootprint) => {
 export const getChunkOfSideLength = (
   coords: WorldCoords,
   sideLength: number
-) => {
+): ChunkFootprint => {
   const oldBottomLeftX = coords.x;
   const oldBottomLeftY = coords.y;
   const ret: ChunkFootprint = {
@@ -122,7 +122,7 @@ export const addToChunkMap = (
   onAdd?: (ExploredChunkData) => void,
   onRemove?: (ExploredChunkData) => void,
   maxChunkSize?: number
-) => {
+): void => {
   let sideLength = chunk.chunkFootprint.sideLength;
   let chunkToAdd: ExploredChunkData = {
     chunkFootprint: {

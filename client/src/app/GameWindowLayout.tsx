@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import { ContextMenu } from './GameWindowComponents/ContextMenu';
 import ControllableCanvas from './board/ControllableCanvas';
@@ -38,11 +38,9 @@ import { PlanetContextPane } from './GameWindowPanes/PlanetContextPane';
 import { HatPane } from './GameWindowPanes/HatPane';
 import { NotificationsPane } from './Notifications';
 import { SettingsPane } from './GameWindowPanes/SettingsPane';
-import GameUIManager from './board/GameUIManager';
-import GameUIManagerContext from './board/GameUIManagerContext';
 import { PrivatePane } from './GameWindowPanes/PrivatePane';
 
-export function GameWindowLayout() {
+export function GameWindowLayout(): JSX.Element {
   const planetDetailsHook = useState<boolean>(false);
   const leaderboardHook = useState<boolean>(false);
   const planetDexHook = useState<boolean>(false);

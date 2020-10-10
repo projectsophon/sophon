@@ -31,7 +31,7 @@ export function Wrapper({
   children,
   initRender,
   terminalEnabled,
-}: LandingWrapperProps) {
+}: LandingWrapperProps): JSX.Element {
   return (
     <StyledWrapper initRender={initRender} terminalEnabled={terminalEnabled}>
       {children}
@@ -85,7 +85,7 @@ export function TerminalWrapper({
   children,
   initRender,
   terminalEnabled,
-}: LandingWrapperProps) {
+}: LandingWrapperProps): JSX.Element {
   return (
     <StyledTerminalWrapper
       initRender={initRender}
@@ -133,7 +133,7 @@ export function TerminalToggler({
 }: {
   terminalEnabled: boolean;
   setTerminalEnabled: (any) => void;
-}) {
+}): JSX.Element {
   const uiEmitter = UIEmitter.getInstance();
   useLayoutEffect(() => {
     uiEmitter.emit(UIEmitterEvent.UIChange);
@@ -172,7 +172,7 @@ export function GameWindowWrapper({
   children,
   initRender,
   terminalEnabled,
-}: LandingWrapperProps) {
+}: LandingWrapperProps): JSX.Element {
   return (
     <StyledGameWindowWrapper
       initRender={initRender}

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { useContext, useEffect, useState, createContext } from 'react';
 import UIEmitter, { UIEmitterEvent } from '../utils/UIEmitter';
 import { copyPlanetStats, PlanetStatsInfo } from '../utils/Utils';
@@ -22,7 +21,7 @@ export const AccountContext = createContext<EthAddress | null>(null);
 export const SelectedContext = createContext<Planet | null>(null);
 export const SelectedStatContext = createContext<PlanetStatsInfo | null>(null);
 
-export default function GameWindow() {
+export default function GameWindow(): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const [selected, setSelected] = useState<Planet | null>(null);
 

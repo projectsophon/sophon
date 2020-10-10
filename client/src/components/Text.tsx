@@ -32,7 +32,7 @@ const fontSizes: {
   xs: '0.75rem',
 };
 
-export function Text({ children, size = 'base', style = {} }: TextProps) {
+export function Text({ children, size = 'base', style = {} }: TextProps): JSX.Element {
   return (
     <div
       style={{
@@ -45,7 +45,7 @@ export function Text({ children, size = 'base', style = {} }: TextProps) {
   );
 }
 
-export function Title({ children }: { children: React.ReactNode }) {
+export function Title({ children }: { children: React.ReactNode }): JSX.Element {
   return <Text size='title'>{children}</Text>;
 }
 
@@ -55,7 +55,7 @@ export function Header({
 }: {
   children: React.ReactNode;
   style?: React.CSSProperties;
-}) {
+}): JSX.Element {
   return (
     <Text size='2xl' style={{ fontWeight: 'bold', ...style }}>
       {children}
@@ -77,7 +77,7 @@ export function Link({
   children,
   size = 'base',
   style = {},
-}: LinkProps) {
+}: LinkProps): JSX.Element {
   const props = {
     href,
     to,
@@ -114,7 +114,7 @@ export const List = styled.ul`
 
 export const Item = styled.li``;
 
-export function BlinkCursor() {
+export function BlinkCursor(): JSX.Element {
   const [visible, setVisible] = useState<boolean>(false);
 
   useEffect(() => {
@@ -148,7 +148,7 @@ export const Invisible = styled.span`
   color: rgba(0, 0, 0, 0);
 `;
 
-export const FakeLine = () => (
+export const FakeLine = (): JSX.Element => (
   <span>
     <Invisible>line</Invisible>
   </span>
@@ -156,7 +156,7 @@ export const FakeLine = () => (
 
 // const delay = 0;
 
-export function Space({ length }: { length: number }) {
+export function Space({ length }: { length: number }): JSX.Element {
   return (
     <>
       {_.range(0, length).map((el, i) => (
@@ -166,27 +166,27 @@ export function Space({ length }: { length: number }) {
   );
 }
 
-export const Tab = () => <Space length={4} />;
+export const Tab = (): JSX.Element => <Space length={4} />;
 
-export const BashPrompt = () => (
+export const BashPrompt = (): JSX.Element => (
   <span>
     <Green>{'$'}</Green>{' '}
   </span>
 );
 
-export const JSPrompt = () => (
+export const JSPrompt = (): JSX.Element => (
   <span>
     <Blue>{'>'}</Blue>{' '}
   </span>
 );
 
-export const ShellPrompt = () => (
+export const ShellPrompt = (): JSX.Element => (
   <span>
     <Green>{'$'}</Green>{' '}
   </span>
 );
 
-export function Shell({ children }: { children: React.ReactNode }) {
+export function Shell({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <span>
       <ShellPrompt />
@@ -209,7 +209,7 @@ export const BasicLink = styled.u`
   }
 `;
 
-export function TxLink({ tx }: { tx: SubmittedTx }) {
+export function TxLink({ tx }: { tx: SubmittedTx }): JSX.Element {
   return (
     <>
       <u>
@@ -228,7 +228,7 @@ export function CenterPlanetLink({
 }: {
   planet: Planet;
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   return (
     <a>
       <u onClick={() => Viewport.getInstance().centerPlanet(planet)}>
@@ -238,7 +238,7 @@ export function CenterPlanetLink({
   );
 }
 
-export function PlanetNameLink({ planet }: { planet: Planet }) {
+export function PlanetNameLink({ planet }: { planet: Planet }): JSX.Element {
   return (
     <CenterPlanetLink planet={planet}>{getPlanetName(planet)}</CenterPlanetLink>
   );
@@ -250,7 +250,7 @@ export function CenterChunkLink({
 }: {
   chunk: ExploredChunkData;
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   return (
     <a>
       <u onClick={() => Viewport.getInstance().centerChunk(chunk)}>
@@ -260,6 +260,6 @@ export function CenterChunkLink({
   );
 }
 
-export function FAQ04Link({ children }: { children: React.ReactNode }) {
+export function FAQ04Link({ children }: { children: React.ReactNode }): JSX.Element {
   return <a href={'https://blog.zkga.me/df-04-faq'}>{children} </a>;
 }

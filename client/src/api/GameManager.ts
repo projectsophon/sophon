@@ -17,14 +17,11 @@ import {
   SpaceType,
 } from '../_types/global/GlobalTypes';
 import LocalStorageManager from './LocalStorageManager';
-import { MIN_CHUNK_SIZE } from '../utils/constants';
 import mimcHash from '../miner/mimc';
 import ContractsAPI from './ContractsAPI';
 import SnarkHelper from './SnarkArgsHelper';
 import { WorldCoords } from '../utils/Coordinates';
-import _ from 'lodash';
-
-import { SpiralPattern, MiningPattern } from '../utils/MiningPatterns';
+import { MiningPattern } from '../utils/MiningPatterns';
 import AbstractGameManager from './AbstractGameManager';
 import {
   ContractConstants,
@@ -192,7 +189,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     // fetch planets after allArrivals, since an arrival to a new planet might be sent
     // while we are fetching
     const planets = await contractsAPI.getPlanets();
-    for (let planetId of planets.keys()) {
+    for (const planetId of planets.keys()) {
       planetVoyageIdMap[planetId] = [];
     }
     for (const arrival of allArrivals) {
@@ -392,7 +389,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     }
   }
 
-  setMiningPattern(pattern: MiningPattern, whichExplorer): void {
+  setMiningPattern(pattern: MiningPattern, whichExplorer: string): void {
     if (this.explorers && this.explorers.has(whichExplorer)) {
       this.explorers.get(whichExplorer).emit('set-pattern', pattern.center);
     }
@@ -508,14 +505,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     ];
   }
 
-  startExplore(): void {
-
-  }
-
-  stopExplore(): void {
-
-  }
-
   private setRadius(worldRadius: number) {
     if (this.worldRadius !== worldRadius) {
       this.worldRadius = worldRadius;
@@ -612,8 +601,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
   }
 
   private async getRandomHomePlanetCoords(): Promise<Location> {
-    const terminalEmitter = TerminalEmitter.getInstance();
-
     // We need to populate this...
     const planetLoc: Location = {
       coords: {
@@ -885,7 +872,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     fromId: LocationId,
     toId: LocationId,
     sentEnergy: number
-  ) {
+  ): number {
     const from = this.getPlanetWithId(fromId);
     if (!from) throw new Error('origin planet unknown');
     const dist = this.getDist(fromId, toId);

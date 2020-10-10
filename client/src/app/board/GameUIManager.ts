@@ -1,5 +1,5 @@
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
-import { compareWorldCoords, WorldCoords } from '../../utils/Coordinates';
+import { WorldCoords } from '../../utils/Coordinates';
 import {
   Planet,
   PlanetMap,
@@ -20,7 +20,7 @@ import autoBind from 'auto-bind';
 import EventEmitter from 'events'
 import AbstractUIManager from './AbstractUIManager';
 import AbstractGameManager from '../../api/AbstractGameManager';
-import { moveShipsDecay, planetHasBonus } from '../../utils/Utils';
+import { moveShipsDecay } from '../../utils/Utils';
 import {
   UnconfirmedMove,
   UnconfirmedUpgrade,
@@ -31,8 +31,6 @@ import UIStateStorageManager, {
   UIDataKey,
   UIDataValue,
 } from '../../api/UIStateStorageManager';
-import NotificationManager from '../../utils/NotificationManager';
-import { emptyAddress } from '../../utils/CheckedTypeUtils';
 
 export enum GameUIManagerEvent {
   InitializedPlayer = 'InitializedPlayer',
@@ -71,7 +69,6 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
 
     this.gameManager = gameManager;
     this.replayMode = replayMode;
-    if (this.replayMode) this.stopExplore();
 
     // this.radiusMap[PlanetType.LittleAsteroid] = 1;
     this.radiusMap[PlanetLevel.Asteroid] = 1;
@@ -95,7 +92,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     autoBind(this);
   }
 
-  static create(gameManager: AbstractGameManager) {
+  static create(gameManager: AbstractGameManager): GameUIManager {
     const uiEmitter = UIEmitter.getInstance();
 
     const uiManager = new GameUIManager(
@@ -188,7 +185,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     return this.gameManager.getMyBalance();
   }
 
-  onMouseDown(coords: WorldCoords) {
+  onMouseDown(coords: WorldCoords): void {
     if (this.sendingPlanet) return;
 
     const hoveringOverCoords = this.updateMouseHoveringOverCoords(coords);
@@ -199,18 +196,18 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     this.mouseDownOverCoords = this.mouseHoveringOverCoords;
   }
 
-  onMouseClick(_coords: WorldCoords) {
+  onMouseClick(_coords: WorldCoords): void {
     if (!this.mouseDownOverPlanet && !this.mouseHoveringOverPlanet) {
       this.setSelectedPlanet(null);
       this.selectedCoords = null;
     }
   }
 
-  onMouseMove(coords: WorldCoords) {
+  onMouseMove(coords: WorldCoords): void {
     this.updateMouseHoveringOverCoords(coords);
   }
 
-  onMouseUp(coords: WorldCoords) {
+  onMouseUp(coords: WorldCoords): void {
     const mouseUpOverCoords = this.updateMouseHoveringOverCoords(coords);
     const mouseUpOverPlanet = this.gameManager.getPlanetWithCoords(
       mouseUpOverCoords
@@ -284,29 +281,27 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     this.isSending = false;
   }
 
-  onMouseOut() {
+  onMouseOut(): void {
     this.mouseDownOverPlanet = null;
     this.mouseDownOverCoords = null;
     this.mouseHoveringOverPlanet = null;
     this.mouseHoveringOverCoords = null;
   }
 
-  startExplore() {
-    this.gameManager.startExplore();
+  startExplore(): void {
     this.isMining = true;
   }
 
-  stopExplore() {
-    this.gameManager.stopExplore();
+  stopExplore(): void {
     this.isMining = false;
     this.minerLocation = null;
   }
 
-  setForcesSending(planetId: LocationId, percentage: number) {
+  setForcesSending(planetId: LocationId, percentage: number): void {
     this.forcesSending[planetId] = percentage;
   }
 
-  setSilverSending(planetId: LocationId, percentage: number) {
+  setSilverSending(planetId: LocationId, percentage: number): void {
     this.silverSending[planetId] = percentage;
   }
 
@@ -314,16 +309,16 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     return planet.owner === this.gameManager.getAccount();
   }
 
-  setDetailLevel(level: number) {
+  setDetailLevel(level: number): void {
     this.detailLevel = level;
   }
 
-  addNewChunk(chunk: ExploredChunkData) {
+  addNewChunk(chunk: ExploredChunkData): void {
     this.gameManager.addNewChunk(chunk);
   }
 
   // mining stuff
-  setMiningPattern(pattern: MiningPattern, whichExplorer) {
+  setMiningPattern(pattern: MiningPattern, whichExplorer: string): void {
     this.gameManager.setMiningPattern(pattern, whichExplorer);
   }
   getMiningPattern(): MiningPattern | null {
@@ -408,7 +403,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     return this.gameManager.spaceTypeFromPerlin(perlin);
   }
 
-  onDiscoveredChunk(chunk: ExploredChunkData): void {
+  onDiscoveredChunk(_: ExploredChunkData): void {
     const res = this.gameManager.getCurrentlyExploringChunk();
     if (res) {
       const { bottomLeft, sideLength } = res;
@@ -422,8 +417,8 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   }
 
   getMinerLocation(): WorldCoords[] {
-    let locs = [];
-    for (let { bottomLeft, sideLength } of this.gameManager.lastChunkPerExplorer.values()) {
+    const locs = [];
+    for (const { bottomLeft, sideLength } of this.gameManager.lastChunkPerExplorer.values()) {
       locs.push({
         x: bottomLeft.x + sideLength / 2,
         y: bottomLeft.y + sideLength / 2,
@@ -654,7 +649,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
     this.emit(GameUIManagerEvent.InitializedPlayerError, err);
   }
 
-  getExplorers() {
+  getExplorers(): any {
     return this.gameManager.explorers;
   }
 }

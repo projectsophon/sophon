@@ -5,16 +5,14 @@ import {
   EthTxStatus,
   SubmittedTx,
   UnconfirmedTx,
-  PlanetEventType,
 } from '../_types/darkforest/api/ContractsAPITypes';
 import { EthIcon, TargetIcon } from '../app/Icons';
 import {
-  CenterChunkLink,
   FAQ04Link,
   PlanetNameLink,
   TxLink,
 } from '../components/Text';
-import { ExploredChunkData, Planet } from '../_types/global/GlobalTypes';
+import { Planet } from '../_types/global/GlobalTypes';
 import dfstyles from '../styles/dfstyles.bs.js';
 
 export enum NotificationType {

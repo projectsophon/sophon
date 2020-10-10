@@ -119,7 +119,7 @@ function TerminalFragment({
   return <span></span>;
 }
 
-export default function Terminal() {
+export default function Terminal(): JSX.Element {
   const ref = useRef(document.createElement('div'));
   const inputRef = useRef(document.createElement('textarea'));
   const heightMeasureRef = useRef(document.createElement('textarea'));
@@ -133,7 +133,7 @@ export default function Terminal() {
   const [userInputEnabled, setUserInputEnabled] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
   const fragmentHook = useState<number>(0);
-  const [fragmentNo, _setFragmentNo] = fragmentHook;
+  const [fragmentNo] = fragmentHook;
   const [inputHeight, setInputHeight] = useState<number>(1);
 
   const [previousInput, setPreviousInput] = useState<string>('');
@@ -379,7 +379,7 @@ export default function Terminal() {
             }}
             onKeyUp={onKeyUp}
             onKeyDown={preventEnterDefault}
-            onKeyPress={isFirefox() ? () => { } : preventEnterDefault}
+            onKeyPress={isFirefox() ? () => null : preventEnterDefault}
             value={inputText}
             onChange={(e) => {
               if (userInputEnabled) {

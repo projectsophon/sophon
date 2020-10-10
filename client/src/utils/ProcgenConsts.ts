@@ -2456,7 +2456,7 @@ export const blurb2grammar = {
     'seconds',
     'days',
     `${
-      Date.now() - ((dflaunch as unknown) as number)
+    Date.now() - ((dflaunch as unknown) as number)
     }ms since the Dark Forest universe began`,
   ],
   removed: [

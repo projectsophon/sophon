@@ -37,7 +37,7 @@ const StyledHatPane = styled.div`
   }
 `;
 
-export function HatPane({ hook }: { hook: ModalHook }) {
+export function HatPane({ hook }: { hook: ModalHook }): JSX.Element {
   const selected = useContext<Planet | null>(SelectedContext);
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
 

@@ -139,7 +139,7 @@ export function calculateRankAndScore(
   return [-1, -1];
 }
 
-export function LeaderboardPane({ hook }: { hook: ModalHook }) {
+export function LeaderboardPane({ hook }: { hook: ModalHook }): JSX.Element {
   const uiManager = useContext<GameUIManager | null>(GameUIManagerContext);
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([]);
 

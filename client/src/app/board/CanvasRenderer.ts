@@ -9,7 +9,6 @@ import {
   Planet,
   ExploredChunkData,
   PlanetResource,
-  PlanetLevel,
 } from '../../_types/global/GlobalTypes';
 import {
   hasOwner,
@@ -109,7 +108,7 @@ class CanvasRenderer {
     canvas: HTMLCanvasElement,
     gameUIManager: GameUIManager,
     image: HTMLImageElement
-  ) {
+  ): CanvasRenderer {
     const canvasRenderer = new CanvasRenderer(canvas, gameUIManager, image);
     CanvasRenderer.instance = canvasRenderer;
 
@@ -123,7 +122,7 @@ class CanvasRenderer {
     this.zone0ChunkMap = new Map<string, ExploredChunkData>();
     this.zone1ChunkMap = new Map<string, ExploredChunkData>();
     this.zone2ChunkMap = new Map<string, ExploredChunkData>();
-    let planetLocations = new Set();
+    const planetLocations = new Set();
     for (const exploredChunk of exploredChunks) {
       if (viewport.intersectsViewport(exploredChunk)) {
         let chunkMap: Map<string, ExploredChunkData>;
@@ -244,7 +243,7 @@ class CanvasRenderer {
   }
 
   private drawPlanets(planetLocations: Location[]) {
-    for (let planetLocation of planetLocations) {
+    for (const planetLocation of planetLocations) {
       this.drawPlanetAtLocation(planetLocation);
     }
   }

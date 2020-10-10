@@ -1,10 +1,9 @@
 import * as stringify from 'json-stable-stringify';
-import { Provider, TransactionReceipt } from '@ethersproject/providers';
+import { TransactionReceipt } from '@ethersproject/providers';
 import { providers, Contract, Wallet, utils, ContractInterface } from 'ethers';
 import { EthAddress } from '../_types/global/GlobalTypes';
 import { address } from '../utils/CheckedTypeUtils';
 import EventEmitter from 'events';
-import { XDAI_CHAIN_ID } from '../utils/constants';
 
 class EthereumAccountManager extends EventEmitter {
   static instance: EthereumAccountManager | null = null;
@@ -12,12 +11,14 @@ class EthereumAccountManager extends EventEmitter {
   private provider: JsonRpcProvider;
   private signer: Wallet | null;
   private rpcURL: string;
+  private defaultRpcURL = 'https://rpc.xdaichain.com/';
   private readonly knownAddresses: EthAddress[];
 
   private constructor() {
     super();
 
-    const url = localStorage.getItem('XDAI_RPC_ENDPOINT') || 'wss://rpc.xdaichain.com/wss';
+    // const url = localStorage.getItem('XDAI_RPC_ENDPOINT') || this.defaultRpcURL;
+    const url = this.defaultRpcURL;
     this.setRpcEndpoint(url);
     this.knownAddresses = [];
     const knownAddressesStr = localStorage.getItem('KNOWN_ADDRESSES');
@@ -43,7 +44,7 @@ class EthereumAccountManager extends EventEmitter {
   public async setRpcEndpoint(url: string): Promise<void> {
     try {
       this.rpcURL = url;
-      const newProvider = new providers.WebSocketProvider(this.rpcURL);
+      const newProvider = new providers.JsonRpcProvider(this.rpcURL);
       // TODO: the chainID check
       this.provider = newProvider;
       if (this.signer) {
@@ -51,11 +52,12 @@ class EthereumAccountManager extends EventEmitter {
       } else {
         this.signer = null;
       }
-      localStorage.setItem('XDAI_RPC_ENDPOINT', this.rpcURL);
+      // localStorage.setItem('XDAI_RPC_ENDPOINT', this.rpcURL);
       this.emit('ChangedRPCEndpoint');
     } catch (e) {
-      console.error(`error setting rpc endpoint: ${e}`);
-      this.setRpcEndpoint('wss://rpc.xdaichain.com/wss');
+      console.error(`error setting rpc endpoint: ${e} - Falling back to default`);
+      // localStorage.setItem('XDAI_RPC_ENDPOINT', this.defaultRpcUrl);
+      this.setRpcEndpoint(this.defaultRpcUrl);
       return;
     }
   }

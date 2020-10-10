@@ -17,7 +17,7 @@ import WindowManager, {
 } from '../../utils/WindowManager';
 import _ from 'lodash';
 
-export default function ControllableCanvas() {
+export default function ControllableCanvas(): JSX.Element {
   // html canvas element width and height. viewport dimensions are tracked by viewport obj
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
@@ -86,7 +86,7 @@ export default function ControllableCanvas() {
     const img = imgRef.current;
     if (!canvas || !img) {
       console.error('');
-      return () => { };
+      return () => null;
     }
 
     Viewport.initialize(gameUIManager, 250, canvas);

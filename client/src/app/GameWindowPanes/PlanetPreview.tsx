@@ -235,7 +235,7 @@ class PlanetPreviewRenderer {
   }
 }
 
-export function PlanetPreview({ selected }: { selected: Planet | null }) {
+export function PlanetPreview({ selected }: { selected: Planet | null }): JSX.Element {
   const bufferRef = useRef<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 

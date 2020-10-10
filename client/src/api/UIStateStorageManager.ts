@@ -6,13 +6,6 @@ import { EthAddress } from '../_types/global/GlobalTypes';
 export enum UIDataKey {
   terminalEnabled = 'terminalEnabled',
 
-  welcomedPlayer = 'welcomedPlayer',
-  foundSpace = 'foundSpace',
-  foundDeepSpace = 'foundDeepSpace',
-  foundPirates = 'foundPirates',
-  foundSilver = 'foundSilver',
-  foundComet = 'foundComet',
-
   notifMove = 'notifMove',
 }
 export type UIDataValue = boolean;
@@ -20,25 +13,11 @@ export type UIDataValue = boolean;
 export type UIData = {
   terminalEnabled: boolean;
 
-  welcomedPlayer: boolean;
-  foundSpace: boolean;
-  foundDeepSpace: boolean;
-  foundPirates: boolean;
-  foundSilver: boolean;
-  foundComet: boolean;
-
   notifMove: boolean;
 };
 
 export const defaultUserData: UIData = {
   terminalEnabled: true,
-
-  welcomedPlayer: false,
-  foundSpace: false,
-  foundDeepSpace: false,
-  foundPirates: false,
-  foundSilver: false,
-  foundComet: false,
 
   notifMove: true,
 };

@@ -33,7 +33,6 @@ import UIStateStorageManager, {
 } from '../../api/UIStateStorageManager';
 import NotificationManager from '../../utils/NotificationManager';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
-import TerminalEmitter from '../../utils/TerminalEmitter';
 
 export enum GameUIManagerEvent {
   InitializedPlayer = 'InitializedPlayer',
@@ -212,7 +211,6 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   }
 
   onMouseUp(coords: WorldCoords) {
-    const terminalEmitter = TerminalEmitter.getInstance();
     const mouseUpOverCoords = this.updateMouseHoveringOverCoords(coords);
     const mouseUpOverPlanet = this.gameManager.getPlanetWithCoords(
       mouseUpOverCoords
@@ -235,7 +233,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
         } else {
           this.setSelectedPlanet(mouseUpOverPlanet);
           this.selectedCoords = mouseUpOverCoords;
-          terminalEmitter.println(`Selected: ${mouseUpOverPlanet.locationId}`);
+          console.log(`Selected: ${mouseUpOverPlanet.locationId}`);
         }
       } else if (
         mouseDownPlanet &&
@@ -270,8 +268,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
           : Math.min(this.getSilverSending(from.locationId), 98);
         if (myAtk > 0) {
           const silver = Math.floor((from.silver * effPercentSilver) / 100);
-          // TODO: do something like JSON.stringify(args) so we know formatting is correct
-          terminalEmitter.jsShell(
+          console.log(
             `df.move('${from.locationId}', '${to.locationId}', ${forces}, ${silver})`
           );
           this.gameManager.move(from.locationId, to.locationId, forces, silver);
@@ -529,16 +526,12 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   }
 
   upgrade(planet: Planet, branch: number): void {
-    const terminalEmitter = TerminalEmitter.getInstance();
-    // TODO: do something like JSON.stringify(args) so we know formatting is correct
-    terminalEmitter.jsShell(`df.upgrade('${planet.locationId}', ${branch})`);
+    console.log(`df.upgrade('${planet.locationId}', ${branch})`);
     this.gameManager.upgrade(planet.locationId, branch);
   }
 
   buyHat(planet: Planet): void {
-    const terminalEmitter = TerminalEmitter.getInstance();
-    // TODO: do something like JSON.stringify(args) so we know formatting is correct
-    terminalEmitter.jsShell(`df.buyHat('${planet.locationId}')`);
+    console.log(`df.buyHat('${planet.locationId}')`);
     this.gameManager.buyHat(planet.locationId);
   }
 

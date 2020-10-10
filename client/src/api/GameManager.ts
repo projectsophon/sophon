@@ -112,8 +112,8 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     this.explorerIPs = [
       `http://0.0.0.0${port}`,
       'http://165.232.57.41',
-
     ];
+    this.explorers = new Map();
     this.lastChunkPerExplorer = new Map();
     this.hashRatePerExplorer = new Map();
 
@@ -367,8 +367,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private initMiningManager(_: WorldCoords): void {
     if (window.Primus) {
-      this.explorers = new Map();
-
       this.explorerIPs.forEach((ip) => {
         const explorer = new window.Primus(ip);
         explorer.on('new-chunk', (chunk) => {

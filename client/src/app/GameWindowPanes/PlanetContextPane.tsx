@@ -395,6 +395,21 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
   useEffect(() => {
     if (!uiManager) return;
     setAccount(uiManager.getAccount());
+
+    const uiEmitter = UIEmitter.getInstance();
+
+    const onKeypress = (e) => {
+      if (e.key === 'Escape') {
+        setSending(false);
+        windowManager.setCursorState(CursorState.Normal);
+        uiEmitter.emit(UIEmitterEvent.SendCancelled);
+      }
+    };
+
+    document.addEventListener('keydown', onKeypress);
+    return () => {
+      document.removeEventListener('keydown', onKeypress);
+    };
   }, [uiManager]);
 
   const planetName = (): string => {

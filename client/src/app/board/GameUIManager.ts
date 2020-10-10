@@ -398,6 +398,7 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   }
 
   onSendCancel(): void {
+    this.mouseDownOverPlanet = null;
     this.isSending = false;
     this.sendingPlanet = null;
     this.sendingCoords = null;

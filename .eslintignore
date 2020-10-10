@@ -1,1 +1,3 @@
 client/public/
+_esy/
+client/src/**/*.bs.js

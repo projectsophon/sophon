@@ -35,9 +35,11 @@ export default function GameWindow() {
     if (!uiManager) return;
 
     const onKeypress = (e) => {
+      const uiEmitter = UIEmitter.getInstance();
       if (e.key === 'Escape') {
         setSelected(null);
         uiManager?.setSelectedPlanet(null);
+        uiEmitter.emit(UIEmitterEvent.SendCancelled);
       }
     };
 

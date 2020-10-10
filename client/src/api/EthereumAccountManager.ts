@@ -17,7 +17,7 @@ class EthereumAccountManager extends EventEmitter {
   private constructor() {
     super();
 
-    const url = localStorage.getItem('XDAI_RPC_ENDPOINT') || 'https://rpc.xdaichain.com/';
+    const url = localStorage.getItem('XDAI_RPC_ENDPOINT') || 'wss://rpc.xdaichain.com/wss';
     this.setRpcEndpoint(url);
     this.knownAddresses = [];
     const knownAddressesStr = localStorage.getItem('KNOWN_ADDRESSES');
@@ -43,7 +43,7 @@ class EthereumAccountManager extends EventEmitter {
   public async setRpcEndpoint(url: string): Promise<void> {
     try {
       this.rpcURL = url;
-      const newProvider = new providers.JsonRpcProvider(this.rpcURL);
+      const newProvider = new providers.WebSocketProvider(this.rpcURL);
       // TODO: the chainID check
       this.provider = newProvider;
       if (this.signer) {
@@ -55,7 +55,7 @@ class EthereumAccountManager extends EventEmitter {
       this.emit('ChangedRPCEndpoint');
     } catch (e) {
       console.error(`error setting rpc endpoint: ${e}`);
-      this.setRpcEndpoint('https://rpc.xdaichain.com/');
+      this.setRpcEndpoint('wss://rpc.xdaichain.com/wss');
       return;
     }
   }

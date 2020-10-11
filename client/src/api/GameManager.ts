@@ -43,6 +43,7 @@ import {
   locationIdToBigNumber,
   address,
   locationIdFromHexStr,
+  emptyAddress,
 } from '../utils/CheckedTypeUtils';
 
 export enum GameManagerEvent {
@@ -1020,7 +1021,6 @@ class GameManager extends EventEmitter implements AbstractGameManager {
       const candidate = candidates_[i++][0];
 
       // Check if has incoming moves from a previous asteroid to be safe
-      // TODO: thread this through?
       const arrivals = this.planetHelper.getArrivalsForPlanet(candidate.locationId);
       if (arrivals.length !== 0) continue;
 
@@ -1035,6 +1035,39 @@ class GameManager extends EventEmitter implements AbstractGameManager {
       console.log('df.move("' + fromId + '","' + candidate.locationId + '",' + energyNeeded + ',' + silverNeeded + ')');
       energySpent += energyNeeded;
       silverSpent += silverNeeded;
+    }
+  }
+
+  async capturePlanets(fromId: LocationId, minCaptureLevel: PlanetLevel, maxDistributeEnergyPercent: number): Promise<void> {
+    const planet = this.getPlanetWithId(fromId);
+
+    const candidates_ = this.getPlanetsInRange(fromId, maxDistributeEnergyPercent)
+      .filter(p => p.owner === emptyAddress)
+      .filter(p => p.planetLevel >= minCaptureLevel)
+      .map(to => {
+        const fromLoc = this.getLocationOfPlanet(fromId);
+        const toLoc = this.getLocationOfPlanet(to.locationId);
+        return [to, distance(fromLoc, toLoc)]
+      })
+      .sort(distanceSort);
+
+    let i = 0;
+    const energyBudget = (maxDistributeEnergyPercent / 100) * planet.energy;
+    let energySpent = 0;
+    while (energyBudget - energySpent > 0 && i < candidates_.length) {
+      // Remember its a tuple of candidates and their distance
+      const candidate = candidates_[i++][0];
+
+      // Check if has incoming moves from another planet to safe
+      const arrivals = this.planetHelper.getArrivalsForPlanet(candidate.locationId);
+      if (arrivals.length !== 0) continue;
+
+      const energyArriving = candidate.energyCap * 0.25;
+      const energyNeeded = Math.ceil(this.getEnergyNeededForMove(fromId, candidate.locationId, energyArriving));
+      if (energyBudget - energyNeeded - energySpent < 0) continue;
+      await this.moveAsync(fromId, candidate.locationId, energyNeeded, 0);
+      console.log(`df.move("${fromId}","${candidate.locationId}",${energyNeeded},0)`);
+      energySpent += energyNeeded;
     }
   }
 }

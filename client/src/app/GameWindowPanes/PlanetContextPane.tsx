@@ -10,7 +10,8 @@ import { Sub, Green, White } from '../../components/Text';
 
 import {
   EthAddress, Bonus, StatIdx,
-  Planet
+  Planet,
+  PlanetLevel
 } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
@@ -33,7 +34,8 @@ import {
   RangeIcon,
   UpgradeIcon,
   SpeedIcon,
-  SilverIcon
+  SilverIcon,
+  PlanetIcon,
 } from '../Icons';
 import { ModalHook, ModalPlanetDetailsIcon, ModalUpgradeDetailsIcon } from './ModalPane';
 import _ from 'lodash';
@@ -129,6 +131,76 @@ const StyledFleets = styled.div<{ visible: boolean }>`
       color: ${dfstyles.colors.background};
       background: ${dfstyles.colors.text};
       cursor: pointer;
+    }
+  }
+
+  .Asteroid > span {
+    height: 0.5em;
+    width: 0.5em;
+  }
+
+  .BrownDwarf > span {
+    height: 0.75em;
+    width: 0.75;
+  }
+
+  .RedDwarf > span {
+    height: 1em;
+    width: 1em;
+  }
+
+  .WhiteDwarf > span {
+    height: 1.25em;
+    width: 1.25em;
+  }
+
+  .YellowStar > span {
+    height: 1.5em;
+    width: 1.5em;
+  }
+
+  .BlueStar > span {
+    height: 1.75em;
+    width: 1.75em;
+  }
+
+  .Giant > span {
+    height: 2em;
+    width: 2em;
+  }
+
+  .Supergiant > span {
+    height: 2.25em;
+    width: 2.25em;
+  }
+
+  .Asteroid,
+  .BrownDwarf,
+  .RedDwarf,
+  .WhiteDwarf,
+  .YellowStar,
+  .BlueStar,
+  .Giant,
+  .Supergiant {
+    display: flex;
+
+    path {
+      fill: gray;
+    }
+
+    &:hover {
+      cursor: pointer;
+      path {
+        fill: ${dfstyles.colors.dfblue};
+      }
+    }
+
+    &.selected {
+      cursor: pointer;
+
+      path {
+        fill: white;
+      }
     }
   }
 `;
@@ -305,6 +377,24 @@ const StyledUpgradeButton = styled.div<{ active: boolean }>`
   }
 `;
 
+const Button = styled.div`
+  margin-top: 1em;
+  padding: 0.2em 0;
+  text-align: center;
+
+  border: 1px solid ${dfstyles.colors.text};
+  border-radius: 2px;
+
+  transition: color 0.2s, background 0.2s;
+
+  &:hover,
+  &.fill-send {
+    color: ${dfstyles.colors.background};
+    background: ${dfstyles.colors.text};
+    cursor: pointer;
+  }
+`;
+
 const ManualInput = styled.input`
   transition: background 0.2s, color 0.2s, width: 0.2s !important;
   outline: none;
@@ -439,13 +529,41 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
     uiManager.distributeSilver(selected.locationId, maxDistributeEnergyPercent)
       .then(() => {
         console.log('Successfully distributed silver');
-        setDistributing(false);
       })
       .catch((err) => {
-        console.error('Failed to distribute silver', err)
-        setDistributing(false);
+        console.error('Failed to distribute silver', err);
       });
+
+    // The call is async, but we set this right away
+    // so switching planets doesn't trigger it for that planet while processing
+    setDistributing(false);
   }, [distributing, selected, uiManager, maxDistributeEnergyPercent]);
+
+  // TODO: configurable
+  const [minCaptureLevel, setMinCaptureLevel] = useState(PlanetLevel.YellowStar)
+  const [capturing, setCapturing] = useState(false);
+  const doCapture = () => {
+    if (capturing) return;
+    setCapturing(true);
+  };
+
+  useEffect(() => {
+    if (!uiManager || !selected || !capturing) return;
+
+    // Keep 35% of max energy on the planet, so we work backwards to the percent to send
+    const percent = (1 - (selected.energyCap * 0.35 / selected.energy)) * 100;
+    uiManager.capturePlanets(selected.locationId, minCaptureLevel, percent)
+      .then(() => {
+        console.log('Successfully captured nearby planets');
+      })
+      .catch((err) => {
+        console.error('Failed to capture nearby planets', err);
+      });
+
+    // The call is async, but we set this right away
+    // so switching planets doesn't trigger it for that planet while processing
+    setCapturing(false);
+  }, [capturing, minCaptureLevel, selected, uiManager]);
 
   const energyHook = useState<number>(
     selected && uiManager
@@ -692,7 +810,55 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         </SectionButtons>
 
         <StyledFleets visible={selected !== null && selected.owner === account && selected.owner !== emptyAddress}>
-          <p>Auto Distribute</p>
+          <p>Automation</p>
+          <div className='statselect'>
+            <div>
+
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.Asteroid)}
+                className={minCaptureLevel <= PlanetLevel.Asteroid ? 'Asteroid selected' : 'Asteroid'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.BrownDwarf)}
+                className={minCaptureLevel <= PlanetLevel.BrownDwarf ? 'BrownDwarf selected' : 'BrownDwarf'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.RedDwarf)}
+                className={minCaptureLevel <= PlanetLevel.RedDwarf ? 'RedDwarf selected' : 'RedDwarf'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.WhiteDwarf)}
+                className={minCaptureLevel <= PlanetLevel.WhiteDwarf ? 'WhiteDwarf selected' : 'WhiteDwarf'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.YellowStar)}
+                className={minCaptureLevel <= PlanetLevel.YellowStar ? 'YellowStar selected' : 'YellowStar'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.BlueStar)}
+                className={minCaptureLevel <= PlanetLevel.BlueStar ? 'BlueStar selected' : 'BlueStar'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.Giant)}
+                className={minCaptureLevel <= PlanetLevel.Giant ? 'Giant selected' : 'Giant'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.Supergiant)}
+                className={minCaptureLevel <= PlanetLevel.Supergiant ? 'Supergiant selected' : 'Supergiant'}>
+                <PlanetIcon />
+              </div>
+            </div>
+          </div>
+          <Button onClick={doCapture} className={capturing ? 'fill-send' : ''}>
+            Capture level {minCaptureLevel}+ Planets
+          </Button>
           <div className='statselect'>
             <EnergyIconSelector icon={<EnergyIcon />} hook={maxDistributeEnergy} />
             <div>
@@ -704,9 +870,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
               </Spinner>
             </div>
           </div>
-          <div onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
+          <Button onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
             Distribute Silver
-          </div>
+          </Button>
         </StyledFleets>
 
         <StyledFleets

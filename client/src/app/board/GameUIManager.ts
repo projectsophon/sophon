@@ -698,6 +698,10 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   async distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): Promise<void> {
     return this.gameManager.distributeSilver(fromId, maxDistributeEnergyPercent)
   }
+
+  async capturePlanets(fromId: LocationId, minCaptureLevel: PlanetLevel, maxDistributeEnergyPercent: number): Promise<void> {
+    return this.gameManager.capturePlanets(fromId, minCaptureLevel, maxDistributeEnergyPercent);
+  }
 }
 
 export default GameUIManager;

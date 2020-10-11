@@ -339,22 +339,22 @@ class ContractsAPI extends EventEmitter {
 
   public onTxSubmit(unminedTx: SubmittedTx): void {
     // TODO encapsulate this into terminalemitter
-    const terminalEmitter = TerminalEmitter.getInstance();
-    terminalEmitter.print(
-      `[TX SUBMIT] ${unminedTx.type} transaction (`,
-      TerminalTextStyle.Blue
-    );
-    terminalEmitter.printLink(
-      `${unminedTx.txHash.slice(0, 6)}`,
-      () => {
-        window.open(`${BLOCK_EXPLORER_URL}/tx/${unminedTx.txHash}`);
-      },
-      TerminalTextStyle.White
-    );
-    terminalEmitter.println(
-      `) submitted to blockchain.`,
-      TerminalTextStyle.Blue
-    );
+    // const terminalEmitter = TerminalEmitter.getInstance();
+    // console.log(
+    //   `[TX SUBMIT] ${unminedTx.type} transaction (`,
+    //   TerminalTextStyle.Blue
+    // );
+    // console.log(
+    //   `${unminedTx.txHash.slice(0, 6)}`,
+    //   () => {
+    //     window.open(`${BLOCK_EXPLORER_URL}/tx/${unminedTx.txHash}`);
+    //   },
+    //   TerminalTextStyle.White
+    // );
+    // terminalEmitter.println(
+    //   `) submitted to blockchain.`,
+    //   TerminalTextStyle.Blue
+    // );
 
     const notifManager = NotificationManager.getInstance();
     notifManager.txSubmit(unminedTx);
@@ -368,39 +368,39 @@ class ContractsAPI extends EventEmitter {
   }
 
   private onTxConfirmation(unminedTx: SubmittedTx, success: boolean) {
-    const terminalEmitter = TerminalEmitter.getInstance();
+    // const terminalEmitter = TerminalEmitter.getInstance();
     if (success) {
-      terminalEmitter.print(
-        `[TX CONFIRM] ${unminedTx.type} transaction (`,
-        TerminalTextStyle.Green
-      );
-      terminalEmitter.printLink(
-        `${unminedTx.txHash.slice(0, 6)}`,
-        () => {
-          window.open(`${BLOCK_EXPLORER_URL}/tx/${unminedTx.txHash}`);
-        },
-        TerminalTextStyle.White
-      );
-      terminalEmitter.println(`) confirmed.`, TerminalTextStyle.Green);
+      // terminalEmitter.print(
+      //   `[TX CONFIRM] ${unminedTx.type} transaction (`,
+      //   TerminalTextStyle.Green
+      // );
+      // terminalEmitter.printLink(
+      //   `${unminedTx.txHash.slice(0, 6)}`,
+      //   () => {
+      //     window.open(`${BLOCK_EXPLORER_URL}/tx/${unminedTx.txHash}`);
+      //   },
+      //   TerminalTextStyle.White
+      // );
+      // terminalEmitter.println(`) confirmed.`, TerminalTextStyle.Green);
 
       const notifManager = NotificationManager.getInstance();
       notifManager.txConfirm(unminedTx);
     } else {
-      terminalEmitter.print(
-        `[TX ERROR] ${unminedTx.type} transaction (`,
-        TerminalTextStyle.Red
-      );
-      terminalEmitter.printLink(
-        `${unminedTx.txHash.slice(0, 6)}`,
-        () => {
-          window.open(`${BLOCK_EXPLORER_URL}/tx/${unminedTx.txHash}`);
-        },
-        TerminalTextStyle.White
-      );
-      terminalEmitter.println(
-        `) reverted. Please try again.`,
-        TerminalTextStyle.Red
-      );
+      // terminalEmitter.print(
+      //   `[TX ERROR] ${unminedTx.type} transaction (`,
+      //   TerminalTextStyle.Red
+      // );
+      // terminalEmitter.printLink(
+      //   `${unminedTx.txHash.slice(0, 6)}`,
+      //   () => {
+      //     window.open(`${BLOCK_EXPLORER_URL}/tx/${unminedTx.txHash}`);
+      //   },
+      //   TerminalTextStyle.White
+      // );
+      // terminalEmitter.println(
+      //   `) reverted. Please try again.`,
+      //   TerminalTextStyle.Red
+      // );
 
       const notifManager = NotificationManager.getInstance();
       notifManager.txRevert(unminedTx);
@@ -414,17 +414,17 @@ class ContractsAPI extends EventEmitter {
     args: InitializePlayerArgs,
     actionId: string
   ): Promise<providers.TransactionReceipt> {
-    const terminalEmitter = TerminalEmitter.getInstance();
-    terminalEmitter.println(
-      'INIT: calculated SNARK with args:',
-      TerminalTextStyle.Sub
-    );
-    terminalEmitter.println(
-      JSON.stringify(hexifyBigIntNestedArray(args.slice(0, 3))),
-      TerminalTextStyle.Sub,
-      true
-    );
-    terminalEmitter.newline();
+    // const terminalEmitter = TerminalEmitter.getInstance();
+    // terminalEmitter.println(
+    //   'INIT: calculated SNARK with args:',
+    //   TerminalTextStyle.Sub
+    // );
+    // terminalEmitter.println(
+    //   JSON.stringify(hexifyBigIntNestedArray(args.slice(0, 3))),
+    //   TerminalTextStyle.Sub,
+    //   true
+    // );
+    // terminalEmitter.newline();
 
     const overrides: providers.TransactionRequest = {
       gasPrice: 1000000000,
@@ -460,12 +460,12 @@ class ContractsAPI extends EventEmitter {
     args: UpgradeArgs,
     actionId: string
   ): Promise<providers.TransactionReceipt> {
-    const terminalEmitter = TerminalEmitter.getInstance();
-    terminalEmitter.println(
-      'UPGRADE: sending upgrade to blockchain',
-      TerminalTextStyle.Sub
-    );
-    terminalEmitter.newline();
+    // const terminalEmitter = TerminalEmitter.getInstance();
+    // terminalEmitter.println(
+    //   'UPGRADE: sending upgrade to blockchain',
+    //   TerminalTextStyle.Sub
+    // );
+    // terminalEmitter.newline();
 
     const overrides: providers.TransactionRequest = {
       gasPrice: 1000000000,
@@ -502,7 +502,7 @@ class ContractsAPI extends EventEmitter {
     silverMoved: number,
     actionId: string
   ): Promise<providers.TransactionReceipt> {
-    const terminalEmitter = TerminalEmitter.getInstance();
+    // const terminalEmitter = TerminalEmitter.getInstance();
 
     const overrides: providers.TransactionRequest = {
       gasPrice: 1000000000,
@@ -518,16 +518,16 @@ class ContractsAPI extends EventEmitter {
         (silverMoved * contractPrecision).toString(),
       ],
     ] as MoveArgs;
-    terminalEmitter.println(
-      'MOVE: calculated SNARK with args:',
-      TerminalTextStyle.Sub
-    );
-    terminalEmitter.println(
-      JSON.stringify(hexifyBigIntNestedArray(args.slice(0, 3))),
-      TerminalTextStyle.Sub,
-      true
-    );
-    terminalEmitter.newline();
+    // terminalEmitter.println(
+    //   'MOVE: calculated SNARK with args:',
+    //   TerminalTextStyle.Sub
+    // );
+    // terminalEmitter.println(
+    //   JSON.stringify(hexifyBigIntNestedArray(args.slice(0, 3))),
+    //   TerminalTextStyle.Sub,
+    //   true
+    // );
+    // terminalEmitter.newline();
 
     const tx: providers.TransactionResponse = await this.txRequestExecutor.makeRequest(
       {
@@ -569,12 +569,12 @@ class ContractsAPI extends EventEmitter {
     currentHatLevel: number,
     actionId: string
   ): Promise<providers.TransactionReceipt> {
-    const terminalEmitter = TerminalEmitter.getInstance();
-    terminalEmitter.println(
-      'BUY HAT: sending request to blockchain',
-      TerminalTextStyle.Sub
-    );
-    terminalEmitter.newline();
+    // const terminalEmitter = TerminalEmitter.getInstance();
+    // terminalEmitter.println(
+    //   'BUY HAT: sending request to blockchain',
+    //   TerminalTextStyle.Sub
+    // );
+    // terminalEmitter.newline();
 
     const overrides: providers.TransactionRequest = {
       gasPrice: 1000000000,

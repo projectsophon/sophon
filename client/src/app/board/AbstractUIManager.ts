@@ -91,4 +91,21 @@ export default interface AbstractUIManager {
   getUIDataItem(key: UIDataKey): UIDataValue;
 
   spaceTypeFromPerlin(perlin: number): SpaceType;
+
+  getMyPlanets(): Planet[];
+  getDist(fromId: LocationId, toId: LocationId): number;
+  getMaxMoveDist(planetId: LocationId, sendingPercent: number): number;
+  getPlanetsInRange(planetId: LocationId, sendingPercent: number): Planet[];
+  getEnergyNeededForMove(
+    fromId: LocationId,
+    toId: LocationId,
+    arrivingEnergy: number
+  ): number;
+  getEnergyArrivingForMove(
+    fromId: LocationId,
+    toId: LocationId,
+    sentEnergy: number
+  ): number;
+  getTimeForMove(fromId: LocationId, toId: LocationId): number;
+  getTemperature(coords: WorldCoords): number;
 }

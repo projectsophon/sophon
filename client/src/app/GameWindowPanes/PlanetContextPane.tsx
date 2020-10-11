@@ -10,7 +10,7 @@ import { Sub, Green, White } from '../../components/Text';
 
 import {
   EthAddress, Bonus, StatIdx,
-
+  PlanetResource,
   Planet
 } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';
@@ -366,6 +366,20 @@ function UpgradeButton({
   );
 }
 
+function isAsteroid(planet: Planet | null): boolean {
+  return planet?.planetResource === PlanetResource.SILVER;
+}
+
+//this is currently shorter distance ascending to larger
+function distance(fromLoc: Planet, toLoc: Planet): number {
+  return Math.sqrt((fromLoc.coords.x - toLoc.coords.x) ** 2 + (fromLoc.coords.y - toLoc.coords.y) ** 2);
+}
+
+//tuples of [planet,distance]
+function distanceSort(a, b) {
+  return a[1] - b[1];
+}
+
 const isPending = (selected): boolean => {
   if (!selected) return true;
   if (!selected.unconfirmedUpgrades) return false;
@@ -425,6 +439,66 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
     if (!twitter) return `${shortaddress}'s ${shorthash} ${planetname}`;
     else return `@${twitter}'s ${shorthash} ${planetname}`;
   };
+
+  const maxDistributeEnergy = useState(20);
+  const [maxDistributeEnergyPercent] = maxDistributeEnergy;
+  const [distributing, setDistributing] = useState(false);
+  const doDistribute = () => {
+    if (distributing) return;
+    setDistributing(true);
+  };
+
+  useEffect(() => {
+    if (!uiManager) return;
+    if (!distributing) return;
+
+    async function distributeSilver() {
+      const candidates_ = uiManager.getPlanetsInRange(selected.locationId, maxDistributeEnergyPercent)
+        .filter(p => p.owner === account)
+        .filter(p => !isAsteroid(p))
+        .map(to => {
+          const fromLoc = uiManager.getLocationOfPlanet(selected.locationId);
+          const toLoc = uiManager.getLocationOfPlanet(to.locationId);
+          return [to, distance(fromLoc, toLoc)]
+        })
+        .sort(distanceSort);
+
+      let i = 0;
+      const energyBudget = (maxDistributeEnergyPercent / 100) * selected.energy;
+      const silverBudget = selected.silver;
+      let energySpent = 0;
+      let silverSpent = 0;
+      while (energyBudget - energySpent > 0 && i < candidates_.length) {
+        // Remember its a tuple of candidates and their distance
+        const candidate = candidates_[i++][0];
+
+        // Check if has incoming moves from a previous asteroid to be safe
+        // TODO: thread this through?
+        const arrivals = await df.contractsAPI.getArrivalsForPlanet(candidate);
+        if (arrivals.length !== 0) continue;
+
+        const silverNeeded = candidate.silverCap - candidate.silver;
+        if (silverNeeded + silverSpent > silverBudget) continue;
+
+        const energyNeeded = Math.ceil(uiManager.getEnergyNeededForMove(selected.locationId, candidate.locationId, 1));
+        if (energyBudget - energyNeeded - energySpent < 0) continue;
+        uiManager.move(selected.locationId, candidate.locationId, energyNeeded, silverNeeded);
+        console.log('df.move("' + selected.locationId + '","' + candidate.locationId + '",' + energyNeeded + ',' + silverNeeded + ')');
+        energySpent += energyNeeded;
+        silverSpent += silverNeeded;
+      }
+    }
+
+    distributeSilver()
+      .then(() => {
+        console.log('Successfully distributed silver');
+        setDistributing(false);
+      })
+      .catch((err) => {
+        console.error('Failed to distribute silver', err)
+        setDistributing(false);
+      });
+  }, [distributing, selected, uiManager, account, maxDistributeEnergyPercent]);
 
   const energyHook = useState<number>(
     selected && uiManager
@@ -670,8 +744,26 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
           </StyledUpgradeButton>
         </SectionButtons>
 
+        <StyledFleets visible={selected !== null && selected.owner === account && selected.owner !== emptyAddress}>
+          <p>Auto Distribute</p>
+          <div className='statselect'>
+            <EnergyIconSelector icon={<EnergyIcon />} hook={maxDistributeEnergy} />
+            <div>
+              <p>
+                <Sub>Max energy % to spend</Sub>
+              </p>
+              <Spinner hook={maxDistributeEnergy}>
+                <Percent>{maxDistributeEnergyPercent}%</Percent>
+              </Spinner>
+            </div>
+          </div>
+          <div onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
+            Distribute Silver
+          </div>
+        </StyledFleets>
+
         <StyledFleets
-          visible={selected !== null && selected.owner !== emptyAddress}
+          visible={selected !== null && selected.owner === account && selected.owner !== emptyAddress}
         >
           <p>Send Resources</p>
           <div className='statselect'>

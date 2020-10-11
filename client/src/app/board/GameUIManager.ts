@@ -694,6 +694,10 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   ): void {
     this.gameManager.move(from, to, forces, silver);
   }
+
+  distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): void {
+    this.gameManager.distributeSilver(fromId, maxDistributeEnergyPercent)
+  }
 }
 
 export default GameUIManager;

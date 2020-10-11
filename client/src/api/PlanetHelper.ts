@@ -783,4 +783,8 @@ export class PlanetHelper {
     }
     planet.silverSpent = this.calculateSilverSpent(planet);
   }
+
+  getArrivalsForPlanet(planetId: LocationId): QueuedArrival[] {
+    return this.getAllVoyages().filter((arrival) => arrival.toPlanet === planetId);
+  }
 }

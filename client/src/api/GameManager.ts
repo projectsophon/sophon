@@ -15,6 +15,7 @@ import {
   Upgrade,
   ChunkFootprint,
   SpaceType,
+  PlanetResource,
 } from '../_types/global/GlobalTypes';
 import LocalStorageManager from './LocalStorageManager';
 import mimcHash from '../miner/mimc';
@@ -56,6 +57,20 @@ import { getAllTwitters, verifyTwitterHandle } from './UtilityServerAPI';
 import EthereumAccountManager from './EthereumAccountManager';
 import { getRandomActionId, moveShipsDecay } from '../utils/Utils';
 import NotificationManager from '../utils/NotificationManager';
+
+function isAsteroid(planet: Planet | null): boolean {
+  return planet?.planetResource === PlanetResource.SILVER;
+}
+
+//this is currently shorter distance ascending to larger
+function distance(fromLoc: Planet, toLoc: Planet): number {
+  return Math.sqrt((fromLoc.coords.x - toLoc.coords.x) ** 2 + (fromLoc.coords.y - toLoc.coords.y) ** 2);
+}
+
+//tuples of [planet,distance]
+function distanceSort(a, b) {
+  return a[1] - b[1];
+}
 
 class GameManager extends EventEmitter implements AbstractGameManager {
   private readonly account: EthAddress | null;
@@ -719,8 +734,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     );
 
     if (Date.now() / 1000 > this.endTimeSeconds) {
-      const terminalEmitter = TerminalEmitter.getInstance();
-      terminalEmitter.println('[ERROR] Game has ended.');
+      console.error('[ERROR] Game has ended.');
       return this;
     }
 
@@ -887,6 +901,45 @@ class GameManager extends EventEmitter implements AbstractGameManager {
   getTemperature(coords: WorldCoords): number {
     const p = perlin(coords, false);
     return (16 - p) * 16;
+  }
+
+  distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): void {
+    const planet = this.getPlanetWithId(fromId);
+
+    const candidates_ = this.getPlanetsInRange(fromId, maxDistributeEnergyPercent)
+      .filter(p => p.owner === this.getAccount())
+      .filter(p => !isAsteroid(p))
+      .map(to => {
+        const fromLoc = this.getLocationOfPlanet(fromId);
+        const toLoc = this.getLocationOfPlanet(to.locationId);
+        return [to, distance(fromLoc, toLoc)]
+      })
+      .sort(distanceSort);
+
+    let i = 0;
+    const energyBudget = (maxDistributeEnergyPercent / 100) * planet.energy;
+    const silverBudget = planet.silver;
+    let energySpent = 0;
+    let silverSpent = 0;
+    while (energyBudget - energySpent > 0 && i < candidates_.length) {
+      // Remember its a tuple of candidates and their distance
+      const candidate = candidates_[i++][0];
+
+      // Check if has incoming moves from a previous asteroid to be safe
+      // TODO: thread this through?
+      const arrivals = this.planetHelper.getArrivalsForPlanet(candidate.locationId);
+      if (arrivals.length !== 0) continue;
+
+      const silverNeeded = candidate.silverCap - candidate.silver;
+      if (silverNeeded + silverSpent > silverBudget) continue;
+
+      const energyNeeded = Math.ceil(this.getEnergyNeededForMove(fromId, candidate.locationId, 1));
+      if (energyBudget - energyNeeded - energySpent < 0) continue;
+      this.move(fromId, candidate.locationId, energyNeeded, silverNeeded);
+      console.log('df.move("' + fromId + '","' + candidate.locationId + '",' + energyNeeded + ',' + silverNeeded + ')');
+      energySpent += energyNeeded;
+      silverSpent += silverNeeded;
+    }
   }
 }
 

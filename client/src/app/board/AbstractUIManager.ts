@@ -108,4 +108,6 @@ export default interface AbstractUIManager {
   ): number;
   getTimeForMove(fromId: LocationId, toId: LocationId): number;
   getTemperature(coords: WorldCoords): number;
+
+  distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): void
 }

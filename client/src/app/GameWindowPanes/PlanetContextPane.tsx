@@ -529,12 +529,14 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
     uiManager.distributeSilver(selected.locationId, maxDistributeEnergyPercent)
       .then(() => {
         console.log('Successfully distributed silver');
-        setDistributing(false);
       })
       .catch((err) => {
-        console.error('Failed to distribute silver', err)
-        setDistributing(false);
+        console.error('Failed to distribute silver', err);
       });
+
+    // The call is async, but we set this right away
+    // so switching planets doesn't trigger it for that planet while processing
+    setDistributing(false);
   }, [distributing, selected, uiManager, maxDistributeEnergyPercent]);
 
   // TODO: configurable
@@ -553,12 +555,14 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
     uiManager.capturePlanets(selected.locationId, minCaptureLevel, percent)
       .then(() => {
         console.log('Successfully captured nearby planets');
-        setCapturing(false);
       })
       .catch((err) => {
-        console.error('Failed to capture nearby planets', err)
-        setCapturing(false);
+        console.error('Failed to capture nearby planets', err);
       });
+
+    // The call is async, but we set this right away
+    // so switching planets doesn't trigger it for that planet while processing
+    setCapturing(false);
   }, [capturing, minCaptureLevel, selected, uiManager]);
 
   const energyHook = useState<number>(

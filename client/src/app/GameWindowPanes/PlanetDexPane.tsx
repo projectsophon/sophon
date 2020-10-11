@@ -24,6 +24,14 @@ import { SilverIcon, RankIcon } from '../Icons';
 import { calculateRankAndScore } from './LeaderboardPane';
 import { DefenseIcon, RangeIcon, SpeedIcon } from '../Icons';
 
+async function distributeAllAsteroids(asteroids) {
+  for (const asteroid of asteroids) {
+    // Keep 35% of max energy on the planet, so we work backwards to the percent to send
+    const percent = (1 - (asteroid.energyCap * 0.35 / asteroid.energy)) * 100;
+    await uiManager.distributeSilver(asteroid.locationId, percent);
+  }
+}
+
 const DexWrapper = styled.div`
   height: 12.2em; // exact size so a row is cut off
   overflow-y: scroll;
@@ -141,6 +149,41 @@ const _PlanetThumb = styled.div`
 const ColorIcon = styled.span<{ color: string }>`
   path {
     fill: ${({ color }) => color} !important;
+  }
+`;
+
+const Button = styled.div<{ active: boolean }>`
+  min-width: 72.5px;
+  border-radius: 2px;
+  border: 1px solid ${dfstyles.colors.subtext};
+  padding: 0.2em;
+
+  text-align: center;
+
+  &:hover {
+    cursor: pointer;
+    border: 1px solid ${dfstyles.colors.text};
+  }
+
+  background: ${({ active }) => (active ? dfstyles.colors.text : 'none')};
+
+  &,
+  & span {
+    ${({ active }) =>
+    active && `color: ${dfstyles.colors.background} !important`};
+  }
+
+  & p > span {
+    vertical-align: middle;
+  }
+
+  &.disabled {
+    border: 1px solid ${dfstyles.colors.subtext} !important;
+    &,
+    & span {
+      color: ${dfstyles.colors.subtext} !important;
+      cursor: auto !important;
+    }
   }
 `;
 
@@ -434,6 +477,24 @@ export function PlanetDexPane({ hook }: { hook: ModalHook; }): JSX.Element {
     setAutoUpgradeBranch(null);
   }, [autoUpgradeBranch, planets, uiManager])
 
+  const [autoDistributeAsteroids, setAutoDistributeAsteroids] = useState(false);
+  useEffect(() => {
+    if (!uiManager || !autoDistributeAsteroids) return;
+
+    const asteroids = planets
+      .filter((planet) => planet.planetResource === PlanetResource.SILVER);
+
+    distributeAllAsteroids(asteroids)
+      .then(() => {
+        console.log('Successfully distributed all asteroids')
+        setAutoDistributeAsteroids(false);
+      })
+      .catch((err) => {
+        console.error('Encountered an error while distributing all asteroids', err);
+        setAutoDistributeAsteroids(false);
+      });
+  }, [autoDistributeAsteroids, planets, uiManager]);
+
   return (
     <ModalPane hook={hook} title='Planet Dex' name={ModalName.PlanetDex}>
       {visible ? <PlayerInfoWrapper>
@@ -450,6 +511,9 @@ export function PlanetDexPane({ hook }: { hook: ModalHook; }): JSX.Element {
         <IconButton onClick={() => setAutoUpgradeBranch(UpgradeBranchName.Speed)}>
           <SpeedIcon />
         </IconButton>
+        <Button active={autoDistributeAsteroids} onClick={() => setAutoDistributeAsteroids(true)}>
+          Auto Distribute Asteroids
+        </Button>
       </ButtonRow>
       <DexWrapper>
         <DexRow className='title-row'>

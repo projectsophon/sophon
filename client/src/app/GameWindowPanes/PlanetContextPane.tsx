@@ -436,13 +436,15 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
   useEffect(() => {
     if (!uiManager || !selected || !distributing) return;
 
-    try {
-      uiManager.distributeSilver(selected.locationId, maxDistributeEnergyPercent)
-      console.log('Successfully distributed silver');
-    } catch (err) {
-      console.error('Failed to distribute silver', err)
-    }
-    setDistributing(false);
+    uiManager.distributeSilver(selected.locationId, maxDistributeEnergyPercent)
+      .then(() => {
+        console.log('Successfully distributed silver');
+        setDistributing(false);
+      })
+      .catch((err) => {
+        console.error('Failed to distribute silver', err)
+        setDistributing(false);
+      });
   }, [distributing, selected, uiManager, maxDistributeEnergyPercent]);
 
   const energyHook = useState<number>(

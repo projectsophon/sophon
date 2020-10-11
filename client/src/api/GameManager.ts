@@ -627,6 +627,100 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     return Promise.resolve(planetLoc);
   }
 
+  async moveAsync(
+    from: LocationId,
+    to: LocationId,
+    forces: number,
+    silver: number
+  ): Promise<void> {
+    localStorage.setItem(
+      `${this.getAccount()?.toLowerCase()}-fromPlanet`,
+      from
+    );
+    localStorage.setItem(`${this.getAccount()?.toLowerCase()}-toPlanet`, to);
+
+    if (Date.now() / 1000 > this.endTimeSeconds) {
+      const terminalEmitter = TerminalEmitter.getInstance();
+      terminalEmitter.println('[ERROR] Game has ended.');
+      return this;
+    }
+
+    const oldLocation = this.planetHelper.getLocationOfPlanet(from);
+    const newLocation = this.planetHelper.getLocationOfPlanet(to);
+    if (!oldLocation) {
+      console.error('tried to move from planet that does not exist');
+      return this;
+    }
+    if (!newLocation) {
+      console.error('tried to move from planet that does not exist');
+      return this;
+    }
+
+    const oldX = oldLocation.coords.x;
+    const oldY = oldLocation.coords.y;
+    const newX = newLocation.coords.x;
+    const newY = newLocation.coords.y;
+    const xDiff = newX - oldX;
+    const yDiff = newY - oldY;
+
+    const distMax = Math.ceil(Math.sqrt(xDiff ** 2 + yDiff ** 2));
+
+    const shipsMoved = forces;
+    const silverMoved = silver;
+
+    if (newX ** 2 + newY ** 2 >= this.worldRadius ** 2) {
+      throw new Error('attempted to move out of bounds');
+    }
+
+    const oldPlanet = this.planetHelper.getPlanetWithLocation(oldLocation);
+
+    if (!this.account || !oldPlanet || oldPlanet.owner !== this.account) {
+      throw new Error('attempted to move from a planet not owned by player');
+    }
+    const actionId = getRandomActionId();
+    const unconfirmedTx = {
+      actionId,
+      type: EthTxType.MOVE,
+      from: oldLocation.hash,
+      to: newLocation.hash,
+      forces: shipsMoved,
+      silver: silverMoved,
+    };
+    this.contractsAPI.onTxInit(unconfirmedTx as UnconfirmedTx);
+
+    return this.snarkHelper
+      .getMoveArgs(
+        oldX,
+        oldY,
+        newX,
+        newY,
+        perlin({ x: newX, y: newY }),
+        this.worldRadius,
+        distMax
+      )
+      .then((callArgs) => {
+        return this.contractsAPI.move(
+          callArgs,
+          shipsMoved,
+          silverMoved,
+          actionId
+        );
+      })
+      .then(() => {
+        //no-op, delete?
+        this.emit(GameManagerEvent.Moved);
+      })
+      .catch((err) => {
+        const notifManager = NotificationManager.getInstance();
+        notifManager.unsubmittedTxFail(unconfirmedTx, err);
+        this.contractsAPI.emit(
+          ContractsAPIEvent.TxInitFailed,
+          unconfirmedTx,
+          err
+        );
+      });
+  }
+
   move(
     from: LocationId,
     to: LocationId,
@@ -903,7 +997,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     return (16 - p) * 16;
   }
 
-  distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): void {
+  async distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): Promise<void> {
     const planet = this.getPlanetWithId(fromId);
 
     const candidates_ = this.getPlanetsInRange(fromId, maxDistributeEnergyPercent)
@@ -931,11 +1025,13 @@ class GameManager extends EventEmitter implements AbstractGameManager {
       if (arrivals.length !== 0) continue;
 
       const silverNeeded = candidate.silverCap - candidate.silver;
+      // Setting a 100 silver guard here, but we could set this to 0
+      if (silverNeeded < 100) continue;
       if (silverNeeded + silverSpent > silverBudget) continue;
 
       const energyNeeded = Math.ceil(this.getEnergyNeededForMove(fromId, candidate.locationId, 1));
       if (energyBudget - energyNeeded - energySpent < 0) continue;
-      this.move(fromId, candidate.locationId, energyNeeded, silverNeeded);
+      await this.moveAsync(fromId, candidate.locationId, energyNeeded, silverNeeded);
       console.log('df.move("' + fromId + '","' + candidate.locationId + '",' + energyNeeded + ',' + silverNeeded + ')');
       energySpent += energyNeeded;
       silverSpent += silverNeeded;

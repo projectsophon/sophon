@@ -462,8 +462,8 @@ export function PlanetDexPane({ hook }: { hook: ModalHook; }): JSX.Element {
           planet.silver >= getUpgradeSilverNeeded(planet) &&
           planet.unconfirmedUpgrades?.length === 0
         ) {
-          // 3 (a.ka. 4) is the max level an upgrade can be
-          if (planet.upgradeState[autoUpgradeBranch] < 3) {
+          // 4 is the max level an upgrade can be
+          if (planet.upgradeState[autoUpgradeBranch] < 4) {
             return true;
           } else {
             console.log(`AutoUpgrade: Can't upgrade past level 4, try a different stat`);

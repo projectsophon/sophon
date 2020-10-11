@@ -99,4 +99,5 @@ export default interface AbstractGameManager extends EventEmitter {
   getTemperature(coords: WorldCoords): number;
 
   async distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): Promise<void>;
+  async capturePlanets(fromId: LocationId, minCaptureLevel: PlanetLevel, maxDistributeEnergyPercent: number): Promise<void>;
 }

@@ -109,5 +109,6 @@ export default interface AbstractUIManager {
   getTimeForMove(fromId: LocationId, toId: LocationId): number;
   getTemperature(coords: WorldCoords): number;
 
-  async distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): Promise<void>
+  async distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): Promise<void>;
+  async capturePlanets(fromId: LocationId, minCaptureLevel: PlanetLevel, maxDistributeEnergyPercent: number): Promise<void>;
 }

@@ -10,7 +10,8 @@ import { Sub, Green, White } from '../../components/Text';
 
 import {
   EthAddress, Bonus, StatIdx,
-  Planet
+  Planet,
+  PlanetLevel
 } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
@@ -305,6 +306,24 @@ const StyledUpgradeButton = styled.div<{ active: boolean }>`
   }
 `;
 
+const Button = styled.div`
+  margin-top: 1em;
+  padding: 0.2em 0;
+  text-align: center;
+
+  border: 1px solid ${dfstyles.colors.text};
+  border-radius: 2px;
+
+  transition: color 0.2s, background 0.2s;
+
+  &:hover,
+  &.fill-send {
+    color: ${dfstyles.colors.background};
+    background: ${dfstyles.colors.text};
+    cursor: pointer;
+  }
+`;
+
 const ManualInput = styled.input`
   transition: background 0.2s, color 0.2s, width: 0.2s !important;
   outline: none;
@@ -446,6 +465,29 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         setDistributing(false);
       });
   }, [distributing, selected, uiManager, maxDistributeEnergyPercent]);
+
+  // TODO: configurable
+  const [capturing, setCapturing] = useState(false);
+  const doCapture = () => {
+    if (capturing) return;
+    setCapturing(true);
+  };
+
+  useEffect(() => {
+    if (!uiManager || !selected || !capturing) return;
+
+    // Keep 35% of max energy on the planet, so we work backwards to the percent to send
+    const percent = (1 - (selected.energyCap * 0.35 / selected.energy)) * 100;
+    uiManager.capturePlanets(selected.locationId, PlanetLevel.YellowStar, percent)
+      .then(() => {
+        console.log('Successfully captured nearby planets');
+        setCapturing(false);
+      })
+      .catch((err) => {
+        console.error('Failed to capture nearby planets', err)
+        setCapturing(false);
+      });
+  }, [capturing, selected, uiManager]);
 
   const energyHook = useState<number>(
     selected && uiManager
@@ -692,7 +734,10 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         </SectionButtons>
 
         <StyledFleets visible={selected !== null && selected.owner === account && selected.owner !== emptyAddress}>
-          <p>Auto Distribute</p>
+          <p>Automation</p>
+          <Button onClick={doCapture} className={capturing ? 'fill-send' : ''}>
+            Capture Rank 4+ Planets
+          </Button>
           <div className='statselect'>
             <EnergyIconSelector icon={<EnergyIcon />} hook={maxDistributeEnergy} />
             <div>
@@ -704,9 +749,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
               </Spinner>
             </div>
           </div>
-          <div onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
+          <Button onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
             Distribute Silver
-          </div>
+          </Button>
         </StyledFleets>
 
         <StyledFleets

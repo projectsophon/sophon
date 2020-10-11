@@ -34,7 +34,8 @@ import {
   RangeIcon,
   UpgradeIcon,
   SpeedIcon,
-  SilverIcon
+  SilverIcon,
+  PlanetIcon,
 } from '../Icons';
 import { ModalHook, ModalPlanetDetailsIcon, ModalUpgradeDetailsIcon } from './ModalPane';
 import _ from 'lodash';
@@ -130,6 +131,76 @@ const StyledFleets = styled.div<{ visible: boolean }>`
       color: ${dfstyles.colors.background};
       background: ${dfstyles.colors.text};
       cursor: pointer;
+    }
+  }
+
+  .Asteroid > span {
+    height: 0.5em;
+    width: 0.5em;
+  }
+
+  .BrownDwarf > span {
+    height: 0.75em;
+    width: 0.75;
+  }
+
+  .RedDwarf > span {
+    height: 1em;
+    width: 1em;
+  }
+
+  .WhiteDwarf > span {
+    height: 1.25em;
+    width: 1.25em;
+  }
+
+  .YellowStar > span {
+    height: 1.5em;
+    width: 1.5em;
+  }
+
+  .BlueStar > span {
+    height: 1.75em;
+    width: 1.75em;
+  }
+
+  .Giant > span {
+    height: 2em;
+    width: 2em;
+  }
+
+  .Supergiant > span {
+    height: 2.25em;
+    width: 2.25em;
+  }
+
+  .Asteroid,
+  .BrownDwarf,
+  .RedDwarf,
+  .WhiteDwarf,
+  .YellowStar,
+  .BlueStar,
+  .Giant,
+  .Supergiant {
+    display: flex;
+
+    path {
+      fill: gray;
+    }
+
+    &:hover {
+      cursor: pointer;
+      path {
+        fill: ${dfstyles.colors.dfblue};
+      }
+    }
+
+    &.selected {
+      cursor: pointer;
+
+      path {
+        fill: white;
+      }
     }
   }
 `;
@@ -467,6 +538,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
   }, [distributing, selected, uiManager, maxDistributeEnergyPercent]);
 
   // TODO: configurable
+  const [minCaptureLevel, setMinCaptureLevel] = useState(PlanetLevel.YellowStar)
   const [capturing, setCapturing] = useState(false);
   const doCapture = () => {
     if (capturing) return;
@@ -478,7 +550,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
     // Keep 35% of max energy on the planet, so we work backwards to the percent to send
     const percent = (1 - (selected.energyCap * 0.35 / selected.energy)) * 100;
-    uiManager.capturePlanets(selected.locationId, PlanetLevel.YellowStar, percent)
+    uiManager.capturePlanets(selected.locationId, minCaptureLevel, percent)
       .then(() => {
         console.log('Successfully captured nearby planets');
         setCapturing(false);
@@ -487,7 +559,7 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
         console.error('Failed to capture nearby planets', err)
         setCapturing(false);
       });
-  }, [capturing, selected, uiManager]);
+  }, [capturing, minCaptureLevel, selected, uiManager]);
 
   const energyHook = useState<number>(
     selected && uiManager
@@ -735,8 +807,53 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
         <StyledFleets visible={selected !== null && selected.owner === account && selected.owner !== emptyAddress}>
           <p>Automation</p>
+          <div className='statselect'>
+            <div>
+
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.Asteroid)}
+                className={minCaptureLevel <= PlanetLevel.Asteroid ? 'Asteroid selected' : 'Asteroid'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.BrownDwarf)}
+                className={minCaptureLevel <= PlanetLevel.BrownDwarf ? 'BrownDwarf selected' : 'BrownDwarf'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.RedDwarf)}
+                className={minCaptureLevel <= PlanetLevel.RedDwarf ? 'RedDwarf selected' : 'RedDwarf'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.WhiteDwarf)}
+                className={minCaptureLevel <= PlanetLevel.WhiteDwarf ? 'WhiteDwarf selected' : 'WhiteDwarf'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.YellowStar)}
+                className={minCaptureLevel <= PlanetLevel.YellowStar ? 'YellowStar selected' : 'YellowStar'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.BlueStar)}
+                className={minCaptureLevel <= PlanetLevel.BlueStar ? 'BlueStar selected' : 'BlueStar'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.Giant)}
+                className={minCaptureLevel <= PlanetLevel.Giant ? 'Giant selected' : 'Giant'}>
+                <PlanetIcon />
+              </div>
+              <div
+                onClick={() => setMinCaptureLevel(PlanetLevel.Supergiant)}
+                className={minCaptureLevel <= PlanetLevel.Supergiant ? 'Supergiant selected' : 'Supergiant'}>
+                <PlanetIcon />
+              </div>
+            </div>
+          </div>
           <Button onClick={doCapture} className={capturing ? 'fill-send' : ''}>
-            Capture Rank 4+ Planets
+            Capture level {minCaptureLevel}+ Planets
           </Button>
           <div className='statselect'>
             <EnergyIconSelector icon={<EnergyIcon />} hook={maxDistributeEnergy} />

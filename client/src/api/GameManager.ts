@@ -1043,7 +1043,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
     const candidates_ = this.getPlanetsInRange(fromId, maxDistributeEnergyPercent)
       .filter(p => p.owner === emptyAddress)
-      .filter(p => p.planetLevel >= PlanetLevel.YellowStar)
+      .filter(p => p.planetLevel >= minCaptureLevel)
       .map(to => {
         const fromLoc = this.getLocationOfPlanet(fromId);
         const toLoc = this.getLocationOfPlanet(to.locationId);

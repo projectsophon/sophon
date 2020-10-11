@@ -579,6 +579,11 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
   );
   const [silverPercent, setSilverPercent] = silverHook;
 
+  const getDistribute = () =>
+    selectedStats
+      ? formatNumber((maxDistributeEnergyPercent / 100) * selectedStats.energy)
+      : '0';
+
   const getEnergy = () =>
     selectedStats
       ? formatNumber((energyPercent / 100) * selectedStats.energy)
@@ -869,6 +874,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
                 <Percent>{maxDistributeEnergyPercent}%</Percent>
               </Spinner>
             </div>
+            <p>
+              <Sub>Sending {getDistribute()} energy</Sub>
+            </p>
           </div>
           <Button onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
             Distribute Silver

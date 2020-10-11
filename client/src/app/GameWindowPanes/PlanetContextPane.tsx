@@ -868,15 +868,12 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
             <EnergyIconSelector icon={<EnergyIcon />} hook={maxDistributeEnergy} />
             <div>
               <p>
-                <Sub>% of current energy to spend</Sub>
+                <Sub>Sending (at max) {getDistribute()} energy</Sub>
               </p>
               <Spinner hook={maxDistributeEnergy}>
                 <Percent>{maxDistributeEnergyPercent}%</Percent>
               </Spinner>
             </div>
-            <p>
-              <Sub>Sending {getDistribute()} energy</Sub>
-            </p>
           </div>
           <Button onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
             Distribute Silver

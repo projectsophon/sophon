@@ -98,5 +98,5 @@ export default interface AbstractGameManager extends EventEmitter {
   getTimeForMove(fromId: LocationId, toId: LocationId): number;
   getTemperature(coords: WorldCoords): number;
 
-  distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): void;
+  async distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): Promise<void>;
 }

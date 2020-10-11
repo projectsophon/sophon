@@ -1017,31 +1017,53 @@ class GameManager extends EventEmitter implements AbstractGameManager {
       })
       .sort(distanceSort);
 
+
     let i = 0;
-    const energyBudget = (maxDistributeEnergyPercent / 100) * planet.energy;
-    const silverBudget = planet.silver;
+    const energyBudget = Math.floor((maxDistributeEnergyPercent / 100) * planet.energy);
+    const silverBudget = Math.floor(planet.silver);
+
+    console.log("energyBudget ", energyBudget, " silverBudget ", silverBudget, " ");
+
     let energySpent = 0;
     let silverSpent = 0;
     while (energyBudget - energySpent > 0 && i < candidates_.length) {
+
+      const silverLeft = silverBudget - silverSpent;
+      const energyLeft = energyBudget - energySpent;
+
       // Remember its a tuple of candidates and their distance
       const candidate = candidates_[i++][0];
+      console.log(candidate);
 
       // Check if has incoming moves from a previous asteroid to be safe
       const arrivals = this.planetHelper.getArrivalsForPlanet(candidate.locationId);
-      if (arrivals.length !== 0) continue;
+      if (arrivals.length !== 0) {
+        console.log("rejecting candidate for having arrivals");
+        continue;
+      }
 
-      const silverNeeded = candidate.silverCap - candidate.silver;
+      const silverRequested = Math.ceil(candidate.silverCap - candidate.silver);
+      const silverNeeded = silverRequested > silverLeft ? silverLeft : silverRequested;
+
       // Setting a 100 silver guard here, but we could set this to 0
-      if (silverNeeded < 100) continue;
-      if (silverNeeded + silverSpent > silverBudget) continue;
+      if (silverNeeded < 100) {
+        console.log("rejecting candidate for needing too little silver ", silverNeeded);
+        continue;
+      }
 
       const energyNeeded = Math.ceil(this.getEnergyNeededForMove(fromId, candidate.locationId, 1));
-      if (energyBudget - energyNeeded - energySpent < 0) continue;
-      await this.moveAsync(fromId, candidate.locationId, energyNeeded, silverNeeded);
+      if (energyLeft - energyNeeded < 0) {
+        console.log("rejecting candidate energyNeeded ", energyNeeded, " exceeds energyLeft ", energyLeft);
+        continue;
+      }
+
       console.log('df.move("' + fromId + '","' + candidate.locationId + '",' + energyNeeded + ',' + silverNeeded + ')');
+      await this.moveAsync(fromId, candidate.locationId, energyNeeded, silverNeeded);
       energySpent += energyNeeded;
       silverSpent += silverNeeded;
     }
+
+    console.log("distributed " + silverSpent + " using " + energySpent + " energy");
   }
 
   async capturePlanets(fromId: LocationId, minCaptureLevel: PlanetLevel, maxDistributeEnergyPercent: number): Promise<void> {
@@ -1058,21 +1080,35 @@ class GameManager extends EventEmitter implements AbstractGameManager {
       .sort(distanceSort);
 
     let i = 0;
-    const energyBudget = (maxDistributeEnergyPercent / 100) * planet.energy;
+    const energyBudget = Math.floor((maxDistributeEnergyPercent / 100) * planet.energy);
+
+    console.log("energyBudget ", energyBudget);
+
     let energySpent = 0;
     while (energyBudget - energySpent > 0 && i < candidates_.length) {
+
+      const energyLeft = energyBudget - energySpent;
+
       // Remember its a tuple of candidates and their distance
       const candidate = candidates_[i++][0];
+      console.log(candidate);
 
       // Check if has incoming moves from another planet to safe
       const arrivals = this.planetHelper.getArrivalsForPlanet(candidate.locationId);
-      if (arrivals.length !== 0) continue;
+      if (arrivals.length !== 0) {
+        console.log("rejecting candidate for having arrivals");
+        continue;
+      }
 
       const energyArriving = candidate.energyCap * 0.25;
       const energyNeeded = Math.ceil(this.getEnergyNeededForMove(fromId, candidate.locationId, energyArriving));
-      if (energyBudget - energyNeeded - energySpent < 0) continue;
-      await this.moveAsync(fromId, candidate.locationId, energyNeeded, 0);
+      if (energyLeft - energyNeeded < 0) {
+        console.log("rejecting candidate energyNeeded ", energyNeeded, " exceeds energyLeft ", energyLeft);
+        continue;
+      }
+
       console.log(`df.move("${fromId}","${candidate.locationId}",${energyNeeded},0)`);
+      await this.moveAsync(fromId, candidate.locationId, energyNeeded, 0);
       energySpent += energyNeeded;
     }
   }

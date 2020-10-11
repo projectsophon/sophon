@@ -10,7 +10,6 @@ import { Sub, Green, White } from '../../components/Text';
 
 import {
   EthAddress, Bonus, StatIdx,
-
   Planet
 } from '../../_types/global/GlobalTypes';
 import GameUIManager from '../board/GameUIManager';
@@ -426,6 +425,26 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
     else return `@${twitter}'s ${shorthash} ${planetname}`;
   };
 
+  const maxDistributeEnergy = useState(50);
+  const [maxDistributeEnergyPercent] = maxDistributeEnergy;
+  const [distributing, setDistributing] = useState(false);
+  const doDistribute = () => {
+    if (distributing) return;
+    setDistributing(true);
+  };
+
+  useEffect(() => {
+    if (!uiManager || !selected || !distributing) return;
+
+    try {
+      uiManager.distributeSilver(selected.locationId, maxDistributeEnergyPercent)
+      console.log('Successfully distributed silver');
+    } catch (err) {
+      console.error('Failed to distribute silver', err)
+    }
+    setDistributing(false);
+  }, [distributing, selected, uiManager, maxDistributeEnergyPercent]);
+
   const energyHook = useState<number>(
     selected && uiManager
       ? uiManager.getForcesSending(selected.locationId)
@@ -670,8 +689,26 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
           </StyledUpgradeButton>
         </SectionButtons>
 
+        <StyledFleets visible={selected !== null && selected.owner === account && selected.owner !== emptyAddress}>
+          <p>Auto Distribute</p>
+          <div className='statselect'>
+            <EnergyIconSelector icon={<EnergyIcon />} hook={maxDistributeEnergy} />
+            <div>
+              <p>
+                <Sub>% of current energy to spend</Sub>
+              </p>
+              <Spinner hook={maxDistributeEnergy}>
+                <Percent>{maxDistributeEnergyPercent}%</Percent>
+              </Spinner>
+            </div>
+          </div>
+          <div onClick={doDistribute} className={distributing ? 'fill-send' : ''}>
+            Distribute Silver
+          </div>
+        </StyledFleets>
+
         <StyledFleets
-          visible={selected !== null && selected.owner !== emptyAddress}
+          visible={selected !== null && selected.owner === account && selected.owner !== emptyAddress}
         >
           <p>Send Resources</p>
           <div className='statselect'>

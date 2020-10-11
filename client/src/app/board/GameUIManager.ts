@@ -652,6 +652,52 @@ class GameUIManager extends EventEmitter implements AbstractUIManager {
   getExplorers(): any {
     return this.gameManager.explorers;
   }
+
+  getMyPlanets(): Planet[] {
+    return this.gameManager.getMyPlanets();
+  }
+  getDist(fromId: LocationId, toId: LocationId): number {
+    return this.gameManager.getDist(fromId, toId);
+  }
+  getMaxMoveDist(planetId: LocationId, sendingPercent: number): number {
+    return this.gameManager.getMaxMoveDist(planetId, sendingPercent);
+  }
+  getPlanetsInRange(planetId: LocationId, sendingPercent: number): Planet[] {
+    return this.gameManager.getPlanetsInRange(planetId, sendingPercent);
+  }
+  getEnergyNeededForMove(
+    fromId: LocationId,
+    toId: LocationId,
+    arrivingEnergy: number
+  ): number {
+    return this.gameManager.getEnergyNeededForMove(fromId, toId, arrivingEnergy);
+  }
+  getEnergyArrivingForMove(
+    fromId: LocationId,
+    toId: LocationId,
+    sentEnergy: number
+  ): number {
+    return this.gameManager.getEnergyArrivingForMove(fromId, toId, sentEnergy);
+  }
+  getTimeForMove(fromId: LocationId, toId: LocationId): number {
+    return this.gameManager.getTimeForMove(fromId, toId);
+  }
+  getTemperature(coords: WorldCoords): number {
+    return this.gameManager.getTemperature(coords);
+  }
+
+  move(
+    from: LocationId,
+    to: LocationId,
+    forces: number,
+    silver: number
+  ): void {
+    this.gameManager.move(from, to, forces, silver);
+  }
+
+  distributeSilver(fromId: LocationId, maxDistributeEnergyPercent: number): void {
+    this.gameManager.distributeSilver(fromId, maxDistributeEnergyPercent)
+  }
 }
 
 export default GameUIManager;

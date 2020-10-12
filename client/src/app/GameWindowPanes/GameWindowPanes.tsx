@@ -7,4 +7,3 @@ export * from './UpgradeDetailsPane';
 export * from './TwitterVerifyPane';
 export * from './TwitterBroadcastPane';
 export * from './ZoomPane';
-export * from './Tooltip';

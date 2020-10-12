@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import dfstyles from '../../styles/dfstyles.bs.js';
-import WindowManager, { TooltipName, GameWindowZIndex } from '../../utils/WindowManager';
+import WindowManager, { GameWindowZIndex } from '../../utils/WindowManager';
 import {
   HelpIcon,
   PlanetIcon,
@@ -16,7 +16,6 @@ import {
   HatIcon,
   SettingsIcon,
 } from '../Icons';
-import { TooltipTrigger } from './Tooltip';
 
 export const IconButton = styled.div<{ width?: string }>`
   width: ${(props) => props.width || '1.5em'};
@@ -92,9 +91,7 @@ export function ModalIcon({
   };
 
   return (
-    <TooltipTrigger
-      name={TooltipName.ModalHelp + modal}
-      needsShift={true}
+    <span
       display='inline-block'
       style={{ height: '1.5em' }}
     >
@@ -107,7 +104,7 @@ export function ModalIcon({
       >
         {child()}
       </IconButton>
-    </TooltipTrigger>
+    </span>
   );
 }
 

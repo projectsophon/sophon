@@ -33,8 +33,6 @@ import {
   getPlanetTitle,
 } from '../../utils/ProcgenUtils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
-import { TooltipTrigger } from './Tooltip';
-import { TooltipName } from '../../utils/WindowManager';
 import { Btn } from '../GameWindowComponents/Btn';
 import {
   AccountContext,
@@ -100,9 +98,9 @@ const PlanetscapeWrapper = styled.div`
 `;
 
 const TimesTwo = () => (
-  <TooltipTrigger name={TooltipName.Bonus}>
+  <span>
     <Green>x2</Green>
-  </TooltipTrigger>
+  </span>
 );
 
 const DetailsRow = styled.div`
@@ -346,19 +344,16 @@ export function PlanetDetailsPane({
             <div>
               <div>
                 <span>
-                  <TooltipTrigger name={TooltipName.Energy} needsShift>
+                  <span>
                     <EnergyIcon />
-                  </TooltipTrigger>
+                  </span>
                   {bonus && bonus[StatIdx.EnergyCap] && <TimesTwo />}
                 </span>
                 <span>
                   {selected?.owner === emptyAddress && selected.energy > 0 ? (
-                    <TooltipTrigger
-                      name={TooltipName.Pirates}
-                      display='inline-flex'
-                    >
+                    <span style={{ display: 'inline-flex' }}>
                       <span>{getFormatProp(selectedStats, 'energy')}</span>
-                    </TooltipTrigger>
+                    </span>
                   ) : (
                       <>{getFormatProp(selectedStats, 'energy')}</>
                     )}{' '}
@@ -367,9 +362,9 @@ export function PlanetDetailsPane({
               </div>
               <div>
                 <span>
-                  <TooltipTrigger name={TooltipName.Silver} needsShift>
+                  <span>
                     <SilverIcon />
-                  </TooltipTrigger>
+                  </span>
                 </span>
                 <span>
                   {getFormatProp(selectedStats, 'silver')} <Sub>/</Sub>{' '}
@@ -379,9 +374,9 @@ export function PlanetDetailsPane({
 
               <div className='margin-top'>
                 <span>
-                  <TooltipTrigger name={TooltipName.EnergyGrowth} needsShift>
+                  <span>
                     <EnergyGrowthIcon />
-                  </TooltipTrigger>
+                  </span>
                   {bonus && bonus[StatIdx.EnergyGro] && <TimesTwo />}
                 </span>
                 <span>{getFormatProp(selected, 'energyGrowth')}</span>
@@ -389,27 +384,27 @@ export function PlanetDetailsPane({
 
               <div>
                 <span>
-                  <TooltipTrigger name={TooltipName.Range} needsShift>
+                  <span>
                     <RangeIcon />
-                  </TooltipTrigger>
+                  </span>
                   {bonus && bonus[StatIdx.Range] && <TimesTwo />}
                 </span>
                 <span>{getFormatProp(selected, 'range')}</span>
               </div>
               <div>
                 <span>
-                  <TooltipTrigger name={TooltipName.Speed} needsShift>
+                  <span>
                     <SpeedIcon />
-                  </TooltipTrigger>
+                  </span>
                   {bonus && bonus[StatIdx.Speed] && <TimesTwo />}
                 </span>
                 <span>{getFormatProp(selected, 'speed')}</span>
               </div>
               <div>
                 <span>
-                  <TooltipTrigger name={TooltipName.Defense} needsShift>
+                  <span>
                     <DefenseIcon />
-                  </TooltipTrigger>
+                  </span>
                   {bonus && bonus[StatIdx.Defense] && <TimesTwo />}
                 </span>
                 <span>{getFormatProp(selected, 'defense')}</span>
@@ -452,15 +447,15 @@ export function PlanetDetailsPane({
 
           {/* <DetailsRowDouble>
             <span>
-              <TooltipTrigger name={TooltipName.Time50} needsShift>
+              <span>
                 <Sub>Time to 50%</Sub>
-              </TooltipTrigger>
+              </span>
             </span>
             <span>{getPop(50)}</span>
             <span>
-              <TooltipTrigger name={TooltipName.Time90} needsShift>
+              <span>
                 <Sub>Time to 90%</Sub>
-              </TooltipTrigger>
+              </span>
             </span>
             <span>{getPop(90)}</span>
           </DetailsRowDouble>

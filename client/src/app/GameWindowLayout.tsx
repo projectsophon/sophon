@@ -14,7 +14,6 @@ import {
 } from './GameWindowComponents/GameWindowComponents';
 
 import {
-  Tooltip,
   CoordsPane,
   PlanetDetailsPane,
   LeaderboardPane,
@@ -55,7 +54,6 @@ export function GameWindowLayout(): JSX.Element {
 
   return (
     <WindowWrapper>
-      <Tooltip />
 
       {/* modals (fragment is purely semantic) */}
       <>

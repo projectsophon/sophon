@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
 import WindowManager, {
   CursorState,
-  TooltipName,
   WindowManagerEvent,
 } from '../../utils/WindowManager';
 import GameUIManager from '../board/GameUIManager';
@@ -16,7 +15,6 @@ import { WorldCoords } from '../../utils/Coordinates';
 import { SpiralPattern } from '../../utils/MiningPatterns';
 import { TargetIcon } from '../Icons';
 import { IconButton } from './ModalPane';
-import { TooltipTrigger } from './Tooltip';
 import dfstyles from '../../styles/dfstyles.bs.js';
 
 const StyledExploreContextPane = styled.div`
@@ -122,15 +120,13 @@ export function ExploreContextPane(): JSX.Element {
             }
             return (
               <p key={ip}>
-                <TooltipTrigger
-                  needsShift
-                  name={TooltipName.MiningTarget}
+                <span
                   style={{ height: '1.5em', marginRight: '1em', display: 'inline-block' }}
                   className={className}>
                   <span onClick={moveHandler}>
                     <IconButton> <TargetIcon /> </IconButton>
                   </span>
-                </TooltipTrigger>
+                </span>
                 <Blue>{ip.replace('http://', '')}</Blue>: <White>{getHashes(hashRate)}</White> hashes/sec{' '}
               </p>
             );

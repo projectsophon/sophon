@@ -23,6 +23,7 @@ import {
   getPlayerShortHash,
   PlanetStatsInfo,
   planetCanUpgrade,
+  bonusFromHex,
 } from '../../utils/Utils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
 import dfstyles from '../../styles/dfstyles.bs.js';
@@ -43,10 +44,8 @@ import { Sub } from '../../components/Text';
 import { PlanetPreview } from './PlanetPreview';
 import WindowManager, {
   CursorState,
-  TooltipName,
 } from '../../utils/WindowManager';
 import UIEmitter, { UIEmitterEvent } from '../../utils/UIEmitter';
-import { TooltipTrigger } from './GameWindowPanes';
 
 const StyledPlanetContextPane = styled.div`
   width: 20em;
@@ -234,9 +233,9 @@ const StyledIconSelector = styled.div`
 type NumberHook = [number, (arg: number | ((n: number) => number)) => void];
 
 const TimesTwo = () => (
-  <TooltipTrigger name={TooltipName.Bonus}>
+  <span>
     <Green>x2</Green>
-  </TooltipTrigger>
+  </span>
 );
 
 export function EnergyIconSelector({
@@ -475,7 +474,13 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
   const windowManager = WindowManager.getInstance();
 
-  const [bonus] = useState<Bonus | null>(null);
+  const [bonus, setBonus] = useState<Bonus | null>(null);
+  // sync selected with bonus
+  useEffect(() => {
+    if (!uiManager || !selected) setBonus(null);
+    else setBonus(bonusFromHex(selected.locationId));
+  }, [selected, uiManager]);
+
   const branchHook = useState<UpgradeBranchName | null>(null);
   const [branch] = branchHook;
 
@@ -715,19 +720,16 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
             <div>
               <span>
-                <TooltipTrigger name={TooltipName.Energy} needsShift>
+                <span>
                   <EnergyIcon />
-                </TooltipTrigger>
+                </span>
                 {bonus && bonus[StatIdx.EnergyCap] && <TimesTwo />}
               </span>
               <span>
                 {selected?.owner === emptyAddress && selected.energy > 0 ? (
-                  <TooltipTrigger
-                    name={TooltipName.Pirates}
-                    display='inline-flex'
-                  >
+                  <span style={{ display: 'inline-flex' }}>
                     <span>{getFormatProp(selectedStats, 'energy')}</span>
-                  </TooltipTrigger>
+                  </span>
                 ) : (
                     <>{getFormatProp(selectedStats, 'energy')}</>
                   )}{' '}
@@ -737,9 +739,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
             <div>
               <span>
-                <TooltipTrigger name={TooltipName.Silver} needsShift>
+                <span>
                   <SilverIcon />
-                </TooltipTrigger>
+                </span>
               </span>
               <span>
                 {getFormatProp(selectedStats, 'silver')} <Sub>/</Sub>{' '}
@@ -749,9 +751,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
             <div className='margin-top'>
               <span>
-                <TooltipTrigger name={TooltipName.EnergyGrowth} needsShift>
+                <span>
                   <EnergyGrowthIcon />
-                </TooltipTrigger>
+                </span>
                 {bonus && bonus[StatIdx.EnergyGro] && <TimesTwo />}
               </span>
               <span>{getFormatProp(selected, 'energyGrowth')}</span>
@@ -759,9 +761,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
             <div>
               <span>
-                <TooltipTrigger name={TooltipName.Range} needsShift>
+                <span>
                   <RangeIcon />
-                </TooltipTrigger>
+                </span>
                 {bonus && bonus[StatIdx.Range] && <TimesTwo />}
               </span>
               <span>{getFormatProp(selected, 'range')}</span>
@@ -771,9 +773,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
             <div>
               <span>
-                <TooltipTrigger name={TooltipName.Speed} needsShift>
+                <span>
                   <SpeedIcon />
-                </TooltipTrigger>
+                </span>
                 {bonus && bonus[StatIdx.Speed] && <TimesTwo />}
               </span>
               <span>{getFormatProp(selected, 'speed')}</span>
@@ -781,9 +783,9 @@ export function PlanetContextPane({ hook, upgradeDetHook }: { hook: ModalHook, u
 
             <div>
               <span>
-                <TooltipTrigger name={TooltipName.Defense} needsShift>
+                <span>
                   <DefenseIcon />
-                </TooltipTrigger>
+                </span>
                 {bonus && bonus[StatIdx.Defense] && <TimesTwo />}
               </span>
               <span>{getFormatProp(selected, 'defense')}</span>

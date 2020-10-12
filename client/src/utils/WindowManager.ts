@@ -5,8 +5,6 @@ export const enum GameWindowZIndex {
   Toggler = 3,
   MenuBar = 4,
   Modal = 1000,
-
-  Tooltip = 16000000,
 }
 
 /*
@@ -23,64 +21,12 @@ export type MousePos = {
 export enum WindowManagerEvent {
   StateChanged = 'StateChanged',
   MiningCoordsUpdate = 'MiningCoordsUpdate',
-  TooltipUpdated = 'TooltipUpdated',
 }
 
 export enum CursorState {
   Normal,
   TargetingExplorer,
   TargetingForces,
-}
-
-export enum TooltipName {
-  None,
-  SilverGrowth,
-  SilverCap,
-  Silver,
-  Energy,
-  EnergyGrowth,
-  Range,
-  TwitterHandle,
-  Bonus,
-  MinEnergy,
-  Time50,
-  Time90,
-  Pirates,
-  Upgrades,
-  PlanetRank,
-  MaxLevel,
-
-  SelectedSilver,
-  SelectedEnergy,
-  Rank,
-  Score,
-  MiningPause,
-  MiningTarget,
-  HashesPerSec,
-  CurrentMining,
-  SilverProd,
-
-  BonusEnergyCap,
-  BonusEnergyGro,
-  BonusRange,
-  BonusSpeed,
-  BonusDefense,
-
-  Clowntown,
-
-  Defense,
-  Speed,
-
-  // note that we actually add ModalName to ModalHelp, and that everything after
-  // is not referenced directly. for this reason the relative ordring matters.
-  ModalHelp,
-  ModalPlanetDetails,
-  ModalLeaderboard,
-  ModalPlanetDex,
-  ModalEnergyDex,
-  ModalUpgradeDetails,
-  ModalTwitterVerification,
-  ModalTwitterBroadcast,
 }
 
 // the purpose of this class is to manage all ui pane events
@@ -95,14 +41,12 @@ class WindowManager extends EventEmitter {
 
   private shiftPressed: boolean;
 
-  private tooltipStack: TooltipName[];
-
   private constructor() {
     super();
     this.mousePos = { x: 0, y: 0 };
     this.mousedownPos = null;
     this.lastZIndex = 0;
-    this.tooltipStack = [];
+
     this.shiftPressed = false;
   }
 
@@ -118,22 +62,6 @@ class WindowManager extends EventEmitter {
     const terminalEmitter = new WindowManager();
 
     return terminalEmitter;
-  }
-
-  // tooltip stuff
-  pushTooltip(tooltip: TooltipName): void {
-    this.tooltipStack.push(tooltip);
-    this.emit(WindowManagerEvent.TooltipUpdated, this.getTooltip());
-  }
-
-  popTooltip(): void {
-    this.tooltipStack.pop();
-    this.emit(WindowManagerEvent.TooltipUpdated, this.getTooltip());
-  }
-
-  getTooltip(): TooltipName {
-    if (this.tooltipStack.length === 0) return TooltipName.None;
-    return this.tooltipStack[this.tooltipStack.length - 1];
   }
 
   // getters

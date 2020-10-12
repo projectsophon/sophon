@@ -16,8 +16,6 @@ import {
 } from '../../utils/ProcgenUtils';
 import { PlanetCosmeticInfo } from '../../_types/darkforest/app/board/utils/UtilsTypes';
 import { bonusFromHex, getPlanetRank } from '../../utils/Utils';
-import { TooltipTrigger } from './Tooltip';
-import { TooltipName } from '../../utils/WindowManager';
 import {
   EnergyIcon,
   PiratesIcon,
@@ -84,58 +82,58 @@ export function PlanetIcons({ planet }: { planet: Planet | null }): JSX.Element 
 
   return (
     <_PlanetIcons>
-      <TooltipTrigger name={TooltipName.None}>
+      <span>
         <span>{planet.planetLevel}</span>
-      </TooltipTrigger>
+      </span>
       {planet.owner === emptyAddress && planet.energy > 0 && (
-        <TooltipTrigger name={TooltipName.Pirates}>
+        <span>
           <PiratesIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {planet.planetLevel === PlanetLevel.MAX && (
-        <TooltipTrigger name={TooltipName.MaxLevel}>
+        <span>
           <MaxLevelIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {planet.planetResource === PlanetResource.SILVER && (
-        <TooltipTrigger name={TooltipName.SilverProd}>
+        <span>
           <SilverProdIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {bonuses[StatIdx.EnergyCap] && (
-        <TooltipTrigger name={TooltipName.BonusEnergyCap}>
+        <span>
           <EnergyIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {bonuses[StatIdx.EnergyGro] && (
-        <TooltipTrigger name={TooltipName.BonusEnergyGro}>
+        <span>
           <EnergyGrowthIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {bonuses[StatIdx.Range] && (
-        <TooltipTrigger name={TooltipName.BonusRange}>
+        <span>
           <RangeIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {bonuses[StatIdx.Speed] && (
-        <TooltipTrigger name={TooltipName.BonusSpeed}>
+        <span>
           <SpeedIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {bonuses[StatIdx.Defense] && (
-        <TooltipTrigger name={TooltipName.BonusDefense}>
+        <span>
           <DefenseIcon />
-        </TooltipTrigger>
+        </span>
       )}
       {rank > 0 && (
-        <TooltipTrigger name={TooltipName.PlanetRank}>
+        <span>
           <RankIcon planet={planet} />
-        </TooltipTrigger>
+        </span>
       )}
       {getPlanetName(planet) === 'Clown Town' && (
-        <TooltipTrigger name={TooltipName.Clowntown}>
+        <span>
           <ClownIcon />
-        </TooltipTrigger>
+        </span>
       )}
     </_PlanetIcons>
   );

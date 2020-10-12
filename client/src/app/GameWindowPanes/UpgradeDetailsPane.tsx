@@ -28,8 +28,6 @@ import GameUIManagerContext from '../board/GameUIManagerContext';
 import GameUIManager from '../board/GameUIManager';
 import { getPlanetTitle, getPlanetName } from '../../utils/ProcgenUtils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
-import { TooltipTrigger } from './Tooltip';
-import { TooltipName } from '../../utils/WindowManager';
 import {
   AccountContext,
   ContextMenuType,
@@ -470,9 +468,9 @@ export function UpgradeDetailsPane({ hook }: { hook: ModalHook }): JSX.Element {
               <br />
               <Sub>
                 (Rank{' '}
-                <TooltipTrigger needsShift name={TooltipName.Upgrades}>
+                <span>
                   {getRank()}
-                </TooltipTrigger>
+                </span>
                 )
               </Sub>
             </span>
@@ -484,9 +482,9 @@ export function UpgradeDetailsPane({ hook }: { hook: ModalHook }): JSX.Element {
               <br />
               <Sub>
                 (Rank{' '}
-                <TooltipTrigger needsShift name={TooltipName.Upgrades}>
+                <span>
                   {getRankFuture()}
-                </TooltipTrigger>
+                </span>
                 )
               </Sub>
             </span>

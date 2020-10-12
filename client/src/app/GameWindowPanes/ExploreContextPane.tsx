@@ -15,7 +15,7 @@ import { WorldCoords } from '../../utils/Coordinates';
 import { SpiralPattern } from '../../utils/MiningPatterns';
 import { TargetIcon } from '../Icons';
 import { IconButton } from './ModalPane';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 
 const StyledExploreContextPane = styled.div`
   width: 18.5em;

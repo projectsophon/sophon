@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 import { PaneProps, StyledToolbarPane } from './GameWindowComponents';
 import { ModalHook, ModalName, ModalIcon } from '../GameWindowPanes/ModalPane';
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 
 // TODO clean this up
 export const Btn = styled.span`

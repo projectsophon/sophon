@@ -20,7 +20,7 @@ import {
 import autoBind from 'auto-bind';
 import { PlanetCosmeticInfo } from '../../_types/darkforest/app/board/utils/UtilsTypes';
 import { addToChunkMap } from '../../utils/ChunkUtils';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 import { getPlanetCosmetic, getOwnerColor } from '../../utils/ProcgenUtils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
 import { hatFromType, HatType } from '../../utils/Hats';

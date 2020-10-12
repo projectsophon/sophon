@@ -26,7 +26,7 @@ import {
   bonusFromHex,
 } from '../../utils/Utils';
 import { emptyAddress } from '../../utils/CheckedTypeUtils';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 
 import {
   DefenseIcon,

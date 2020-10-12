@@ -1,7 +1,7 @@
 import autoBind from 'auto-bind';
 import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 import {
   getPlanetCosmetic,
   PixelCoords,

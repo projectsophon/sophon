@@ -13,7 +13,7 @@ import {
   TxLink,
 } from '../components/Text';
 import { Planet } from '../_types/global/GlobalTypes';
-import dfstyles from '../styles/dfstyles.bs.js';
+import dfstyles from '../styles/dfstyles.js';
 
 export enum NotificationType {
   Tx,

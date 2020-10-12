@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import dfstyles from '../styles/dfstyles.bs.js';
+import dfstyles from '../styles/dfstyles.js';
 import Typist from 'react-typist';
 import TerminalEmitter, {
   TerminalEvent,

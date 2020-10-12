@@ -16,7 +16,7 @@ import {
   getPlanetRank,
   bonusFromHex
 } from '../../utils/Utils';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 import { getPlanetName, getPlanetCosmetic } from '../../utils/ProcgenUtils';
 import { SelectedContext } from '../GameWindow';
 import { SilverIcon, RankIcon } from '../Icons';

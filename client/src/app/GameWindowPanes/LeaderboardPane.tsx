@@ -5,7 +5,7 @@ import GameUIManager from '../board/GameUIManager';
 import GameUIManagerContext from '../board/GameUIManagerContext';
 import { EthAddress, Planet, Player } from '../../_types/global/GlobalTypes';
 import { Sub } from '../../components/Text';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 import { PlanetThumb, PlanetLink } from './PlanetDexPane';
 import { getPlayerShortHash } from '../../utils/Utils';
 import { BLOCK_EXPLORER_URL } from '../../utils/constants';

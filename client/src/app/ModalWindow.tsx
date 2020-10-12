@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import dfstyles from '../styles/dfstyles.bs.js';
+import dfstyles from '../styles/dfstyles.js';
 
 const ModalWrapper = styled.div`
   position: absolute;

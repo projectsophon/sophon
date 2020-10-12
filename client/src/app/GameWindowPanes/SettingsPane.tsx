@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import EthereumAccountManager from '../../api/EthereumAccountManager';
 import { useStoredUIState, UIDataKey } from '../../api/UIStateStorageManager';
 import { Sub, Red, White } from '../../components/Text';
-import dfstyles from '../../styles/dfstyles.bs.js';
+import dfstyles from '../../styles/dfstyles.js';
 import { ONE_DAY } from '../../utils/Utils';
 import { EthAddress } from '../../_types/global/GlobalTypes';
 import { EthAddress } from '../../_types/global/GlobalTypes';

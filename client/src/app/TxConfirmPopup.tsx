@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
 import Button from '../components/Button';
-import dfstyles from '../styles/dfstyles.bs.js';
+import dfstyles from '../styles/dfstyles.js';
 import { ONE_DAY } from '../utils/Utils';
 
 const StyledTxConfirmPopup = styled.div`

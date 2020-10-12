@@ -1,7 +1,7 @@
 // should be able to be treated as a text element
 import React from 'react';
 import styled from 'styled-components';
-import dfstyles from '../styles/dfstyles.bs.js';
+import dfstyles from '../styles/dfstyles.js';
 import { UpgradeBranchName, Planet } from '../_types/global/GlobalTypes';
 import { getPlanetRank, isFullRank } from '../utils/Utils';
 

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Link as ReactRouterLink } from 'react-router-dom';
 import styled from 'styled-components';
-import dfstyles from '../styles/dfstyles.bs.js';
+import dfstyles from '../styles/dfstyles.js';
 import _ from 'lodash';
 import { SubmittedTx } from '../_types/darkforest/api/ContractsAPITypes';
 import Viewport from '../app/board/Viewport';

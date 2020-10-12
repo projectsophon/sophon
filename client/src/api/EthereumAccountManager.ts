@@ -45,6 +45,7 @@ class EthereumAccountManager extends EventEmitter {
     try {
       this.rpcURL = url;
       const newProvider = new providers.JsonRpcProvider(this.rpcURL);
+      newProvider.pollingInterval = 8000;
       // TODO: the chainID check
       this.provider = newProvider;
       if (this.signer) {

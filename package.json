@@ -19,7 +19,7 @@
     "primus": "^7.3.5",
     "primus-emit": "^1.0.0",
     "update-dotenv": "^1.1.1",
-    "vite": "^1.0.0-rc.4",
+    "vite": "1.0.0-rc.4",
     "vite-plugin-react": "^3.0.2",
     "ws": "^7.3.1"
   },
@@ -27,12 +27,16 @@
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
     "bs-platform": "^8.2.0",
-    "eslint-config-prettier": "^6.12.0",
-    "eslint-plugin-react-hooks": "^4.1.2",
-    "eslint-plugin-react": "^7.21.4",
     "eslint": "^7.11.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-react": "^7.21.4",
+    "eslint-plugin-react-hooks": "^4.1.2",
     "neon-cli": "^0.4.2",
+    "st": "^2.0.0",
     "typescript": "^3.7.2"
+  },
+  "resolutions": {
+    "vite": "npm:@phated/vite@1.0.0-rc.4"
   },
   "scripts": {
     "start": "node .",
@@ -41,6 +45,8 @@
     "re:build": "bsb -make-world",
     "re:watch": "bsb -make-world -w",
     "re:clean": "bsb -clean-world",
-    "rust:build": "neon build --release"
+    "rust:build": "neon build --release",
+    "static:build": "vite build",
+    "static:serve": "st -p 8083 -d dist -i index.html -nc"
   }
 }

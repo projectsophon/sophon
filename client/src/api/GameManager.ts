@@ -689,8 +689,9 @@ class GameManager extends EventEmitter implements AbstractGameManager {
     };
     this.contractsAPI.onTxInit(unconfirmedTx as UnconfirmedTx);
 
-    return this.snarkHelper
-      .getMoveArgs(
+    let callArgs;
+    try {
+      callArgs = await this.snarkHelper.getMoveArgs(
         oldX,
         oldY,
         newX,
@@ -698,19 +699,24 @@ class GameManager extends EventEmitter implements AbstractGameManager {
         perlin({ x: newX, y: newY }),
         this.worldRadius,
         distMax
-      )
-      .then((callArgs) => {
-        return this.contractsAPI.move(
-          callArgs,
-          shipsMoved,
-          silverMoved,
-          actionId
-        );
-      })
-      .then(() => {
-        //no-op, delete?
-        this.emit(GameManagerEvent.Moved);
-      })
+      );
+    } catch (err) {
+      const notifManager = NotificationManager.getInstance();
+      notifManager.unsubmittedTxFail(unconfirmedTx, err);
+      this.contractsAPI.emit(
+        ContractsAPIEvent.TxInitFailed,
+        unconfirmedTx,
+        err
+      );
+      // Exit if we failed to snark it
+      return;
+    }
+
+    // Fire off the move call but don't wait for it
+    // because the server isn't responding to us in a reasonable time
+    this.contractsAPI
+      .move(callArgs, shipsMoved, silverMoved, actionId)
+      .then(() => this.emit(GameManagerEvent.Moved))
       .catch((err) => {
         const notifManager = NotificationManager.getInstance();
         notifManager.unsubmittedTxFail(unconfirmedTx, err);

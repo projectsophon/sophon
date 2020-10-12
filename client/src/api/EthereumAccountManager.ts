@@ -44,8 +44,13 @@ class EthereumAccountManager extends EventEmitter {
   public async setRpcEndpoint(url: string): Promise<void> {
     try {
       this.rpcURL = url;
-      const newProvider = new providers.JsonRpcProvider(this.rpcURL);
-      newProvider.pollingInterval = 8000;
+      let newProvider;
+      if (this.rpcURL.startsWith('ws')) {
+        newProvider = new providers.WebSocketProvider(this.rpcURL);
+      } else {
+        newProvider = new providers.JsonRpcProvider(this.rpcURL);
+        newProvider.pollingInterval = 8000;
+      }
       // TODO: the chainID check
       this.provider = newProvider;
       if (this.signer) {

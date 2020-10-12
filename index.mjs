@@ -44,6 +44,7 @@ const {
   IS_CLIENT_SERVER,
   IS_WEBSOCKET_SERVER,
   PORT,
+  SHOULD_EXPLORE,
 } = env.parsed;
 
 const answers = await inquirer.prompt([
@@ -128,7 +129,14 @@ const answers = await inquirer.prompt([
     message: `What port should we start the server on?`,
     default: 8082,
     when: (answers) => PORT == null && (answers.isClientServer || answers.isWebsocketServer),
-  }
+  },
+  {
+    type: 'confirm',
+    name: 'shouldExplore',
+    message: `Do you want to explore the universe?`,
+    default: true,
+    when: () => SHOULD_EXPLORE == null,
+  },
 ]);
 
 const {
@@ -141,6 +149,7 @@ const {
   isClientServer = toBoolean(IS_CLIENT_SERVER),
   isWebsocketServer = toBoolean(IS_WEBSOCKET_SERVER),
   port = toNumber(PORT),
+  shouldExplore = toBoolean(SHOULD_EXPLORE),
 } = answers;
 
 await updateDotenv({
@@ -153,6 +162,7 @@ await updateDotenv({
   IS_CLIENT_SERVER: `${isClientServer}`,
   IS_WEBSOCKET_SERVER: `${isWebsocketServer}`,
   PORT: `${port}`,
+  SHOULD_EXPLORE: `${shouldExplore}`,
 });
 console.log('Config written to `.env` file - edit/delete this file to change settings');
 
@@ -281,4 +291,6 @@ minerManager.on(MinerManagerEvent.DiscoveredNewChunk, (chunk, miningTimeMillis) 
   localStorageManager.updateChunk(chunk, false);
 });
 
-minerManager.startExplore();
+if (shouldExplore) {
+  minerManager.startExplore();
+}

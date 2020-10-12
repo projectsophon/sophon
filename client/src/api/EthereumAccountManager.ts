@@ -11,7 +11,12 @@ class EthereumAccountManager extends EventEmitter {
   private provider: JsonRpcProvider;
   private signer: Wallet | null;
   private rpcURL: string;
-  private defaultRpcURL = 'https://rpc.xdaichain.com/';
+  // private defaultRpcURL = 'http://localhost:8545/';
+  // private defaultRpcURL = 'https://rpc.xdaichain.com/';
+  // private defaultRpcURL = 'https://xdai.poanetwork.dev';
+  // private defaultRpcURL = 'https://xdai-archive.blockscout.com';
+  // private defaultRpcURL = 'wss://rpc.xdaichain.com/wss';
+  private defaultRpcURL = 'wss://xdai.poanetwork.dev/wss';
   private readonly knownAddresses: EthAddress[];
 
   private constructor() {

@@ -1,4 +1,4 @@
-import * as stringify from 'json-stable-stringify';
+import stringify from 'json-stable-stringify';
 import { TransactionReceipt } from '@ethersproject/providers';
 import { providers, Contract, Wallet, utils, ContractInterface } from 'ethers';
 import { EthAddress } from '../_types/global/GlobalTypes';
@@ -86,7 +86,7 @@ class EthereumAccountManager extends EventEmitter {
 
   public async loadCoreContract(): Promise<Contract> {
     const contractABI = (
-      await fetch('/public/contracts/DarkForestCore.json').then((x) => x.json())
+      await fetch('/contracts/DarkForestCore.json').then((x) => x.json())
     ).abi;
 
     const { contractAddress } = await import('../utils/prod_contract_addr');

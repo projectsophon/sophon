@@ -159,7 +159,7 @@ export default function ControllableCanvas(): JSX.Element {
     >
       <img
         ref={imgRef}
-        src='/public/img/texture.jpg'
+        src='/img/texture.jpg'
         style={{ position: 'absolute', left: '-1000px', top: '-1000px' }}
         onLoad={() => setLoaded(true)}
       />

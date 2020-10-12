@@ -1,8 +1,10 @@
 import path from 'path';
+import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
 import os from 'os';
 import fs from 'fs';
@@ -20,6 +22,8 @@ import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
 import { SpiralPattern } from './lib/SpiralPattern.mjs';
 import LocalStorageManager from './lib/LocalStorageManager.mjs';
 import { toBoolean, toNumber, toObject, toFullPath, isUnset, toEnv } from './lib/env-utils.mjs';
+
+const { viteConfig } = require('./vite.config.js');
 
 let cores = os.cpus();
 
@@ -279,33 +283,9 @@ const minerManager = MinerManager.create(
 
 let server;
 
-import VitePluginReact from 'vite-plugin-react';
-
 if (isClientServer) {
-  server = createServer({
-    root: path.join(__dirname, 'client'),
-    alias: {
-      'react': '@pika/react',
-      'react-dom': '@pika/react-dom',
-      'auto-bind': 'auto-bind/index',
-      'crypto': 'crypto-browserify',
-      'http': 'http-browserify',
-      'https': 'https-browserify',
-      'stream': 'stream-browserify',
-    },
-    jsx: 'react',
-    optimizeDeps: {
-      include: ['auto-bind/index', 'stylis-rule-sheet'],
-    },
-    env: {
-      PORT: port,
-    },
-    // Explictly don't add the plugin resolvers because
-    // we want prod React to make warnings go away
-    // resolvers: [...VitePluginReact.resolvers],
-    configureServer: [VitePluginReact.configureServer],
-    transforms: [...VitePluginReact.transforms],
-  });
+  const config = viteConfig({ port });
+  server = createServer(config);
 } else if (isWebsocketServer) {
   server = http.createServer();
 }

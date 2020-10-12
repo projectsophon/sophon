@@ -72,8 +72,8 @@ class SnarkArgsHelper {
 
       const snarkProof: SnarkJSProofAndSignals = await window.snarkjs.groth16.fullProve(
         input,
-        '/public/circuits/init/circuit.wasm',
-        '/public/init.zkey'
+        '/circuits/init/circuit.wasm',
+        '/init.zkey'
       );
       const ret = this.callArgsFromProofAndSignals(
         snarkProof.proof,
@@ -119,8 +119,8 @@ class SnarkArgsHelper {
       };
       const snarkProof: SnarkJSProofAndSignals = await window.snarkjs.groth16.fullProve(
         input,
-        'public/circuits/move/circuit.wasm',
-        '/public/move.zkey'
+        '/circuits/move/circuit.wasm',
+        '/move.zkey'
       );
       const hash1 = this.useMockHash ? fakeHash(x1, y1) : mimcHash(x1, y1);
       const hash2 = this.useMockHash ? fakeHash(x2, y2) : mimcHash(x2, y2);

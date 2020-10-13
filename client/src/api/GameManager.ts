@@ -101,7 +101,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private readonly endTimeSeconds: number = 1609372800;
 
-  explorerIPs: string[];
+  explorerUrls: string[];
   explorers: Map<string, any>;
   lastChunkPerExplorer: Map<string, ChunkFootprint>;
   hashRatePerExplorer: Map<string, number>;
@@ -123,12 +123,10 @@ class GameManager extends EventEmitter implements AbstractGameManager {
   ) {
     super();
 
-    const port = import.meta.env.PORT ? `:${import.meta.env.PORT}` : '';
-
-    this.explorerIPs = [
-      `http://0.0.0.0${port}`,
-      'http://165.232.57.41',
-    ];
+    this.explorerUrls = [];
+    if (import.meta.env.EXPLORER_URL) {
+      this.explorerUrls.push(import.meta.env.EXPLORER_URL);
+    }
     this.explorers = new Map();
     this.lastChunkPerExplorer = new Map();
     this.hashRatePerExplorer = new Map();
@@ -383,7 +381,7 @@ class GameManager extends EventEmitter implements AbstractGameManager {
 
   private initMiningManager(_: WorldCoords): void {
     if (window.Primus) {
-      this.explorerIPs.forEach((ip) => {
+      this.explorerUrls.forEach((ip) => {
         const explorer = new window.Primus(ip);
         explorer.on('new-chunk', (chunk) => {
           this.lastChunkPerExplorer.set(ip, chunk.chunkFootprint);

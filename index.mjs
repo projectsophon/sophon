@@ -311,7 +311,11 @@ const minerManager = MinerManager.create(
 let server;
 
 if (isClientServer) {
-  const config = viteConfig({ port });
+  const config = viteConfig({
+    env: {
+      EXPLORER_URL: (isWebsocketServer && shouldExplore) ? `http://localhost:${port}` : null,
+    },
+  });
   server = createServer(config);
 } else if (isWebsocketServer) {
   server = http.createServer();

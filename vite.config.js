@@ -1,7 +1,7 @@
 const path = require('path');
 const VitePluginReact = require('vite-plugin-react');
 
-const viteConfig = ({ port = 8082, ...rest }) => ({
+const viteConfig = ({ ...rest }) => ({
   root: path.join(__dirname, 'client'),
   alias: {
     'react': '@pika/react',
@@ -15,9 +15,6 @@ const viteConfig = ({ port = 8082, ...rest }) => ({
   jsx: 'react',
   optimizeDeps: {
     include: ['auto-bind/index', 'stylis-rule-sheet'],
-  },
-  env: {
-    PORT: port,
   },
   // Explictly don't add the plugin resolvers because
   // we want prod React to make warnings go away

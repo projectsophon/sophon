@@ -20,8 +20,18 @@ import updateDotenv from 'update-dotenv';
 import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
 import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
 import { SpiralPattern } from './lib/SpiralPattern.mjs';
+import { SpiralSkipPattern } from './lib/SpiralSkipPattern.mjs';
 import LocalStorageManager from './lib/LocalStorageManager.mjs';
-import { toBoolean, toNumber, toObject, toFullPath, isUnset, toEnv } from './lib/env-utils.mjs';
+import {
+  toBoolean,
+  toNumber,
+  toObject,
+  toFullPath,
+  isUnset,
+  toEnv,
+  fromKey,
+  toKey,
+} from './lib/env-utils.mjs';
 
 const { viteConfig } = require('./vite.config.js');
 
@@ -57,6 +67,7 @@ const {
   INIT_COORDS,
   CHUNK_SIZE,
   PERLIN_THRESHOLD,
+  EXPLORE_PATTERN,
 } = env.parsed;
 
 const answers = await inquirer.prompt([
@@ -202,6 +213,20 @@ const answers = await inquirer.prompt([
       return (shouldExplore || toBoolean(SHOULD_EXPLORE)) && isUnset(PERLIN_THRESHOLD);
     },
   },
+  {
+    type: 'list',
+    // Capitalized here because constructor
+    name: 'ExplorePattern',
+    message: `What pattern would you like to use?`,
+    default: () => SpiralPattern,
+    choices: [
+      { name: 'Spiral pattern', value: SpiralPattern },
+      { name: 'Spiral Skip pattern', value: SpiralSkipPattern },
+    ],
+    when: ({ shouldExplore }) => {
+      return (shouldExplore || toBoolean(SHOULD_EXPLORE)) && isUnset(EXPLORE_PATTERN);
+    },
+  }
 ]);
 
 const {
@@ -221,6 +246,7 @@ const {
   initCoords = toObject(INIT_COORDS),
   chunkSize = toNumber(CHUNK_SIZE),
   perlinThreshold = toNumber(PERLIN_THRESHOLD),
+  ExplorePattern = fromKey(EXPLORE_PATTERN, { SpiralPattern, SpiralSkipPattern }),
 } = answers;
 
 await updateDotenv({
@@ -240,6 +266,7 @@ await updateDotenv({
   INIT_COORDS: toEnv(initCoords),
   CHUNK_SIZE: toEnv(chunkSize),
   PERLIN_THRESHOLD: toEnv(perlinThreshold),
+  EXPLORE_PATTERN: toEnv(toKey(ExplorePattern, { SpiralPattern, SpiralSkipPattern })),
 });
 console.log('Config written to `.env` file - edit/delete this file to change settings');
 
@@ -247,7 +274,7 @@ const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'j
 
 const planetRarity = 16384;
 
-const initPattern = new SpiralPattern(initCoords, chunkSize);
+const initPattern = new ExplorePattern(initCoords, chunkSize);
 
 const localStorageManager = await LocalStorageManager.create(db);
 
@@ -301,10 +328,10 @@ if (isWebsocketServer) {
 
   primus.on('connection', (spark) => {
     spark.on('set-pattern', (worldCoords) => {
-      const newPattern = new SpiralPattern(worldCoords, chunkSize);
+      const newPattern = new ExplorePattern(worldCoords, chunkSize);
       minerManager.setMiningPattern(newPattern);
       const coords = `${worldCoords.x},${worldCoords.y}`;
-      updateDotenv({ INIT_COORDS: `${JSON.stringify(worldCoords)}` })
+      updateDotenv({ INIT_COORDS: toEnv(worldCoords) })
         .then(() => console.log(`Updated INIT_COORDS to ${coords} in .env`))
         .catch(() => console.log(`Failed to update INIT_COORDS to ${coords} in .env`));
     });
@@ -315,7 +342,7 @@ if (isWebsocketServer) {
       }
 
       minerManager.setRadius(radius);
-      updateDotenv({ WORLD_RADIUS: `${radius}` })
+      updateDotenv({ WORLD_RADIUS: toEnv(radius) })
         .then(() => console.log(`Updated WORLD_RADIUS to ${radius} in .env`))
         .catch(() => console.log(`Failed to update WORLD_RADIUS to ${radius} in .env`));
     });
@@ -337,7 +364,9 @@ if (isWebsocketServer) {
 }
 
 if (server && port) {
-  server.listen(port);
+  server.listen(port, () => {
+    console.log(`Client server started at http://localhost:${port}`);
+  });
 }
 
 minerManager.on(MinerManagerEvent.DiscoveredNewChunk, (chunk, miningTimeMillis) => {

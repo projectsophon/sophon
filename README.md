@@ -38,7 +38,7 @@ If information is still the main resource, then exploring is still the most impo
 
 ### Exploring
 
-Most importantly for us, Jacob found a 10x speedup in the Rust explorer DF Team promoted a week before the game start. With it, we achieved 1-2k hashes on a Raspberry Pi and 3-5k on a our laptops. But running a 24cpu server on Digital Ocean pulled ~28k hashes when benchmarked it. We are cheap, so we for 24 hours after we reached top 2 -- but it was awsome!
+Most importantly for us, Jacob found a 10x speedup in the Rust explorer DF Team promoted a week before the game start. With it, we achieved 1-2k hashes on a Raspberry Pi and 3-5k on a our laptops. But running a 24cpu server on Digital Ocean pulled ~28k hashes when benchmarked it. We are cheap, so we only ran it for 24 hours after we reached top 2 -- but it was awesome!
 
 You can explore outside the legal radius, just comment out the radius check. During periods of low expansion during the start of the game, get a head start on the next place you want to expand towards!
 

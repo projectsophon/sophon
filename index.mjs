@@ -10,12 +10,13 @@ import os from 'os';
 import fs from 'fs';
 import http from 'http';
 import level from 'level';
-import Primus from 'primus';
-import primusEmit from 'primus-emit';
 import { createServer } from 'vite';
 import inquirer from 'inquirer';
 import dotenv from 'dotenv';
 import updateDotenv from 'update-dotenv';
+import multileveldown from 'multileveldown';
+import LevelRangeEmitter from 'level-range-emitter';
+import WebSocketServer from 'simple-websocket/server.js';
 
 import { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE } from './lib/constants.mjs';
 import { MinerManager, MinerManagerEvent } from './lib/MinerManager.mjs';
@@ -271,6 +272,7 @@ await updateDotenv({
 console.log('Config written to `.env` file - edit/delete this file to change settings');
 
 const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'json' });
+const lre = LevelRangeEmitter.server(db);
 
 const planetRarity = 16384;
 
@@ -321,49 +323,13 @@ if (isClientServer) {
   server = http.createServer();
 }
 
-let primus;
+let wss;
 if (isWebsocketServer) {
-  primus = new Primus(server, {
-    iknowhttpsisbetter: true,
-    plugin: {
-      emit: primusEmit,
-    }
-  });
+  wss = new WebSocketServer({ server });
 
-  primus.on('connection', (spark) => {
-    spark.on('set-pattern', (worldCoords) => {
-      const newPattern = new ExplorePattern(worldCoords, chunkSize);
-      minerManager.setMiningPattern(newPattern);
-      const coords = `${worldCoords.x},${worldCoords.y}`;
-      updateDotenv({ INIT_COORDS: toEnv(worldCoords) })
-        .then(() => console.log(`Updated INIT_COORDS to ${coords} in .env`))
-        .catch(() => console.log(`Failed to update INIT_COORDS to ${coords} in .env`));
-    });
-
-    spark.on('set-radius', (radius) => {
-      if (!radiusUpdates) {
-        return;
-      }
-
-      minerManager.setRadius(radius);
-      updateDotenv({ WORLD_RADIUS: toEnv(radius) })
-        .then(() => console.log(`Updated WORLD_RADIUS to ${radius} in .env`))
-        .catch(() => console.log(`Failed to update WORLD_RADIUS to ${radius} in .env`));
-    });
-
-    spark.on('startup-sync', () => {
-      // Only send sync chunks with 200 objects in them
-      let chunks = [];
-      for (let chunk of localStorageManager.allChunks()) {
-        if (chunks.length < 200) {
-          chunks.push(chunk);
-        } else {
-          spark.emit('sync-chunks', chunks);
-          chunks = [];
-        }
-      }
-      chunks = null;
-    });
+  wss.on('connection', (websocketStream) => {
+    const dbStream = multileveldown.server(db, { readonly: true });
+    lre.session(dbStream, websocketStream);
   });
 }
 
@@ -373,14 +339,7 @@ if (server && port) {
   });
 }
 
-minerManager.on(MinerManagerEvent.DiscoveredNewChunk, (chunk, miningTimeMillis) => {
-  const hashRate = chunk.chunkFootprint.sideLength ** 2 / (miningTimeMillis / 1000);
-  if (isWebsocketServer) {
-    primus.forEach((spark) => {
-      spark.emit('new-chunk', chunk);
-      spark.emit('hash-rate', hashRate);
-    });
-  }
+minerManager.on(MinerManagerEvent.DiscoveredNewChunk, (chunk, _miningTimeMillis) => {
   localStorageManager.updateChunk(chunk, false);
 });
 

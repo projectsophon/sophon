@@ -328,7 +328,7 @@ if (isWebsocketServer) {
   wss = new WebSocketServer({ server });
 
   wss.on('connection', (websocketStream) => {
-    const dbStream = multileveldown.server(db);
+    const dbStream = multileveldown.server(db, { readonly: true });
     lre.session(dbStream, websocketStream);
   });
 }

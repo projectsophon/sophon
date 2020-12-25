@@ -206,7 +206,7 @@ const answers = await inquirer.prompt([
     default: 0,
     choices: [
       { name: 'All (Nebula/Space/Deep Space)', value: 0 },
-      { name: 'Space & Deep Space', value: 15 },
+      { name: 'Space & Deep Space', value: 14 },
       { name: 'Just Deep Space', value: 17 }
     ],
     when: ({ shouldExplore }) => {

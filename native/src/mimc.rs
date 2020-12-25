@@ -5,6 +5,7 @@ use std::ops::Rem;
 use std::ops::Sub;
 
 lazy_static! {
+    static ref KEY: U512 = U512::from(7);
     static ref P: U512 = U512::from_dec_str(
         "21888242871839275222246405745257275088548364400416034343698204186575808495617"
     )
@@ -312,7 +313,7 @@ impl MimcState {
     }
 
     pub fn sponge(inputs: &[i64], rounds: usize) -> U512 {
-        let mut state = MimcState::new(rounds, PrimeElem { x: U512::from(3) });
+        let mut state = MimcState::new(rounds, PrimeElem { x: *KEY });
 
         inputs
             .into_iter()

@@ -270,7 +270,7 @@ await updateDotenv({
 });
 console.log('Config written to `.env` file - edit/delete this file to change settings');
 
-const db = level(path.join(__dirname, `known_board_perlin`), { valueEncoding: 'json' });
+const db = level(path.join(__dirname, `known_board_v05`), { valueEncoding: 'json' });
 
 const planetRarity = 16384;
 
